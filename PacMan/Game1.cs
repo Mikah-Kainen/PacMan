@@ -7,14 +7,16 @@ namespace PacMan
 {
     public class Game1 : Game
     {
-        private GraphicsDeviceManager _graphics;
+
+        private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
-        Texture2D pixelMap;
+        public Screen CurrentScreen;
         public Game1()
         {
-            _graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+            CurrentScreen = new GameScreen(graphics, Content, 1000, 800);
         }
 
         protected override void Initialize()
@@ -28,24 +30,7 @@ namespace PacMan
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            pixelMap = Content.Load<Texture2D>("pacmanmap");
-
-            MemoryStream stream = new MemoryStream();
-
-            pixelMap.SaveAsPng(stream, pixelMap.Width, pixelMap.Height);
-
-            System.Drawing.Bitmap pixelBitmap = new System.Drawing.Bitmap(stream);
-
-            for(int x = 0; x < pixelBitmap.Width; x++)
-            {
-                for(int y = 0; y < pixelBitmap.Height; y++)
-                {
-                    System.Drawing.Color pixelColor = pixelBitmap.GetPixel(x, y);
-                    
-                    //You now have the pixel color, determine what texture this should map to from your pixel map
-                }
-            }
-
+            CurrentScreen.Load();
             // TODO: use this.Content to load your game content here
         }
 
@@ -53,6 +38,8 @@ namespace PacMan
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            CurrentScreen.Update(gameTime);
 
             // TODO: Add your update logic here
 
@@ -67,7 +54,7 @@ namespace PacMan
 
             spriteBatch.Begin();
 
-            spriteBatch.Draw(pixelMap, new Rectangle(10, 10, pixelMap.Width, pixelMap.Height), Color.White);
+            CurrentScreen.Draw(spriteBatch);
 
             spriteBatch.End();
 
