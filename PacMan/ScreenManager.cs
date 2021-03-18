@@ -18,6 +18,7 @@ namespace PacMan
 
         public void SetScreen(Screen currentScreen)
         {
+            PreviousScreens.Push(CurrentScreen);
             CurrentScreen = currentScreen;
         }
 
@@ -40,5 +41,6 @@ namespace PacMan
                 screen.Draw(spriteBatch);
             }
         }
+
     }
 }

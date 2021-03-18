@@ -15,6 +15,7 @@ namespace PacMan
         private ScreenManager screenManager;
         private InputManager inputManager;
         private Directions currentDirection;
+
         public Pacman(Texture2D tex, Color tint, Vector2 pos, Vector2 size, float speedPerSec, ScreenManager screenManager, InputManager inputManager)
             : base(tex, tint, pos, size)
         {
@@ -55,9 +56,9 @@ namespace PacMan
             }
         }
 
-        //public override void Draw(SpriteBatch spriteBatch)
-        //{
-
-        //}
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(Tex, Pos, new Rectangle(240, 0, 180,  193), Tint, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+        }
     }
 }

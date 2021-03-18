@@ -18,6 +18,8 @@ namespace PacMan
         private Pacman pacman;
         private Rectangle screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
 
+        private AnimationSprite pacmanSprite;
+
         public GameScreen(GraphicsDeviceManager graphics, ContentManager content, int xBound, int yBound, ScreenManager screenManager, InputManager inputManager)
             :base(graphics, content, xBound, yBound, screenManager, inputManager)
         {
@@ -27,6 +29,12 @@ namespace PacMan
                 [new Color(237, 28, 36)] = CreatePixel(Color.Red),
                 [new Color(34, 177, 76)] = CreatePixel(Color.Green),
             };
+
+            var frameList = new List<AnimationFrame>();
+            frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), Vector2.Zero));
+            frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), Vector2.Zero));
+            frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), Vector2.Zero));
+            pacmanSprite = new AnimationSprite(content.Load<Texture2D>("pacmansprite"), Color.White, screen.Center.ToVector2(), Vector2.One, frameList, TimeSpan.FromMilliseconds(2 00));
         }
 
         public override void Load()
@@ -54,13 +62,16 @@ namespace PacMan
                 }
             }
 
-            pacman = new Pacman(CreatePixel(Color.Yellow), Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f), new Vector2(screen.Width / 20f, screen.Height/20f), 500, ScreenManager, InputManager);
+            Texture2D pacmansprite = ContentManager.Load<Texture2D>("pacmansprite");
+
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f), new Vector2(pacmansprite.Width, pacmansprite.Height), 500, ScreenManager, InputManager);
             
         }
 
         public override void Update(GameTime gameTime)
         {
             pacman.Update(gameTime);
+            pacmanSprite.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -70,7 +81,8 @@ namespace PacMan
             {
                 sprite.Draw(spriteBatch);
             }
-            pacman.Draw(spriteBatch);
+            //pacman.Draw(spriteBatch);
+            pacmanSprite.Draw(spriteBatch);
         }
 
 

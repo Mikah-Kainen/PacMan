@@ -10,15 +10,14 @@ namespace PacMan
     {
         private Vector2 position;
         public ref Vector2 Pos => ref position;
-
         public Vector2 Size { get; internal set; }
-
-        public Rectangle HitBox => new Rectangle((int)Pos.X, (int)Pos.Y, (int)Size.X, (int)Size.Y);
-
-        public GameObject(Vector2 pos, Vector2 size)
+        public Rectangle HitBox => new Rectangle((int)Pos.X, (int)Pos.Y, (int)(Size.X * Scale.X), (int)(Size.Y * Scale.Y));
+        public Vector2 Scale { get; internal set; }
+        public GameObject(Vector2 pos, Vector2 size, Vector2 scale)
         {
             Pos = pos;
             Size = size;
+            Scale = scale;
         }
 
         public abstract void Draw(SpriteBatch spriteBatch);

@@ -11,10 +11,10 @@ namespace PacMan
     {
         public Texture2D Tex { get; private set; }
         public Color Tint { get; private set; }
-
         public ScreenManager ScreenManager { get; private set; }
-        public Sprite(Texture2D tex, Color tint, Vector2 pos, Vector2 size)
-            : base(pos, size)
+
+        public Sprite(Texture2D tex, Color tint, Vector2 pos, Vector2 scale)
+            : base(pos, new Vector2(tex.Width, tex.Height), scale)
         {
             Tex = tex;
             Tint = tint;
