@@ -18,8 +18,8 @@ namespace PacMan
         private Pacman pacman;
         private Rectangle screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
 
-        public GameScreen(GraphicsDeviceManager graphics, ContentManager content, int xBound, int yBound)
-            :base(graphics, content, xBound, yBound)
+        public GameScreen(GraphicsDeviceManager graphics, ContentManager content, int xBound, int yBound, ScreenManager screenManager, InputManager inputManager)
+            :base(graphics, content, xBound, yBound, screenManager, inputManager)
         {
             textureDictionary = new Dictionary<Color, Texture2D>
             {
@@ -54,7 +54,7 @@ namespace PacMan
                 }
             }
 
-            pacman = new Pacman(CreatePixel(Color.Yellow), Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f), new Vector2(screen.Width / 20f, screen.Height/20f));
+            pacman = new Pacman(CreatePixel(Color.Yellow), Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f), new Vector2(screen.Width / 20f, screen.Height/20f), 500, ScreenManager, InputManager);
             
         }
 
