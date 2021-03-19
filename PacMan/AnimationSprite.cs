@@ -9,8 +9,8 @@ namespace PacMan
 {
     public class AnimationSprite : Sprite
     {
-        public List<AnimationFrame> Frames { get; private set; }
-        int currentIndex;
+        public List<AnimationFrame> Frames { get; internal set; }
+        protected int currentIndex;
         public AnimationFrame CurrentFrame => Frames[currentIndex];
 
         TimeSpan elapsedTime;

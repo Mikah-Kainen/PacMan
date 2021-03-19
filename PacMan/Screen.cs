@@ -14,11 +14,11 @@ namespace PacMan
         public ContentManager ContentManager { get; private set; }
         public ScreenManager ScreenManager { get; private set; }
         public InputManager InputManager { get; private set; }
-        public Screen(GraphicsDeviceManager graphics, ContentManager content, int xBound, int yBound, ScreenManager screenManager, InputManager inputManager)
+
+        public Rectangle Bounds { get; private set; }
+        public Screen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
-            graphics.PreferredBackBufferWidth = xBound;
-            graphics.PreferredBackBufferHeight = yBound;
-            graphics.ApplyChanges();
+            Bounds = bounds;
 
             GraphicsDeviceManager = graphics;
             ContentManager = content;

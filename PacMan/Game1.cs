@@ -30,7 +30,7 @@ namespace PacMan
             settings = new Settings();
             screenManager = new ScreenManager(settings);
             inputManager = new InputManager();
-            screens.Add(new GameScreen(graphics, Content, 1000, 800, screenManager, inputManager));
+            screens.Add(new GameScreen(graphics, Content, new Rectangle(0, 0, 1000, 800), screenManager, inputManager));
             screenManager.SetScreen(screens[0]);
 
             base.Initialize();

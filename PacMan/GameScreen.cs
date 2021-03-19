@@ -18,10 +18,8 @@ namespace PacMan
         private Pacman pacman;
         private Rectangle screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
 
-        private AnimationSprite pacmanSprite;
-
-        public GameScreen(GraphicsDeviceManager graphics, ContentManager content, int xBound, int yBound, ScreenManager screenManager, InputManager inputManager)
-            :base(graphics, content, xBound, yBound, screenManager, inputManager)
+        public GameScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
+            :base(graphics, content, bounds, screenManager, inputManager)
         {
             textureDictionary = new Dictionary<Color, Texture2D>
             {
@@ -29,12 +27,6 @@ namespace PacMan
                 [new Color(237, 28, 36)] = CreatePixel(Color.Red),
                 [new Color(34, 177, 76)] = CreatePixel(Color.Green),
             };
-
-            var frameList = new List<AnimationFrame>();
-            frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), Vector2.Zero));
-            frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), Vector2.Zero));
-            frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), Vector2.Zero));
-            pacmanSprite = new AnimationSprite(content.Load<Texture2D>("pacmansprite"), Color.White, screen.Center.ToVector2(), Vector2.One, frameList, TimeSpan.FromMilliseconds(2 00));
         }
 
         public override void Load()
@@ -46,8 +38,8 @@ namespace PacMan
 
             sprites = new List<Sprite>();
 
-            float xChunk = screen.Width / (float)pixelMap.Width;
-            float yChunk = screen.Height / (float)pixelMap.Height;
+            float xChunk = (int)screen.Width / pixelMap.Width + 1;
+            float yChunk = (int)screen.Height / pixelMap.Height + 1;
 
             Vector2 Chunk = new Vector2(xChunk, yChunk);
 
@@ -64,14 +56,17 @@ namespace PacMan
 
             Texture2D pacmansprite = ContentManager.Load<Texture2D>("pacmansprite");
 
-            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f), new Vector2(pacmansprite.Width, pacmansprite.Height), 500, ScreenManager, InputManager);
+            var frameList = new List<AnimationFrame>();
+            frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f)));
+            frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f)));
+            frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f)));
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f), new Vector2(.5f, .5f), frameList, TimeSpan.FromMilliseconds(100), 500, ScreenManager, InputManager);
             
         }
 
         public override void Update(GameTime gameTime)
         {
             pacman.Update(gameTime);
-            pacmanSprite.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -81,8 +76,7 @@ namespace PacMan
             {
                 sprite.Draw(spriteBatch);
             }
-            //pacman.Draw(spriteBatch);
-            pacmanSprite.Draw(spriteBatch);
+            pacman.Draw(spriteBatch);
         }
 
 
