@@ -13,7 +13,7 @@ namespace PacMan
     public class GameScreen : Screen
     {
         private Texture2D pixelMap;
-        private Dictionary<Color, Sprite> textureDictionary;
+        private Dictionary<Color, Func<Vector2, Vector2, Sprite>> textureDictionary;
         private List<Sprite> sprites;
         private Pacman pacman;
         private Rectangle screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
@@ -21,14 +21,15 @@ namespace PacMan
         public GameScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
             :base(graphics, content, bounds, screenManager, inputManager)
         {
-            textureDictionary = new Dictionary<Color, Sprite>
+            textureDictionary = new Dictionary<Color, Func<Vector2, Vector2, Sprite>>
             {
-                [Color.Black] = new Wall(CreatePixel(Color.Black), Color.White, Vector2.One, Vector2.One),
-                [new Color(255, 28, 36)] = new Sprite(CreatePixel(Color.Red), Color.White, Vector2.One, Vector2.One),
-                [new Color(237, 28, 36)] = new Sprite(CreatePixel(Color.Red), Color.White, Vector2.One, Vector2.One),
-                [new Color(34, 177, 76)] = new Sprite(CreatePixel(Color.Green), Color.White, Vector2.One, Vector2.One),
-                [new Color(255, 255, 255)] = new Sprite(CreatePixel(Color.White), Color.White, Vector2.One, Vector2.One),
+                [Color.Black] = new Func<Vector2, Vector2, Sprite>((Vector2 pos, Vector2 scale) => new Sprite(CreatePixel(Color.Black), Color.White, pos, scale)),
+                [new Color(255, 28, 36)] = new Func<Vector2, Vector2, Sprite>((Vector2 pos, Vector2 scale) => new Sprite(CreatePixel(Color.Red), Color.White, pos, scale)),
+                [new Color(237, 28, 36)] =   new Func<Vector2, Vector2, Sprite>((Vector2 pos, Vector2 scale) => new Sprite(CreatePixel(Color.Red), Color.White, pos, scale)),
+                [new Color(34, 177, 76)] =   new Func<Vector2, Vector2, Sprite>((Vector2 pos, Vector2 scale) => new Sprite(CreatePixel(Color.Green), Color.White, pos, scale)),
+                [new Color(255, 255, 255)] = new Func<Vector2, Vector2, Sprite>((Vector2 pos, Vector2 scale) => new Sprite(CreatePixel(Color.White), Color.White, pos, scale)),
             };
+
         }
 
         public override void Load()
@@ -51,7 +52,7 @@ namespace PacMan
                 {
                     int index = CalculateIndex(x, y, pixelMap.Width);
                     Color pixelColor = pixels[index];
-                    sprites.Add(textureDictionary[pixelColor].Copy(textureDictionary[pixelColor].Tex, Color.White, new Vector2(x,y) * Chunk, Chunk));
+                    sprites.Add(textureDictionary[pixelColor](new Vector2(x,y) * Chunk, Chunk));
                     //You now have the pixel color, determine what texture this should map to from your pixel map
                 }
             }
