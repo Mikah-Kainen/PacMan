@@ -16,12 +16,17 @@ namespace PacMan
         private InputManager inputManager;
         private List<Screen> screens;
         private Settings settings;
+        private Vector2 screenSize;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             screens = new List<Screen>();
+            screenSize = new Vector2(1000, 800);
+            graphics.PreferredBackBufferWidth = (int)screenSize.X;
+            graphics.PreferredBackBufferHeight = (int)screenSize.Y;
+            graphics.ApplyChanges();
         }
 
         protected override void Initialize()
@@ -30,7 +35,7 @@ namespace PacMan
             settings = new Settings();
             screenManager = new ScreenManager(settings);
             inputManager = new InputManager();
-            screens.Add(new GameScreen(graphics, Content, new Rectangle(0, 0, 1000, 800), screenManager, inputManager));
+            screens.Add(new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
             screenManager.SetScreen(screens[0]);
 
             base.Initialize();

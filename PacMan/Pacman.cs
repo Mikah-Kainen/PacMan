@@ -32,9 +32,23 @@ namespace PacMan
         {
             base.Update(gameTime);
             Keys[] currentKeys = inputManager.KeyboardState.GetPressedKeys();
+            int index = 0;
             if (currentKeys.Length > 0)
             {
-                currentDirection = screenManager.Settings.DirectionDictionary[currentKeys[0]];
+                bool shouldScan = true;
+                while (!screenManager.Settings.DirectionDictionary.ContainsKey(currentKeys[index]))
+                {
+                    index++;
+                    if (index >= currentKeys.Length)
+                    {
+                        shouldScan = false;
+                        break;
+                    }
+                }
+                if (shouldScan)
+                {
+                    currentDirection = screenManager.Settings.DirectionDictionary[currentKeys[index]];
+                }
             }
             switch (currentDirection)
             {
@@ -81,21 +95,22 @@ namespace PacMan
             {
                 returnValue = true;
                 Pos.X = (int)(base.CurrentFrame.HitBox.Width * Scale.X / 2 + screenManager.CurrentScreen.Bounds.Left);
-
             }
             else if(Pos.X + base.CurrentFrame.HitBox.Width * Scale.X / 2 >= screenManager.CurrentScreen.Bounds.Right)
             {
                 returnValue = true;
                 Pos.X = (int)(screenManager.CurrentScreen.Bounds.Right - base.CurrentFrame.HitBox.Width * Scale.X / 2);
             }
-            //else if()
-            //{
-            //    returnValue = true;
-            //}
-            //else if()
-            //{
-            //    returnValue = true;
-            //}
+            else if (Pos.Y - base.CurrentFrame.HitBox.Height * Scale.Y / 2 <= screenManager.CurrentScreen.Bounds.Top)
+            {
+                returnValue = true;
+                Pos.Y = (int)(base.CurrentFrame.HitBox.Height * Scale.Y / 2 + screenManager.CurrentScreen.Bounds.Top);
+            }
+            else if (Pos.Y + base.CurrentFrame.HitBox.Height * Scale.Y / 2 >= screenManager.CurrentScreen.Bounds.Bottom)
+            {
+                returnValue = true;
+                Pos.Y = (int)(screenManager.CurrentScreen.Bounds.Bottom - base.CurrentFrame.HitBox.Height * Scale.Y / 2);
+            }
 
             return returnValue;
         }

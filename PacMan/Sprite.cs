@@ -20,6 +20,11 @@ namespace PacMan
             Tint = tint;
         }
 
+        public virtual Sprite Copy(Texture2D tex, Color tint, Vector2 pos, Vector2 scale)
+        {
+            return new Sprite(tex, tint, pos, scale);
+        }
+
         public virtual void Update(GameTime gameTime)
         {
 
@@ -29,5 +34,7 @@ namespace PacMan
         {
             spriteBatch.Draw(Tex, HitBox, Tint);
         }
+
+       
     }
 }
