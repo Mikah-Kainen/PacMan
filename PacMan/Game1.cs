@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace PacMan
@@ -36,6 +39,10 @@ namespace PacMan
             screenManager = new ScreenManager(settings);
             inputManager = new InputManager();
             screens.Add(new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
+
+
+
+
             screenManager.SetScreen(screens[0]);
 
             base.Initialize();
@@ -45,7 +52,6 @@ namespace PacMan
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            screenManager.CurrentScreen.Load();
             // TODO: use this.Content to load your game content here
         }
 

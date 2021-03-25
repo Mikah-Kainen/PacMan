@@ -10,13 +10,14 @@ namespace PacMan
 {
     public abstract class Screen
     {
-        public GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
-        public ContentManager ContentManager { get; private set; }
-        public ScreenManager ScreenManager { get; private set; }
-        public InputManager InputManager { get; private set; }
+        public GraphicsDeviceManager GraphicsDeviceManager { get; set; }
+        public ContentManager ContentManager { get; set; }
+        public ScreenManager ScreenManager { get; set; }
+        public InputManager InputManager { get; set; }
+        public List<GameObject> Objects { get; set; }
+        public Rectangle Bounds { get; set; }
 
-        public Rectangle Bounds { get; private set; }
-        public Screen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
+        public void Load(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
             Bounds = bounds;
 
@@ -24,12 +25,24 @@ namespace PacMan
             ContentManager = content;
             ScreenManager = screenManager;
             InputManager = inputManager;
+
+            Objects = new List<GameObject>();
         }
 
-        public abstract void Load();
+        public virtual void Update(GameTime gameTime)
+        {
+            foreach(var objectOnScreen in Objects)
+            {
+                objectOnScreen.Update(gameTime);
+            }
+        }
 
-        public abstract void Update(GameTime gameTime);
-
-        public abstract void Draw(SpriteBatch spriteBatch);
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+            foreach (var objectOnScreen in Objects)
+            {
+                objectOnScreen.Draw(spriteBatch);
+            }
+        }
     }
 }

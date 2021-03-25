@@ -14,5 +14,12 @@ namespace PacMan
             Right,
             None,
         };
+
+
+        public enum TileType
+        {
+            Wall,
+            Background,
+        }
     }
 }

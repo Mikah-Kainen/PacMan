@@ -8,38 +8,40 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
+using static PacMan.Enum;
+
 namespace PacMan
 {
     public class GameScreen : Screen
     {
         private Texture2D pixelMap;
-        private Dictionary<Color, Func<Vector2, Vector2, Sprite>> textureDictionary;
-        private List<Sprite> sprites;
+        private Dictionary<Color, Func<Vector2, Vector2, Tile>> textureDictionary;
         private Pacman pacman;
+        private List<Tile> walls;
         private Rectangle screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
 
         public GameScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
-            :base(graphics, content, bounds, screenManager, inputManager)
         {
-            textureDictionary = new Dictionary<Color, Func<Vector2, Vector2, Sprite>>
+            base.Load(graphics, content, bounds, screenManager, inputManager);
+
+            textureDictionary = new Dictionary<Color, Func<Vector2, Vector2, Tile>>
             {
-                [Color.Black] = new Func<Vector2, Vector2, Sprite>((Vector2 pos, Vector2 scale) => new Sprite(CreatePixel(Color.Black), Color.White, pos, scale)),
-                [new Color(255, 28, 36)] = new Func<Vector2, Vector2, Sprite>((Vector2 pos, Vector2 scale) => new Sprite(CreatePixel(Color.Red), Color.White, pos, scale)),
-                [new Color(237, 28, 36)] =   new Func<Vector2, Vector2, Sprite>((Vector2 pos, Vector2 scale) => new Sprite(CreatePixel(Color.Red), Color.White, pos, scale)),
-                [new Color(34, 177, 76)] =   new Func<Vector2, Vector2, Sprite>((Vector2 pos, Vector2 scale) => new Sprite(CreatePixel(Color.Green), Color.White, pos, scale)),
-                [new Color(255, 255, 255)] = new Func<Vector2, Vector2, Sprite>((Vector2 pos, Vector2 scale) => new Sprite(CreatePixel(Color.White), Color.White, pos, scale)),
+                [Color.Black] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Black), Color.White, pos, scale, TileType.Wall)),
+                [new Color(255, 28, 36)] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Red), Color.White, pos, scale, TileType.Background)),
+                [new Color(237, 28, 36)] =   new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Red), Color.White, pos, scale, TileType.Background)),
+                [new Color(34, 177, 76)] =   new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Green), Color.White, pos, scale, TileType.Background)),
+                [new Color(255, 255, 255)] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.White), Color.White, pos, scale, TileType.Background)),
             };
 
+            Init();
         }
 
-        public override void Load()
+        public void Init()
         {
             pixelMap = ContentManager.Load<Texture2D>("pacmanmap");
 
             Color[] pixels = new Color[pixelMap.Width * pixelMap.Height];
             pixelMap.GetData(pixels);
-
-            sprites = new List<Sprite>();
 
             float xChunk = (int)screen.Width / pixelMap.Width + 1;
             float yChunk = (int)screen.Height / pixelMap.Height + 1;
@@ -52,7 +54,14 @@ namespace PacMan
                 {
                     int index = CalculateIndex(x, y, pixelMap.Width);
                     Color pixelColor = pixels[index];
-                    sprites.Add(textureDictionary[pixelColor](new Vector2(x,y) * Chunk, Chunk));
+                    Objects.Add(textureDictionary[pixelColor](new Vector2(x,y) * Chunk, Chunk));
+
+                    var tile = Objects[index] as Tile;
+
+                    if(tile.TileType == TileType.Wall)
+                    {
+                        walls.Add(tile);
+                    }
                     //You now have the pixel color, determine what texture this should map to from your pixel map
                 }
             }
@@ -63,23 +72,26 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f)));
-            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f), new Vector2(.5f, .5f), frameList, TimeSpan.FromMilliseconds(100), 500, ScreenManager, InputManager);
-            
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f), new Vector2(.3f, .3f), frameList, TimeSpan.FromMilliseconds(100), 500, ScreenManager, InputManager);
+            Objects.Add(pacman);
         }
 
         public override void Update(GameTime gameTime)
         {
-            pacman.Update(gameTime);
+
+            ///////////////////////////////////////////////
+            ///////////////////////////////// do stuff with my walls and pacman
+
+            ////////////////////////////////////////////////
+
+            base.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(pixelMap, new Rectangle(10, 10, pixelMap.Width, pixelMap.Height), Color.White);
-            foreach(Sprite sprite in sprites)
-            {
-                sprite.Draw(spriteBatch);
-            }
-            pacman.Draw(spriteBatch);
+            //spriteBatch.Draw(pixelMap, new Rectangle(10, 10, pixelMap.Width, pixelMap.Height), Color.White);
+
+            base.Draw(spriteBatch);
         }
 
 

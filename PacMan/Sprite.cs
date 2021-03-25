@@ -20,7 +20,7 @@ namespace PacMan
             Tint = tint;
         }
 
-        public virtual void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
 
         }
