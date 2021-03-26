@@ -14,8 +14,7 @@ namespace PacMan
         private float speed;
         private ScreenManager screenManager;
         private InputManager inputManager;
-        private Directions currentDirection;
-        private float rotation;
+        public Directions CurrentDirection { get; set; }
 
         public Pacman(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, TimeSpan timeBetweenFrames, float speedPerSec, ScreenManager screenManager, InputManager inputManager)
             : base(tex, tint, pos, scale, frames, timeBetweenFrames)
@@ -23,8 +22,8 @@ namespace PacMan
             speed = speedPerSec / 125 * 2;
             this.screenManager = screenManager;
             this.inputManager = inputManager;
-            currentDirection = Directions.None;
-            rotation = 0;
+            CurrentDirection = Directions.None;
+            base.isMiddleOrigin = true;
         }
 
 
@@ -47,29 +46,29 @@ namespace PacMan
                 }
                 if (shouldScan)
                 {
-                    currentDirection = screenManager.Settings.DirectionDictionary[currentKeys[index]];
+                    CurrentDirection = screenManager.Settings.DirectionDictionary[currentKeys[index]];
                 }
             }
-            switch (currentDirection)
+            switch (CurrentDirection)
             {
                 case Directions.Up:
                     Pos.Y -= speed;
-                    rotation = 3 * (float)Math.PI / 2;
+                    Rotation = 3 * (float)Math.PI / 2;
                     break;
 
                 case Directions.Down:
                     Pos.Y += speed;
-                    rotation = (float)Math.PI / 2;
+                    Rotation = (float)Math.PI / 2;
                     break;
 
                 case Directions.Left:
                     Pos.X -= speed;
-                    rotation = (float)Math.PI;
+                    Rotation = (float)Math.PI;
                     break;
 
                 case Directions.Right:
                     Pos.X += speed;
-                    rotation = 0;
+                    Rotation = 0;
                     break;
 
                 default:
@@ -78,15 +77,14 @@ namespace PacMan
             }
             if(HitBorder())
             {
-                currentDirection = Directions.None;
-                base.currentIndex = 1;
+                CurrentDirection = Directions.None;
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(Tex, Pos, base.CurrentFrame.HitBox, Tint, rotation, base.CurrentFrame.Origin, Scale, SpriteEffects.None, 0f);
-        }
+        //public override void Draw(SpriteBatch spriteBatch)
+        //{
+        //    spriteBatch.Draw(Tex, Pos, base.CurrentFrame.HitBox, Tint, Rotation, base.CurrentFrame.Origin, Scale, SpriteEffects.None, 0f);
+        //}
 
         private bool HitBorder()
         {

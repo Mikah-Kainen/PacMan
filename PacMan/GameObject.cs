@@ -11,7 +11,24 @@ namespace PacMan
         private Vector2 position;
         public ref Vector2 Pos => ref position;
         public Vector2 Size { get; internal set; }
-        public Rectangle HitBox => new Rectangle((int)Pos.X, (int)Pos.Y, (int)(Size.X * Scale.X), (int)(Size.Y * Scale.Y));
+        public bool isMiddleOrigin = false;
+        public Rectangle HitBox
+        {
+            get
+            {
+                if (!isMiddleOrigin)
+                {
+                    return new Rectangle((int)Pos.X, (int)Pos.Y, (int)(Size.X * Scale.X), (int)(Size.Y * Scale.Y));
+                }
+                else
+                {
+                    return new Rectangle((int)(Pos.X - Size.X * Scale.X / 2), (int)(Pos.Y - Size.Y * Scale.Y / 2), (int)(Size.X * Scale.X), (int)(Size.Y * Scale.Y));
+                }
+            }
+
+            set { }
+
+        }
         public Vector2 Scale { get; internal set; }
         public GameObject(Vector2 pos, Vector2 size, Vector2 scale)
         {

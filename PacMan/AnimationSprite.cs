@@ -12,15 +12,20 @@ namespace PacMan
         public List<AnimationFrame> Frames { get; internal set; }
         protected int currentIndex;
         public AnimationFrame CurrentFrame => Frames[currentIndex];
+        public float Rotation;
 
         TimeSpan elapsedTime;
         TimeSpan timeBetweenFrames;
+
+        private Texture2D substitutionTex;
         public AnimationSprite(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, TimeSpan timeBetweenFrames) 
-            : base(tex, tint, pos, scale)
+            : base(new Texture2D(tex.GraphicsDevice, frames[1].HitBox.Width, frames[1].HitBox.Height), tint, pos, scale)
         {
             Frames = frames;
             elapsedTime = TimeSpan.Zero;
             this.timeBetweenFrames = timeBetweenFrames;
+            Rotation = 0;
+            substitutionTex = tex;
         }
 
         public override void Update(GameTime gameTime)
@@ -37,7 +42,7 @@ namespace PacMan
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Tex, Pos, CurrentFrame.HitBox, Tint, 0, CurrentFrame.Origin, Scale, SpriteEffects.None, 1);
+            spriteBatch.Draw(substitutionTex, Pos, CurrentFrame.HitBox, Tint, Rotation, CurrentFrame.Origin, Scale, SpriteEffects.None, 1);
         }
 
     }

@@ -38,6 +38,7 @@ namespace PacMan
 
         public void Init()
         {
+            walls = new List<Tile>();
             pixelMap = ContentManager.Load<Texture2D>("pacmanmap");
 
             Color[] pixels = new Color[pixelMap.Width * pixelMap.Height];
@@ -56,7 +57,7 @@ namespace PacMan
                     Color pixelColor = pixels[index];
                     Objects.Add(textureDictionary[pixelColor](new Vector2(x,y) * Chunk, Chunk));
 
-                    var tile = Objects[index] as Tile;
+                    var tile = Objects[y + x * pixelMap.Width] as Tile;
 
                     if(tile.TileType == TileType.Wall)
                     {
@@ -72,19 +73,22 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f)));
-            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f), new Vector2(.3f, .3f), frameList, TimeSpan.FromMilliseconds(100), 500, ScreenManager, InputManager);
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f - 50), new Vector2(.3f, .3f), frameList, TimeSpan.FromMilliseconds(100), 500, ScreenManager, InputManager);
             Objects.Add(pacman);
         }
 
         public override void Update(GameTime gameTime)
         {
 
-            ///////////////////////////////////////////////
-            ///////////////////////////////// do stuff with my walls and pacman
-
-            ////////////////////////////////////////////////
-
             base.Update(gameTime);
+
+            foreach(Tile wall in walls)
+            {
+                if(pacman.HitBox.Intersects(wall.HitBox))
+                {
+                    pacman.CurrentDirection = Directions.None;
+                }
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
