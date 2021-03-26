@@ -8,11 +8,11 @@ namespace PacMan
     {
         public enum Directions
         {
-            Up,
-            Down,
-            Left,
-            Right,
-            None,
+            Up = 1,
+            Down = -1,
+            Left = 2,
+            Right = -2,
+            None = 0,
         };
 
 

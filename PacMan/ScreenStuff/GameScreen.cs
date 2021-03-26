@@ -28,8 +28,8 @@ namespace PacMan
             {
                 [Color.Black] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Black), Color.White, pos, scale, TileType.Wall)),
                 [new Color(255, 28, 36)] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Red), Color.White, pos, scale, TileType.Background)),
-                [new Color(237, 28, 36)] =   new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Red), Color.White, pos, scale, TileType.Background)),
-                [new Color(34, 177, 76)] =   new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Green), Color.White, pos, scale, TileType.Background)),
+                [new Color(237, 28, 36)] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Red), Color.White, pos, scale, TileType.Background)),
+                [new Color(34, 177, 76)] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Green), Color.White, pos, scale, TileType.Background)),
                 [new Color(255, 255, 255)] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.White), Color.White, pos, scale, TileType.Background)),
             };
 
@@ -55,11 +55,11 @@ namespace PacMan
                 {
                     int index = CalculateIndex(x, y, pixelMap.Width);
                     Color pixelColor = pixels[index];
-                    Objects.Add(textureDictionary[pixelColor](new Vector2(x,y) * Chunk, Chunk));
+                    Objects.Add(textureDictionary[pixelColor](new Vector2(x, y) * Chunk, Chunk));
 
                     var tile = Objects[y + x * pixelMap.Width] as Tile;
 
-                    if(tile.TileType == TileType.Wall)
+                    if (tile.TileType == TileType.Wall)
                     {
                         walls.Add(tile);
                     }
@@ -82,13 +82,81 @@ namespace PacMan
 
             base.Update(gameTime);
 
-            foreach(Tile wall in walls)
+            pacman.canChangeDirection = true;
+            foreach (Tile wall in walls)
             {
-                if(pacman.HitBox.Intersects(wall.HitBox))
+                if (pacman.HitBox.Intersects(wall.HitBox))
                 {
-                    pacman.CurrentDirection = Directions.None;
+                    pacman.canChangeDirection = false;
+                    switch (pacman.PreviousDirection)
+                    {
+                        case Directions.Up:
+                            while (pacman.HitBox.Top < wall.HitBox.Bottom)
+                            {
+                                pacman.Pos.Y++;
+                            }
+                            break;
+
+                        case Directions.Down:
+                            while (pacman.HitBox.Bottom > wall.HitBox.Top)
+                            {
+                                pacman.Pos.Y--;
+                            }
+                            break;
+
+                        case Directions.Left:
+                            while (pacman.HitBox.Left < wall.HitBox.Right)
+                            {
+                                pacman.Pos.X++;
+                            }
+                            break;
+
+                        case Directions.Right:
+                            while (pacman.HitBox.Right > wall.HitBox.Left)
+                            {
+                                pacman.Pos.X--;
+                            }
+                            break;
+                    }
                 }
+
+                if (pacman.HitBox.Intersects(wall.HitBox) && pacman.CurrentDirection != pacman.PreviousDirection)
+                {
+                    switch (pacman.CurrentDirection)
+                    {
+                        case Directions.Up:
+                            while (pacman.HitBox.Top < wall.HitBox.Bottom)
+                            {
+                                pacman.Pos.Y++;
+                            }
+                            break;
+
+                        case Directions.Down:
+                            while (pacman.HitBox.Bottom > wall.HitBox.Top)
+                            {
+                                pacman.Pos.Y--;
+                            }
+                            break;
+
+                        case Directions.Left:
+                            while (pacman.HitBox.Left < wall.HitBox.Right)
+                            {
+                                pacman.Pos.X++;
+                            }
+                            break;
+
+                        case Directions.Right:
+                            while (pacman.HitBox.Right > wall.HitBox.Left)
+                            {
+                                pacman.Pos.X--;
+                            }
+                            break;
+                    }
+                }
+                pacman.PreviousDirection = pacman.CurrentDirection;
+                pacman.CurrentDirection = Directions.None;
             }
+
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -102,7 +170,7 @@ namespace PacMan
         public Texture2D CreatePixel(Color tint)
         {
             Texture2D returnTex = new Texture2D(GraphicsDeviceManager.GraphicsDevice, 1, 1);
-            returnTex.SetData(new Color[] {tint});
+            returnTex.SetData(new Color[] { tint });
             return returnTex;
         }
 

@@ -12,7 +12,7 @@ namespace PacMan
         public ref Vector2 Pos => ref position;
         public Vector2 Size { get; internal set; }
         public bool isMiddleOrigin = false;
-        public Rectangle HitBox
+        public virtual Rectangle HitBox
         {
             get
             {

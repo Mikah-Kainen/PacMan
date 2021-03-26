@@ -14,7 +14,9 @@ namespace PacMan
         private float speed;
         private ScreenManager screenManager;
         private InputManager inputManager;
+        public bool canChangeDirection { get; set; }
         public Directions CurrentDirection { get; set; }
+        public Directions PreviousDirection { get; set; }
 
         public Pacman(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, TimeSpan timeBetweenFrames, float speedPerSec, ScreenManager screenManager, InputManager inputManager)
             : base(tex, tint, pos, scale, frames, timeBetweenFrames)
@@ -23,32 +25,38 @@ namespace PacMan
             this.screenManager = screenManager;
             this.inputManager = inputManager;
             CurrentDirection = Directions.None;
+            PreviousDirection = Directions.None;
             base.isMiddleOrigin = true;
+            canChangeDirection = true;
         }
 
 
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            Keys[] currentKeys = inputManager.KeyboardState.GetPressedKeys();
-            int index = 0;
-            if (currentKeys.Length > 0)
+            if (canChangeDirection)
             {
-                bool shouldScan = true;
-                while (!screenManager.Settings.DirectionDictionary.ContainsKey(currentKeys[index]))
+                Keys[] currentKeys = inputManager.KeyboardState.GetPressedKeys();
+                int index = 0;
+                if (currentKeys.Length > 0)
                 {
-                    index++;
-                    if (index >= currentKeys.Length)
+                    bool shouldScan = true;
+                    while (!screenManager.Settings.DirectionDictionary.ContainsKey(currentKeys[index]))
                     {
-                        shouldScan = false;
-                        break;
+                        index++;
+                        if (index >= currentKeys.Length)
+                        {
+                            shouldScan = false;
+                            break;
+                        }
+                    }
+                    if (shouldScan)
+                    {
+                        PreviousDirection = CurrentDirection;
+                        CurrentDirection = screenManager.Settings.DirectionDictionary[currentKeys[index]];
                     }
                 }
-                if (shouldScan)
-                {
-                    CurrentDirection = screenManager.Settings.DirectionDictionary[currentKeys[index]];
-                }
-            }
+            } 
             switch (CurrentDirection)
             {
                 case Directions.Up:
@@ -73,12 +81,14 @@ namespace PacMan
 
                 default:
                     base.currentIndex = 1;
+                    canChangeDirection = true;
                     break;
             }
-            if(HitBorder())
-            {
-                CurrentDirection = Directions.None;
-            }
+           
+            //if(HitBorder())
+            //{
+            //    CurrentDirection = Directions.None;
+            //}
         }
 
         //public override void Draw(SpriteBatch spriteBatch)
