@@ -73,7 +73,7 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f)));
-            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f - 50), new Vector2(.3f, .3f), frameList, TimeSpan.FromMilliseconds(100), 500, ScreenManager, InputManager);
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f - 50), new Vector2(.3f, .3f), frameList, TimeSpan.FromMilliseconds(100), 1.5f, 5, ScreenManager, InputManager);
             Objects.Add(pacman);
         }
 
@@ -82,79 +82,18 @@ namespace PacMan
 
             base.Update(gameTime);
 
-            pacman.canChangeDirection = true;
             foreach (Tile wall in walls)
             {
+                int index = 1;
                 if (pacman.HitBox.Intersects(wall.HitBox))
                 {
-                    pacman.canChangeDirection = false;
-                    switch (pacman.PreviousDirection)
+                    while (pacman.HitBox.Intersects(wall.HitBox))
                     {
-                        case Directions.Up:
-                            while (pacman.HitBox.Top < wall.HitBox.Bottom)
-                            {
-                                pacman.Pos.Y++;
-                            }
-                            break;
-
-                        case Directions.Down:
-                            while (pacman.HitBox.Bottom > wall.HitBox.Top)
-                            {
-                                pacman.Pos.Y--;
-                            }
-                            break;
-
-                        case Directions.Left:
-                            while (pacman.HitBox.Left < wall.HitBox.Right)
-                            {
-                                pacman.Pos.X++;
-                            }
-                            break;
-
-                        case Directions.Right:
-                            while (pacman.HitBox.Right > wall.HitBox.Left)
-                            {
-                                pacman.Pos.X--;
-                            }
-                            break;
+                        pacman.Pos = pacman.PreviousPositions[index];
+                        index++;
                     }
+                    pacman.CurrentDirection = Directions.None;
                 }
-
-                if (pacman.HitBox.Intersects(wall.HitBox) && pacman.CurrentDirection != pacman.PreviousDirection)
-                {
-                    switch (pacman.CurrentDirection)
-                    {
-                        case Directions.Up:
-                            while (pacman.HitBox.Top < wall.HitBox.Bottom)
-                            {
-                                pacman.Pos.Y++;
-                            }
-                            break;
-
-                        case Directions.Down:
-                            while (pacman.HitBox.Bottom > wall.HitBox.Top)
-                            {
-                                pacman.Pos.Y--;
-                            }
-                            break;
-
-                        case Directions.Left:
-                            while (pacman.HitBox.Left < wall.HitBox.Right)
-                            {
-                                pacman.Pos.X++;
-                            }
-                            break;
-
-                        case Directions.Right:
-                            while (pacman.HitBox.Right > wall.HitBox.Left)
-                            {
-                                pacman.Pos.X--;
-                            }
-                            break;
-                    }
-                }
-                pacman.PreviousDirection = pacman.CurrentDirection;
-                pacman.CurrentDirection = Directions.None;
             }
 
         }
