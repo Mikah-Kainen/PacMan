@@ -136,7 +136,7 @@ namespace PacMan
 
         private Vector2 GetPacTile()
         {
-            return Vector2.Zero;
+            return new Vector2((int)(pacman.Pos.X / TileSize.X) * TileSize.X + TileSize.X / 2, (int)(pacman.Pos.Y / TileSize.Y) * TileSize.Y + TileSize.Y / 2);
         }
 
         private Vector2 GetBlinkyTile()
