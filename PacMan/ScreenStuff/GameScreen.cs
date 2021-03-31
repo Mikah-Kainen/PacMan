@@ -17,6 +17,7 @@ namespace PacMan
         private Texture2D pixelMap;
         private Dictionary<Color, Func<Vector2, Vector2, Tile>> textureDictionary;
         private Pacman pacman;
+        private List<Ghost> ghosts;
         private List<Tile> walls;
         public Vector2 TileSize;
         private Rectangle screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
@@ -40,6 +41,7 @@ namespace PacMan
         public void Init()
         {
             walls = new List<Tile>();
+            ghosts = new List<Ghost>();
             pixelMap = ContentManager.Load<Texture2D>("pacmanmap");
 
             Color[] pixels = new Color[pixelMap.Width * pixelMap.Height];
@@ -75,7 +77,20 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f)));
             pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f - 50), new Vector2(.3f, .3f), frameList, TimeSpan.FromMilliseconds(100), 1.5f, 5, ScreenManager, InputManager);
+
+            Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
+
+            frameList = new List<AnimationFrame>();
+            frameList.Add(new AnimationFrame(new Rectangle(234, 47, 162, 148), new Vector2(81, 74)));
+            frameList.Add(new AnimationFrame(new Rectangle(46, 236, 158, 147), new Vector2(76, 73.5f)));
+            frameList.Add(new AnimationFrame(new Rectangle(45, 43, 161, 154), new Vector2(80.5f, 77)));
+            frameList.Add(new AnimationFrame(new Rectangle(235, 233, 160, 156), new Vector2(80, 78)));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(100, 100), new Vector2(.4f, .4f), frameList, 2f, 5, ScreenManager, InputManager));
             Objects.Add(pacman);
+            foreach(Ghost ghost in ghosts)
+            {
+                Objects.Add(ghost);
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -96,7 +111,7 @@ namespace PacMan
                     pacman.CurrentDirection = Directions.None;
                 }
             }
-
+            ghosts[0].CurrentDirection = pacman.CurrentDirection;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

@@ -20,6 +20,7 @@ namespace PacMan
         private List<Screen> screens;
         private Settings settings;
         private Vector2 screenSize;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
