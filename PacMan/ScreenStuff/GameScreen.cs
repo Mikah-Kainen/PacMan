@@ -18,6 +18,7 @@ namespace PacMan
         private Dictionary<Color, Func<Vector2, Vector2, Tile>> textureDictionary;
         private Pacman pacman;
         private List<Tile> walls;
+        public Vector2 TileSize;
         private Rectangle screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
 
         public GameScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
@@ -47,7 +48,7 @@ namespace PacMan
             float xChunk = (int)screen.Width / pixelMap.Width + 1;
             float yChunk = (int)screen.Height / pixelMap.Height + 1;
 
-            Vector2 Chunk = new Vector2(xChunk, yChunk);
+            TileSize = new Vector2(xChunk, yChunk);
 
             for (int x = 0; x < pixelMap.Width; x++)
             {
@@ -55,7 +56,7 @@ namespace PacMan
                 {
                     int index = CalculateIndex(x, y, pixelMap.Width);
                     Color pixelColor = pixels[index];
-                    Objects.Add(textureDictionary[pixelColor](new Vector2(x, y) * Chunk, Chunk));
+                    Objects.Add(textureDictionary[pixelColor](new Vector2(x, y) * TileSize, TileSize));
 
                     var tile = Objects[y + x * pixelMap.Width] as Tile;
 
@@ -116,6 +117,26 @@ namespace PacMan
         private int CalculateIndex(int x, int y, int width)
         {
             return width * y + x;
+        }
+
+        private Vector2 GetPacTile()
+        {
+            return Vector2.Zero;
+        }
+
+        private Vector2 GetBlinkyTile()
+        {
+            return Vector2.Zero;
+        }
+
+        private Vector2 GetInkyTile()
+        {
+            return Vector2.Zero;
+        }
+
+        private Vector2 GetPinkyTile()
+        {
+            return Vector2.Zero;
         }
     }
 }
