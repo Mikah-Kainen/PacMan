@@ -15,24 +15,27 @@ namespace PacMan
     public class GameScreen : Screen
     {
         private Texture2D pixelMap;
-        private Dictionary<Color, Func<Vector2, Vector2, Tile>> textureDictionary;
+        private Dictionary<Color, Func<Vector2, Vector2, Point, Tile>> textureDictionary;
         private Pacman pacman;
         private List<Ghost> ghosts;
         private List<Tile> walls;
+        
         public Vector2 TileSize;
+        private Dictionary<Point, Tile> pointToTile;
+        private Tile[,] grid;
         private Rectangle screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
 
         public GameScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
             base.Load(graphics, content, bounds, screenManager, inputManager);
 
-            textureDictionary = new Dictionary<Color, Func<Vector2, Vector2, Tile>>
+            textureDictionary = new Dictionary<Color, Func<Vector2, Vector2, Point, Tile>>
             {
-                [Color.Black] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Black), Color.White, pos, scale, TileType.Wall)),
-                [new Color(255, 28, 36)] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Red), Color.White, pos, scale, TileType.Background)),
-                [new Color(237, 28, 36)] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Red), Color.White, pos, scale, TileType.Background)),
-                [new Color(34, 177, 76)] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.Green), Color.White, pos, scale, TileType.Background)),
-                [new Color(255, 255, 255)] = new Func<Vector2, Vector2, Tile>((Vector2 pos, Vector2 scale) => new Tile(CreatePixel(Color.White), Color.White, pos, scale, TileType.Background)),
+                [Color.Black] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.Black), Color.White, scale, TileType.Wall, posInGrid)),
+                [new Color(255, 28, 36)] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.Red), Color.White, scale, TileType.Background, posInGrid)),
+                [new Color(237, 28, 36)] = new Func<Vector2, Vector2,   Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.Red), Color.White, scale, TileType.Background, posInGrid)),
+                [new Color(34, 177, 76)] = new Func<Vector2, Vector2,   Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.Green), Color.White, scale, TileType.Background, posInGrid)),
+                [new Color(255, 255, 255)] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.White, scale, TileType.Background, posInGrid)),
             };
 
             Init();
@@ -43,6 +46,8 @@ namespace PacMan
             walls = new List<Tile>();
             ghosts = new List<Ghost>();
             pixelMap = ContentManager.Load<Texture2D>("pacmanmap");
+            grid = new Tile[pixelMap.Width, pixelMap.Height];
+            
 
             Color[] pixels = new Color[pixelMap.Width * pixelMap.Height];
             pixelMap.GetData(pixels);
@@ -56,9 +61,25 @@ namespace PacMan
             {
                 for (int y = 0; y < pixelMap.Height; y++)
                 {
+                    //If the index is already contained within the dictionary
+                    //set temp = Dictionary[new Point(y, x)]
+
                     int index = CalculateIndex(x, y, pixelMap.Width);
                     Color pixelColor = pixels[index];
-                    Objects.Add(textureDictionary[pixelColor](new Vector2(x, y) * TileSize, TileSize));
+                    Tile temp = textureDictionary[pixelColor](new Vector2(x, y) * TileSize, TileSize, new Point(y, x));
+                    Point tempPoint = new Point(y, x);
+                    Objects.Add(temp);
+
+                    grid[y, x] = temp;
+                    if (pointToTile.ContainsKey(tempPoint))
+                    {
+                        pointToTile.Add(tempPoint, temp);
+                    }
+
+                    //////////////////////////////////////////////////
+                    ///
+                    /// /////////////Make sure to check neighbors and add them to the CurrentTile and the PointToTile Dictionary
+                    ////////////////////////////////////////
 
                     var tile = Objects[y + x * pixelMap.Width] as Tile;
 
@@ -133,6 +154,20 @@ namespace PacMan
         {
             return width * y + x;
         }
+
+        public List<Tile> GetNeighbors(Tile targetTile)
+        {
+            List<Tile> returnList = new List<Tile>();
+            returnList.Add(grid[targetTile.PosInGrid.X + 1, targetTile.PosInGrid.Y]);
+            returnList.Add(grid[targetTile.PosInGrid.X, targetTile.PosInGrid.Y + 1]);
+            returnList.Add(grid[targetTile.PosInGrid.X - 1, targetTile.PosInGrid.Y]);
+            returnList.Add(grid[targetTile.PosInGrid.X, targetTile.PosInGrid.Y - 1]);
+
+
+            return returnList;
+        } 
+
+
 
         private Vector2 GetPacTile()
         {

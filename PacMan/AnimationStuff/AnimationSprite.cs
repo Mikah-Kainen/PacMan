@@ -23,12 +23,10 @@ namespace PacMan
             {
                 return new Rectangle((int)(Pos.X - CurrentFrame.HitBox.Width * Scale.X / 2), (int)(Pos.Y - CurrentFrame.HitBox.Height * Scale.Y / 2), (int)(CurrentFrame.HitBox.Width * Scale.X), (int)(CurrentFrame.HitBox.Height * Scale.Y));
             }
-
-            set { }
         }
 
         public AnimationSprite(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, TimeSpan timeBetweenFrames) 
-            : base(tex, tint, pos, scale)
+            : base(tex, tint, pos, scale, Vector2.Zero)
         {
             Frames = frames;
             elapsedTime = TimeSpan.Zero;

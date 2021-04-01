@@ -24,8 +24,6 @@ namespace PacMan
             {
                 return new Rectangle((int)(Pos.X - Frames[1].HitBox.Width * Scale.X / 2), (int)(Pos.Y - Frames[1].HitBox.Height * Scale.Y / 2), (int)(Frames[1].HitBox.Width * Scale.X), (int)(Frames[1].HitBox.Height * Scale.Y));
             }
-
-            set { }
         }
 
         public Pacman(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, TimeSpan timeBetweenFrames, float speedPerUpdate, int iterationsPerUpdate, ScreenManager screenManager, InputManager inputManager)
@@ -36,7 +34,6 @@ namespace PacMan
             this.screenManager = screenManager;
             this.inputManager = inputManager;
             CurrentDirection = Directions.None;
-            base.isMiddleOrigin = true;
             PreviousPositions = new Vector2[8];
 
         }
@@ -49,7 +46,6 @@ namespace PacMan
             this.screenManager = screenManager;
             this.inputManager = inputManager;
             CurrentDirection = Directions.None;
-            base.isMiddleOrigin = true;
             PreviousPositions = new Vector2[8];
 
         }
