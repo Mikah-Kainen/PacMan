@@ -19,6 +19,10 @@ namespace PacMan
 
         private Vector2 pos;
         public override ref Vector2 Pos => ref pos;
+
+        public int tentativeDistance;
+
+        bool wasVisited;
         public Tile(Texture2D tex, Color tint, Vector2 scale, TileType tileType, Point posInGrid)
             : base(tex, tint, Vector2.Zero, scale, new Vector2(.5f * scale.X * tex.Width, .5f * scale.Y * tex.Height))
         {

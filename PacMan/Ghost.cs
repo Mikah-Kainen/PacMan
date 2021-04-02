@@ -9,21 +9,16 @@ namespace PacMan
 {
     public class Ghost : AnimationSprite
     {
-        //private Pacman targetPac;
-        //private List<Tile> walls;
-        //private List<Ghost> otherGhosts;
         private float speedPerUpdate;
         private int iterationsPerUpdate;
         private ScreenManager screenManager;
         private InputManager inputManager;
+        public Tile targetTile;
         public Directions CurrentDirection { get; set; }
 
         public Ghost(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, float speedPerUpdate, int iterationsPerUpdate, ScreenManager screenManager, InputManager inputManager)
             :base(tex, tint, pos, scale, frames, TimeSpan.FromMilliseconds(100))
         {
-            //this.targetPac = targetPac;
-            //this.walls = walls;
-            //this.otherGhosts = otherGhosts;
             this.speedPerUpdate = speedPerUpdate;
             this.iterationsPerUpdate = iterationsPerUpdate;
             this.screenManager = screenManager;

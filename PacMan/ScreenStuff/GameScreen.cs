@@ -45,6 +45,7 @@ namespace PacMan
         {
             walls = new List<Tile>();
             ghosts = new List<Ghost>();
+            pointToTile = new Dictionary<Point, Tile>();
             pixelMap = ContentManager.Load<Texture2D>("pacmanmap");
             grid = new Tile[pixelMap.Width, pixelMap.Height];
             
@@ -66,16 +67,20 @@ namespace PacMan
 
                     int index = CalculateIndex(x, y, pixelMap.Width);
                     Color pixelColor = pixels[index];
-                    Tile temp = textureDictionary[pixelColor](new Vector2(x, y) * TileSize, TileSize, new Point(y, x));
                     Point tempPoint = new Point(y, x);
-                    Objects.Add(temp);
+
+                    if (!pointToTile.ContainsKey(tempPoint))
+                    {
+                        pointToTile.Add(tempPoint, textureDictionary[pixelColor](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    }
+                    Tile temp = pointToTile[tempPoint];
 
                     grid[y, x] = temp;
-                    if (pointToTile.ContainsKey(tempPoint))
-                    {
-                        pointToTile.Add(tempPoint, temp);
-                    }
 
+                    List<Tile> neighbors = new List<Tile>();
+
+                    temp.Neighbors = GetNeighbors(x, y, pixels);
+                    Objects.Add(temp);
                     //////////////////////////////////////////////////
                     ///
                     /// /////////////Make sure to check neighbors and add them to the CurrentTile and the PointToTile Dictionary
@@ -132,7 +137,7 @@ namespace PacMan
                     pacman.CurrentDirection = Directions.None;
                 }
             }
-            ghosts[0].CurrentDirection = pacman.CurrentDirection;
+            ghosts[0].targetTile = PositionToTile(pacman.Pos);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -155,28 +160,95 @@ namespace PacMan
             return width * y + x;
         }
 
-        public List<Tile> GetNeighbors(Tile targetTile)
+        public List<Tile> GetNeighbors(int x, int y, Color[] pixels)
         {
-            List<Tile> returnList = new List<Tile>();
-            returnList.Add(grid[targetTile.PosInGrid.X + 1, targetTile.PosInGrid.Y]);
-            returnList.Add(grid[targetTile.PosInGrid.X, targetTile.PosInGrid.Y + 1]);
-            returnList.Add(grid[targetTile.PosInGrid.X - 1, targetTile.PosInGrid.Y]);
-            returnList.Add(grid[targetTile.PosInGrid.X, targetTile.PosInGrid.Y - 1]);
+            List<Tile> neighbors = new List<Tile>();
+            Point tempPoint = new Point();
+            int index = 0;
 
 
-            return returnList;
+            //Calculates left neighbor
+            tempPoint = new Point(y, x - 1);
+            if (!pointToTile.ContainsKey(tempPoint))
+            {
+                index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
+                if (index < pixels.Length && index >= 0)
+                {
+                    pointToTile.Add(tempPoint, textureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    neighbors.Add(pointToTile[tempPoint]);
+                }
+            }
+            else
+            {
+                neighbors.Add(pointToTile[tempPoint]);
+            }
+
+
+            //Calculates right neighbor
+            tempPoint = new Point(y, x + 1);
+            if (!pointToTile.ContainsKey(tempPoint))
+            {
+                index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
+                if (index < pixels.Length && index >= 0)
+                {
+                    pointToTile.Add(tempPoint, textureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    neighbors.Add(pointToTile[tempPoint]);
+                }
+            }
+            else
+            {
+                neighbors.Add(pointToTile[tempPoint]);
+            }
+
+
+            //Calculates up neighbor
+            tempPoint = new Point(y - 1, x);
+            if (!pointToTile.ContainsKey(tempPoint))
+            {
+                index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
+                if (index < pixels.Length && index >= 0)
+                {
+                    pointToTile.Add(tempPoint, textureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    neighbors.Add(pointToTile[tempPoint]);
+                }
+            }
+            else
+            {
+                neighbors.Add(pointToTile[tempPoint]);
+            }
+
+
+
+            //Calculates down neighbor
+            tempPoint = new Point(y + 1, x);
+            if (!pointToTile.ContainsKey(tempPoint))
+            {
+                index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
+                if (index < pixels.Length && index >= 0)
+                {
+                    pointToTile.Add(tempPoint, textureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    neighbors.Add(pointToTile[tempPoint]);
+                }
+            }
+            else
+            {
+                neighbors.Add(pointToTile[tempPoint]);
+            }
+
+
+            return neighbors;
         } 
 
 
 
-        private Vector2 GetPacTile()
+        public Tile PositionToTile(Vector2 position)
         {
-            return new Vector2((int)(pacman.Pos.X / TileSize.X) * TileSize.X + TileSize.X / 2, (int)(pacman.Pos.Y / TileSize.Y) * TileSize.Y + TileSize.Y / 2);
+            return grid[(int)(pacman.Pos.X / TileSize.X), (int)(pacman.Pos.Y / TileSize.Y)];
         }
 
-        private Vector2 GetBlinkyTile()
+        private Tile GetBlinkyTile()
         {
-            return Vector2.Zero;
+            return PositionToTile(pacman.Pos);
         }
 
         private Vector2 GetInkyTile()
