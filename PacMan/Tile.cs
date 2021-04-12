@@ -3,13 +3,14 @@ using Microsoft.Xna.Framework.Graphics;
 using PacMan.TraversalStuff;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 using static PacMan.Enum;
 
 namespace PacMan
 {
-    public class Tile : Sprite, ITraversable<Tile>
+    public class Tile : Sprite, ITraversable<Tile>, IComparable<Tile>
     {
         public TileType TileType;
 
@@ -20,11 +21,13 @@ namespace PacMan
 
         public Point PositionInGrid { get; set; }
 
-        public int TentativeDistance { get; set; }
+        public double FinalDistance { get; set; }
+
+        public double KnownDistance { get; set; }
 
         public bool WasVisited { get; set; }
 
-        public bool IsObstacle { get { return Tint == Color.Black; } set => throw new Exception("Im not sure what to put here so I guess Ill do this"); }
+        public bool IsObstacle { get { return Tint == Color.Black; } }
         public Tile(Texture2D tex, Color tint, Vector2 scale, TileType tileType, Point posInGrid)
             : base(tex, tint, Vector2.Zero, scale, new Vector2(.5f * scale.X * tex.Width, .5f * scale.Y * tex.Height))
         {
@@ -47,6 +50,10 @@ namespace PacMan
             base.Draw(spriteBatch);
         }
 
+        public int CompareTo(Tile other)
+        {
+            return FinalDistance.CompareTo(other.FinalDistance);
+        }
         
     }
 }
