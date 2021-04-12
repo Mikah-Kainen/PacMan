@@ -31,10 +31,10 @@ namespace PacMan
 
             textureDictionary = new Dictionary<Color, Func<Vector2, Vector2, Point, Tile>>
             {
-                [Color.Black] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.Black), Color.White, scale, TileType.Wall, posInGrid)),
-                [new Color(255, 28, 36)] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.Red), Color.White, scale, TileType.Background, posInGrid)),
-                [new Color(237, 28, 36)] = new Func<Vector2, Vector2,   Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.Red), Color.White, scale, TileType.Background, posInGrid)),
-                [new Color(34, 177, 76)] = new Func<Vector2, Vector2,   Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.Green), Color.White, scale, TileType.Background, posInGrid)),
+                [Color.Black] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.Black, scale, TileType.Wall, posInGrid)),
+                [new Color(255, 28, 36)] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.Red, scale, TileType.Background, posInGrid)),
+                [new Color(237, 28, 36)] = new Func<Vector2, Vector2,   Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.Red, scale, TileType.Background, posInGrid)),
+                [new Color(34, 177, 76)] = new Func<Vector2, Vector2,   Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.Green, scale, TileType.Background, posInGrid)),
                 [new Color(255, 255, 255)] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.White, scale, TileType.Background, posInGrid)),
             };
 
@@ -92,7 +92,6 @@ namespace PacMan
                     {
                         walls.Add(tile);
                     }
-                    //You now have the pixel color, determine what texture this should map to from your pixel map
                 }
             }
 
@@ -102,7 +101,7 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f)));
-            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f - 50), new Vector2(.3f, .3f), frameList, TimeSpan.FromMilliseconds(100), 1.5f, 5, ScreenManager, InputManager);
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(screen.Width / 2f, screen.Height / 2f - 50), new Vector2(TileSize.X / frameList[1].HitBox.Width, TileSize.Y / frameList[1].HitBox.Height), frameList, TimeSpan.FromMilliseconds(100), 1.5f, 5, ScreenManager, InputManager);
 
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
