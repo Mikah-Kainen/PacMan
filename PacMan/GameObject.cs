@@ -23,7 +23,7 @@ namespace PacMan
                 //}
                 //else
                 //{
-                    return new Rectangle((int)(Pos.X - Size.X * Scale.X / 2), (int)(Pos.Y - Size.Y * Scale.Y / 2), (int)(Size.X * Scale.X), (int)(Size.Y * Scale.Y));
+                    return new Rectangle((int)(Pos.X - Origin.X), (int)(Pos.Y - Origin.Y), (int)(Size.X * Scale.X), (int)(Size.Y * Scale.Y));
                 //}
             }
         }

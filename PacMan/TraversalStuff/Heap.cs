@@ -35,7 +35,10 @@ namespace PacMan
 
         private void HeapifyUp(int currentIndex)
         {
-            //////////// Check to make sure current isnt the heap of the Heap
+            if(currentIndex == 0)
+            {
+                return;
+            }
             int parentIndex = GetParent(currentIndex);
 
             if(backingList[currentIndex].CompareTo(backingList[parentIndex]) < 0)
@@ -49,18 +52,26 @@ namespace PacMan
         {
             int leftChild = GetLeftChild(currentIndex);
             int rightChild = GetRightChild(currentIndex);
-            //
-            ////////Make sure to check whether left and right children are in the list
-            ////////////////////////
-            int compIndex;
 
-            if(backingList[leftChild].CompareTo(backingList[rightChild]) < 0)
+            int compIndex;
+            if (leftChild >= Count)
+            {
+                return;
+            }
+            else if (rightChild >= Count)
             {
                 compIndex = leftChild;
             }
             else
             {
-                compIndex = rightChild;
+                if (backingList[leftChild].CompareTo(backingList[rightChild]) < 0)
+                {
+                    compIndex = leftChild;
+                }
+                else
+                {
+                    compIndex = rightChild;
+                }
             }
 
             if(backingList[compIndex].CompareTo(backingList[currentIndex]) < 0)
@@ -68,6 +79,18 @@ namespace PacMan
                 Swap(compIndex, currentIndex);
                 HeapifyDown(compIndex);
             }
+        }
+
+        public bool Contains(T value)
+        {
+            foreach(T indexValue in backingList)
+            {
+                if(indexValue.Equals(value))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void Swap(int index1, int index2)

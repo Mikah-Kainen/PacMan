@@ -27,6 +27,10 @@ namespace PacMan
 
         public bool WasVisited { get; set; }
 
+        public Tile Founder { get; set; }
+
+        public double Weight { get;  }
+
         public bool IsObstacle { get { return Tint == Color.Black; } }
         public Tile(Texture2D tex, Color tint, Vector2 scale, TileType tileType, Point posInGrid)
             : base(tex, tint, Vector2.Zero, scale, new Vector2(.5f * scale.X * tex.Width, .5f * scale.Y * tex.Height))
@@ -35,6 +39,7 @@ namespace PacMan
             Neighbors = new List<Tile>();
             this.PositionInGrid = posInGrid;
             WasVisited = false;
+            Weight = 1;
 
             pos = new Vector2(posInGrid.X * Scale.X + Origin.X, posInGrid.Y * Scale.Y + Origin.Y);
         }
@@ -53,6 +58,11 @@ namespace PacMan
         public int CompareTo(Tile other)
         {
             return FinalDistance.CompareTo(other.FinalDistance);
+        }
+
+        public bool Equals(Tile other)
+        {
+            return PositionInGrid.Equals(other.PositionInGrid);
         }
         
     }
