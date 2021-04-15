@@ -44,65 +44,66 @@ namespace PacMan
             {
                 CurrentDirection = Directions.None;
             }
-            else if(updateCount * 16 > timeBetweenUpdates.TotalMilliseconds)
+            //else if(updateCount * 16 > timeBetweenUpdates.TotalMilliseconds)
+            //{
+            //    Pos = path.Pop().Pos;
+            //    updateCount = 0;
+            //}
+            //updateCount++;
+            else
             {
-                Pos = path.Pop().Pos;
-                updateCount = 0;
+                Vector2 targetPos = path.Peek().Pos;
+                if (targetPos == Pos)
+                {
+                    path.Pop();
+                }
+                if (targetPos.X > Pos.X)
+                {
+                    CurrentDirection = Directions.Right;
+                }
+                else if (targetPos.X < Pos.X)
+                {
+                    CurrentDirection = Directions.Left;
+                }
+                else if (targetPos.Y < Pos.Y)
+                {
+                    CurrentDirection = Directions.Up;
+                }
+                else if (targetPos.Y > Pos.Y)
+                {
+                    CurrentDirection = Directions.Down;
+                }
             }
-            updateCount++;
-            //else
-            //{
-            //    if (path.Peek().Pos == Pos)
-            //    {
-            //        path.Pop();
-            //    }
-            //    if (path.Peek().Pos.X > Pos.X)
-            //    {
-            //        CurrentDirection = Directions.Right;
-            //    }
-            //    else if (path.Peek().Pos.X < Pos.X)
-            //    {
-            //        CurrentDirection = Directions.Left;
-            //    }
-            //    else if (path.Peek().Pos.Y < Pos.Y)
-            //    {
-            //        CurrentDirection = Directions.Up;
-            //    }
-            //    else if (path.Peek().Pos.Y > Pos.Y)
-            //    {
-            //        CurrentDirection = Directions.Down;
-            //    }
-            //}
 
-            //for (int i = 0; i < iterationsPerUpdate; i ++)
-            //{
-            //    switch (CurrentDirection)
-            //    {
-            //        case Directions.Up:
-            //            Pos.Y -= speedPerUpdate;
-            //            currentIndex = 0;
-            //            break;
+            for (int i = 0; i < iterationsPerUpdate; i++)
+            {
+                switch (CurrentDirection)
+                {
+                    case Directions.Up:
+                        Pos.Y -= speedPerUpdate;
+                        currentIndex = 0;
+                        break;
 
-            //        case Directions.Down:
-            //            Pos.Y += speedPerUpdate;
-            //            currentIndex = 1;
-            //            break;
+                    case Directions.Down:
+                        Pos.Y += speedPerUpdate;
+                        currentIndex = 1;
+                        break;
 
-            //        case Directions.Right:
-            //            Pos.X += speedPerUpdate;
-            //            currentIndex = 2;
-            //            break;
+                    case Directions.Right:
+                        Pos.X += speedPerUpdate;
+                        currentIndex = 2;
+                        break;
 
-            //        case Directions.Left:
-            //            Pos.X -= speedPerUpdate;
-            //            currentIndex = 3;
-            //            break;
+                    case Directions.Left:
+                        Pos.X -= speedPerUpdate;
+                        currentIndex = 3;
+                        break;
 
-            //        default:
+                    default:
 
-            //            break;
-            //    }
-            //}
+                        break;
+                }
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)

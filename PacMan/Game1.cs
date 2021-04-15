@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using PacMan.ScreenStuff;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -40,11 +42,13 @@ namespace PacMan
             screenManager = new ScreenManager(settings);
             inputManager = new InputManager();
             screens.Add(new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
+            screens.Add(new TileEditorScreen(graphics.GraphicsDevice));
+            //screens.Add(new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y)), screenManager, inputManager));
 
 
 
 
-            screenManager.SetScreen(screens[0]);
+            screenManager.SetScreen(screens[1]);
 
             base.Initialize();
         }
@@ -64,7 +68,12 @@ namespace PacMan
             inputManager.Update();
             screenManager.CurrentScreen.Update(gameTime);
 
+            var mouseState = Mouse.GetState();
+            var mousePosition = mouseState.Position;
+
+            ////////////////////////////////////////////////
             // TODO: Add your update logic here
+            /////////////////////////////////////////
 
             base.Update(gameTime);
         }

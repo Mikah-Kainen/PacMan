@@ -41,7 +41,7 @@ namespace PacMan
             WasVisited = false;
             Weight = 1;
 
-            pos = new Vector2(posInGrid.X * Scale.X + Origin.X, posInGrid.Y * Scale.Y + Origin.Y);
+            pos = new Vector2(posInGrid.X * Scale.X * tex.Width + Origin.X, posInGrid.Y * Scale.Y * tex.Height + Origin.Y);
         }
 
         public override void Update(GameTime gameTime)

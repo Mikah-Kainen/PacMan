@@ -27,11 +27,41 @@ namespace PacMan.TraversalStuff
 
             startingPosition.KnownDistance = 0;
             startingPosition.FinalDistance = heuristicFunction(startingPosition, targetPosition);
-            startingPosition.WasVisited = true;
             priorityQueue.Add(startingPosition);
-            T finalPosition = RecursiveAStar<T>(priorityQueue, targetPosition, heuristicFunction);
+            T finalPosition = default;
 
-            while (!finalPosition.PositionInGrid.Equals(startingPosition.PositionInGrid))
+            while (priorityQueue.Count > 0)
+            {
+                T currentPosition = priorityQueue.Pop();
+                if (currentPosition.PositionInGrid.Equals(targetPosition.PositionInGrid))
+                {
+                    finalPosition = currentPosition;
+                    break;
+                }
+
+                foreach (T neightbor in currentPosition.Neighbors)
+                {
+                    if (!neightbor.IsObstacle)
+                    {
+                        if (neightbor.KnownDistance > currentPosition.KnownDistance + currentPosition.Weight)
+                        {
+                            neightbor.Founder = currentPosition;
+                            neightbor.KnownDistance = currentPosition.KnownDistance + currentPosition.Weight;
+                            neightbor.FinalDistance = neightbor.KnownDistance + heuristicFunction(neightbor, targetPosition);
+                            neightbor.WasVisited = false;
+                        }
+                        
+                        if (!priorityQueue.Contains(neightbor) && !neightbor.WasVisited)
+                        {
+                            priorityQueue.Add(neightbor);
+                        }
+                    }
+                }
+                currentPosition.WasVisited = true;
+            }
+        
+
+            while (finalPosition.Founder != null)
             {
                 returnStack.Push(finalPosition);
                 finalPosition = finalPosition.Founder;
@@ -40,38 +70,5 @@ namespace PacMan.TraversalStuff
             return returnStack;
         }
 
-        private static T RecursiveAStar<T>(Heap<T> priorityQueue, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction)
-            where T : IComparable<T>, ITraversable<T>
-        {
-            if (priorityQueue.Count == 0)
-            {
-                throw new Exception("No suitable path was found");
-            }
-            T currentPosition = priorityQueue.Pop();
-            if (currentPosition.PositionInGrid.Equals(targetPosition.PositionInGrid))
-            {
-                return currentPosition;
-            }
-
-            foreach (T neightbor in currentPosition.Neighbors)
-            {
-                if (!neightbor.IsObstacle && !neightbor.WasVisited)
-                {
-                    if (neightbor.KnownDistance > currentPosition.KnownDistance + currentPosition.Weight)
-                    {
-                        neightbor.Founder = currentPosition;
-                        neightbor.KnownDistance = currentPosition.KnownDistance + currentPosition.Weight;
-                        neightbor.FinalDistance = neightbor.KnownDistance + heuristicFunction(neightbor, targetPosition);
-                        priorityQueue.Add(neightbor);
-                    }
-                    else if(!priorityQueue.Contains(neightbor))
-                    {
-                        priorityQueue.Add(neightbor);
-                    }
-                }
-            }
-            currentPosition.WasVisited = true;
-            return RecursiveAStar(priorityQueue, targetPosition, heuristicFunction);
-        }
     }
 }
