@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+
 using PacMan.TraversalStuff;
 using System;
 using System.Collections.Generic;
@@ -110,7 +112,7 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f)));
-            pacman = new Pacman(pacmansprite, Color.White, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), new Vector2(TileSize.X / frameList[1].HitBox.Width, TileSize.Y / frameList[1].HitBox.Height), frameList, TimeSpan.FromMilliseconds(100), 1.5f, 5, ScreenManager, InputManager);
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), new Vector2(TileSize.X / (frameList[2].HitBox.Width + 30), TileSize.Y / (frameList[2].HitBox.Height + 30)), frameList, TimeSpan.FromMilliseconds(100), 1.5f, 3, ScreenManager, InputManager);
 
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
@@ -257,7 +259,70 @@ namespace PacMan
         } 
 
 
+        public void UpdatePacman()
+        {
+            Keys[] currentKeys = InputManager.KeyboardState.GetPressedKeys();
+            int index = 0;
+            if (currentKeys.Length > 0)
+            {
+                bool shouldScan = true;
+                while (!ScreenManager.Settings.DirectionDictionary.ContainsKey(currentKeys[index]))
+                {
+                    index++;
+                    if (index >= currentKeys.Length)
+                    {
+                        shouldScan = false;
+                        break;
+                    }
+                }
+                if (shouldScan)
+                {
+                    pacman.CurrentDirection = ScreenManager.Settings.DirectionDictionary[currentKeys[index]];
+                }
+            }
+            for (int x = 0; x < pacman.iterationsPerUpdate; x++)
+            {
+                for (int i = pacman.PreviousPositions.Length - 1; i > 0; i--)
+                {
+                    pacman.PreviousPositions[i] = pacman.PreviousPositions[i - 1];
+                }
+                pacman.PreviousPositions[0] = pacman.Pos;
+                Tile pacTile = PositionToTile(new Vector2());
+                switch (pacman.CurrentDirection)
+                {
+                    case Directions.Up:
+                        if (pacTile.)
+                        {
+                            pacman.Pos.Y -= pacman.speed;
+                        }
+                        pacman.Rotation = 3 * (float)Math.PI / 2;
+                        break;
 
+                    case Directions.Down:
+                        pacman.Pos.Y += pacman.speed;
+                        pacman.Rotation = (float)Math.PI / 2;
+                        break;
+
+                    case Directions.Left:
+                        pacman.Pos.X -= pacman.speed;
+                        pacman.Rotation = (float)Math.PI;
+                        break;
+
+                    case Directions.Right:
+                        pacman.Pos.X += pacman.speed;
+                        pacman.Rotation = 0;
+                        break;
+
+                    default:
+                        pacman.currentIndex = 1;
+                        break;
+                }
+                if (pacman.HitBorder())
+                {
+                    pacman.CurrentDirection = Directions.None;
+                }
+            }
+        }
         public Tile PositionToTile(Vector2 position)
         {
             return grid[(int)((position.X) / TileSize.X), (int)((position.Y) / TileSize.Y)];

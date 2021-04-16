@@ -11,8 +11,8 @@ namespace PacMan
 {
     public class Pacman : AnimationSprite
     {
-        private float speed;
-        private int iterationsPerUpdate;
+        public float speed;
+        public int iterationsPerUpdate;
         private ScreenManager screenManager;
         private InputManager inputManager;
         public Directions CurrentDirection { get; set; }
@@ -54,63 +54,6 @@ namespace PacMan
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-            Keys[] currentKeys = inputManager.KeyboardState.GetPressedKeys();
-            int index = 0;
-            if (currentKeys.Length > 0)
-            {
-                bool shouldScan = true;
-                while (!screenManager.Settings.DirectionDictionary.ContainsKey(currentKeys[index]))
-                {
-                    index++;
-                    if (index >= currentKeys.Length)
-                    {
-                        shouldScan = false;
-                        break;
-                    }
-                }
-                if (shouldScan)
-                {
-                    CurrentDirection = screenManager.Settings.DirectionDictionary[currentKeys[index]];
-                }
-            }
-            for (int x = 0; x < iterationsPerUpdate; x ++)
-            {
-                for (int i = PreviousPositions.Length - 1; i > 0; i--)
-                {
-                    PreviousPositions[i] = PreviousPositions[i - 1];
-                }
-                PreviousPositions[0] = Pos;
-                switch (CurrentDirection)
-                {
-                    case Directions.Up:
-                        Pos.Y -= speed;
-                        Rotation = 3 * (float)Math.PI / 2;
-                        break;
-
-                    case Directions.Down:
-                        Pos.Y += speed;
-                        Rotation = (float)Math.PI / 2;
-                        break;
-
-                    case Directions.Left:
-                        Pos.X -= speed;
-                        Rotation = (float)Math.PI;
-                        break;
-
-                    case Directions.Right:
-                        Pos.X += speed;
-                        Rotation = 0;
-                        break;
-
-                    default:
-                        base.currentIndex = 1;
-                        break;
-                }
-                if (HitBorder())
-                {
-                    CurrentDirection = Directions.None;
-                }
-            }
         }
 
         //public override void Draw(SpriteBatch spriteBatch)
@@ -118,7 +61,7 @@ namespace PacMan
         //    spriteBatch.Draw(Tex, Pos, base.CurrentFrame.HitBox, Tint, Rotation, base.CurrentFrame.Origin, Scale, SpriteEffects.None, 0f);
         //}
 
-        private bool HitBorder()
+        public bool HitBorder()
         {
             bool returnValue = false;
             if (Pos.X - base.CurrentFrame.HitBox.Width * Scale.X / 2 <= screenManager.CurrentScreen.Bounds.Left)

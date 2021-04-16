@@ -31,12 +31,12 @@ namespace PacMan.ScreenStuff
 
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
 
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(pixelMap, Bounds, Color.White);
         }

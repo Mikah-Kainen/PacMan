@@ -10,7 +10,7 @@ namespace PacMan
     public class AnimationSprite : Sprite
     {
         public List<AnimationFrame> Frames { get; internal set; }
-        protected int currentIndex;
+        public int currentIndex;
         public AnimationFrame CurrentFrame => Frames[currentIndex];
         public float Rotation;
 
