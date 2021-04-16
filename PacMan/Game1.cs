@@ -42,8 +42,7 @@ namespace PacMan
             screenManager = new ScreenManager(settings);
             inputManager = new InputManager();
             screens.Add(new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
-            screens.Add(new TileEditorScreen(graphics.GraphicsDevice));
-            //screens.Add(new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y)), screenManager, inputManager));
+            screens.Add(new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
 
 
 
