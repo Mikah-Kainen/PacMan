@@ -17,7 +17,6 @@ namespace PacMan
     public class GameScreen : Screen
     {
         private Texture2D pixelMap;
-        private Dictionary<Color, Func<Vector2, Vector2, Point, Tile>> textureDictionary;
         private Pacman pacman;
         private List<Ghost> ghosts;
         private List<Tile> walls;
@@ -31,15 +30,7 @@ namespace PacMan
         {
             base.Load(graphics, content, bounds, screenManager, inputManager);
 
-            textureDictionary = new Dictionary<Color, Func<Vector2, Vector2, Point, Tile>>
-            {
-                [Color.Black] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.Black, scale, TileType.Wall, posInGrid)),
-                [new Color(255, 28, 36)] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.Red, scale, TileType.Background, posInGrid)),
-                [new Color(237, 28, 36)] = new Func<Vector2, Vector2,   Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.Red, scale, TileType.Background, posInGrid)),
-                [new Color(34, 177, 76)] = new Func<Vector2, Vector2,   Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.Green, scale, TileType.Background, posInGrid)),
-                [new Color(255, 255, 255)] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(CreatePixel(Color.White), Color.White, scale, TileType.Background, posInGrid)),
-            };
-
+            
             Heap<int> heap = new Heap<int>();
             heap.Add(65);
             heap.Add(75);
@@ -86,7 +77,7 @@ namespace PacMan
 
                     if (!pointToTile.ContainsKey(tempPoint))
                     {
-                        pointToTile.Add(tempPoint, textureDictionary[pixelColor](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                        pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixelColor](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
                     }
                     Tile temp = pointToTile[tempPoint];
 
@@ -167,13 +158,6 @@ namespace PacMan
         }
 
 
-        public Texture2D CreatePixel(Color tint)
-        {
-            Texture2D returnTex = new Texture2D(GraphicsDeviceManager.GraphicsDevice, 1, 1);
-            returnTex.SetData(new Color[] { tint });
-            return returnTex;
-        }
-
         private int CalculateIndex(int x, int y, int width)
         {
             return width * y + x;
@@ -193,7 +177,7 @@ namespace PacMan
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
                 if (index < pixels.Length && index >= 0)
                 {
-                    pointToTile.Add(tempPoint, textureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
                     neighbors.Add(pointToTile[tempPoint]);
                 }
             }
@@ -210,7 +194,7 @@ namespace PacMan
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
                 if (index < pixels.Length && index >= 0)
                 {
-                    pointToTile.Add(tempPoint, textureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
                     neighbors.Add(pointToTile[tempPoint]);
                 }
             }
@@ -227,7 +211,7 @@ namespace PacMan
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
                 if (index < pixels.Length && index >= 0)
                 {
-                    pointToTile.Add(tempPoint, textureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
                     neighbors.Add(pointToTile[tempPoint]);
                 }
             }
@@ -245,7 +229,7 @@ namespace PacMan
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
                 if (index < pixels.Length && index >= 0)
                 {
-                    pointToTile.Add(tempPoint, textureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
                     neighbors.Add(pointToTile[tempPoint]);
                 }
             }
@@ -291,10 +275,10 @@ namespace PacMan
                 switch (pacman.CurrentDirection)
                 {
                     case Directions.Up:
-                        if (pacTile.)
-                        {
-                            pacman.Pos.Y -= pacman.speed;
-                        }
+                        //if (pacTile.)
+                        //{
+                        //    pacman.Pos.Y -= pacman.speed;
+                        //}
                         pacman.Rotation = 3 * (float)Math.PI / 2;
                         break;
 

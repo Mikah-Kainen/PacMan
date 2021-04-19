@@ -38,11 +38,12 @@ namespace PacMan
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            settings = new Settings();
+            settings = new Settings(GraphicsDevice);
             screenManager = new ScreenManager(settings);
             inputManager = new InputManager();
+            screens.Add(new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
             screens.Add(new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
-            //screens.Add(new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
+
 
 
 
