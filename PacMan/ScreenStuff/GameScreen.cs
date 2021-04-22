@@ -77,7 +77,7 @@ namespace PacMan
 
                     if (!pointToTile.ContainsKey(tempPoint))
                     {
-                        pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixelColor](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                        pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixelColor].CreateTile(GraphicsDeviceManager.GraphicsDevice, TileSize, tempPoint));
                     }
                     Tile temp = pointToTile[tempPoint];
 
@@ -177,7 +177,7 @@ namespace PacMan
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
                 if (index < pixels.Length && index >= 0)
                 {
-                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]].CreateTile(GraphicsDeviceManager.GraphicsDevice, TileSize, tempPoint));
                     neighbors.Add(pointToTile[tempPoint]);
                 }
             }
@@ -194,7 +194,7 @@ namespace PacMan
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
                 if (index < pixels.Length && index >= 0)
                 {
-                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]].CreateTile(GraphicsDeviceManager.GraphicsDevice, TileSize, tempPoint));
                     neighbors.Add(pointToTile[tempPoint]);
                 }
             }
@@ -211,7 +211,7 @@ namespace PacMan
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
                 if (index < pixels.Length && index >= 0)
                 {
-                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]].CreateTile(GraphicsDeviceManager.GraphicsDevice, TileSize, tempPoint));
                     neighbors.Add(pointToTile[tempPoint]);
                 }
             }
@@ -229,7 +229,7 @@ namespace PacMan
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
                 if (index < pixels.Length && index >= 0)
                 {
-                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]](new Vector2(tempPoint.X, tempPoint.Y) * TileSize, TileSize, tempPoint));
+                    pointToTile.Add(tempPoint, ScreenManager.Settings.TextureDictionary[pixels[index]].CreateTile(GraphicsDeviceManager.GraphicsDevice, TileSize, tempPoint));
                     neighbors.Add(pointToTile[tempPoint]);
                 }
             }

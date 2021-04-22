@@ -6,7 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-
+using Newtonsoft.Json;
+using static PacMan.Enum;
 
 namespace PacMan.ScreenStuff
 {
@@ -16,11 +17,12 @@ namespace PacMan.ScreenStuff
         Texture2D pixelMap;
         Vector2 tileSize;
         Sprite[,] grid;
-        List<Sprite> paints;
+        List<Sprite> pallet;
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
             base.Load(graphics, content, bounds, screenManager, inputManager);
+
 
             OpenFileDialog dialog = new OpenFileDialog();
 
@@ -31,7 +33,7 @@ namespace PacMan.ScreenStuff
             }
 
             //define a fraction and multiply bounds by that
-            float fraction = 3 / 4f;
+            float fraction = 3/ 4f;
             tileSize = new Vector2(bounds.Width * fraction / pixelMap.Width, bounds.Height * fraction / pixelMap.Height);
             Color[] pixels = new Color[pixelMap.Width * pixelMap.Height];
             pixelMap.GetData<Color>(pixels);
@@ -43,21 +45,23 @@ namespace PacMan.ScreenStuff
             {
                 for (int x = 0; x < pixelMap.Width; x++)
                 {
-                    grid[y, x] = ScreenManager.Settings.TextureDictionary[pixels[x + y * pixelMap.Width]](new Vector2(tileSize.X * x, tileSize.Y * y), tileSize, new Point(x, y));
+                    grid[y, x] = ScreenManager.Settings.TextureDictionary[pixels[x + y * pixelMap.Width]].CreateTile(GraphicsDeviceManager.GraphicsDevice, tileSize, new Point(x, y));
                 }
             }
 
 
-            Vector2 paintSize = new Vector2(bounds.Width * (1 - fraction) / 2, bounds.Height * (1 - fraction) / 2);
+            Vector2 paintSize = new Vector2(bounds.Width * (1 - fraction) / 10, bounds.Height * (1 - fraction) / 10);
             Vector2 paintOrigin = new Vector2(paintSize.X / 2, paintSize.Y / 2);
-            paints = new List<Sprite>();
+            pallet = new List<Sprite>();
 
-            paints.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * paintSize.X, 2 * paintSize.Y + bounds.Y * fraction), paintSize, paintOrigin));
+            //
+            pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * paintSize.X, 2 * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
+
 
             //Convert this texture2d into a 2d array of sprites
-            //In draw dont blow up the texture, simply loop through the array and draw each sprite 
+            //In draw dont blow up the5 texture, simply loop through the array and draw each sprite 
             //each sprite has its own scale which will simulate the imagine being "blown up"
-
+            Objects.AddRange(pallet);
         }
 
         public override void Update(GameTime gameTime)
@@ -71,6 +75,8 @@ namespace PacMan.ScreenStuff
             {
                 sprite?.Draw(spriteBatch);
             }
+
+            base.Draw(spriteBatch);
         }
 
 

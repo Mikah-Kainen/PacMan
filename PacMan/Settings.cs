@@ -1,6 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+
+using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +18,7 @@ namespace PacMan
         /// <summary>
         /// Vector2 pos, Vector2 scale, Point posInGrid
         /// </summary>
-        public Dictionary<Color, Func<Vector2, Vector2, Point, Tile>> TextureDictionary { get; private set; }
+        public Dictionary<Color, (Color color, TileType tileType)> TextureDictionary { get; private set; }
         public Settings(GraphicsDevice graphicsDevice)
         {
             DirectionDictionary = new Dictionary<Keys, Directions>
@@ -33,15 +36,26 @@ namespace PacMan
             //Change it to be a Dictionary<Color, (Color, TileType)>
             //Function that takes in a color and tile type and whatever and returns tile
 
-            TextureDictionary = new Dictionary<Color, Func<Vector2, Vector2, Point, Tile>>
+            //Func<Vector2, Vector2, Point, Tile>
+
+            TextureDictionary = new Dictionary<Color, (Color color, TileType type)>
             {
-                [Color.Black] =              new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(whitePixel, Color.Black, scale, TileType.Wall, posInGrid)),
-                [new Color(255, 28, 36)] =   new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(whitePixel, Color.Red, scale, TileType.Background, posInGrid)),
-                [new Color(237, 28, 36)] =   new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(whitePixel, Color.Red, scale, TileType.Background, posInGrid)),
-                [new Color(34, 177, 76)] =   new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(whitePixel, Color.Green, scale, TileType.Background, posInGrid)),
-                [new Color(255, 255, 255)] = new Func<Vector2, Vector2, Point, Tile>((Vector2 pos, Vector2 scale, Point posInGrid) => new Tile(whitePixel, Color.White, scale, TileType.Background, posInGrid)),
+                [Color.Black] =              (Color.Black, TileType.Wall     ),
+                [new Color(255, 28, 36)] =   (Color.Red,   TileType.Background),
+                [new Color(237, 28, 36)] =   (Color.Red,   TileType.Background),
+                [new Color(34, 177, 76)] =   (Color.Green, TileType.Background),
+                [new Color(255, 255, 255)] = (Color.White, TileType.Background),
             };
 
+            //Read from file
+            var fileToConvetBack = System.IO.File.ReadAllText("Stuffs.txt");
+            Dictionary<int, (int, TileType)> meow = JsonConvert.DeserializeObject<Dictionary<int, (int, TileType)>>(fileToConvetBack);
+
+            TextureDictionary.Clear();
+            foreach (var pair in meow)
+            {
+                TextureDictionary.Add(pair.Key.FromArgb(), (pair.Value.Item1.FromArgb(), pair.Value.Item2));
+            }
         }
     }
 }
