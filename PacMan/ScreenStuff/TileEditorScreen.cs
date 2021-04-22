@@ -16,6 +16,7 @@ namespace PacMan.ScreenStuff
         Texture2D pixelMap;
         Vector2 tileSize;
         Sprite[,] grid;
+        List<Sprite> paints;
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
@@ -46,6 +47,13 @@ namespace PacMan.ScreenStuff
                 }
             }
 
+
+            Vector2 paintSize = new Vector2(bounds.Width * (1 - fraction) / 2, bounds.Height * (1 - fraction) / 2);
+            Vector2 paintOrigin = new Vector2(paintSize.X / 2, paintSize.Y / 2);
+            paints = new List<Sprite>();
+
+            paints.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * paintSize.X, 2 * paintSize.Y + bounds.Y * fraction), paintSize, paintOrigin));
+
             //Convert this texture2d into a 2d array of sprites
             //In draw dont blow up the texture, simply loop through the array and draw each sprite 
             //each sprite has its own scale which will simulate the imagine being "blown up"
@@ -62,6 +70,17 @@ namespace PacMan.ScreenStuff
             foreach(Sprite sprite in grid)
             {
                 sprite?.Draw(spriteBatch);
+            }
+        }
+
+
+        private void ChangeTileColor(Point mousePos, Color newColor)
+        {
+            Vector2 index = new Vector2(mousePos.X / tileSize.X, mousePos.Y / tileSize.Y);
+
+            if(index.X > pixelMap.Width || index.Y > pixelMap.Height)
+            {
+                return;
             }
         }
     }
