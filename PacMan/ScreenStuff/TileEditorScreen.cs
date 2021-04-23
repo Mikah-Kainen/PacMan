@@ -59,7 +59,7 @@ namespace PacMan.ScreenStuff
 
             var textureDictionary = ScreenManager.Settings.TextureDictionary;
             int xPos = 0;
-            int yPos = 0;
+            int yPos = 1;
             foreach(var kvp in textureDictionary)
             {
                 pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), kvp.Key, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
