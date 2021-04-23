@@ -57,10 +57,19 @@ namespace PacMan.ScreenStuff
             //
             pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * paintSize.X, 2 * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
 
-
-            //Convert this texture2d into a 2d array of sprites
-            //In draw dont blow up the5 texture, simply loop through the array and draw each sprite 
-            //each sprite has its own scale which will simulate the imagine being "blown up"
+            var textureDictionary = ScreenManager.Settings.TextureDictionary;
+            int xPos = 0;
+            int yPos = 0;
+            foreach(var kvp in textureDictionary)
+            {
+                pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), kvp.Key, new Vector2(2 * (paintSize.X + xPos), 2 * (paintSize.Y + yPos) + bounds.Height * fraction), paintSize, paintOrigin));
+                xPos++;
+                if(xPos > 5)
+                {
+                    xPos = 0;
+                    yPos++;
+                }
+            }
             Objects.AddRange(pallet);
         }
 
