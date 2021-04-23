@@ -48,7 +48,22 @@ namespace PacMan
             };
 
             //Read from file
-            var fileToConvetBack = System.IO.File.ReadAllText("Stuffs.txt");
+
+            bool homeLaptop = false;
+
+
+            string filePath = "";
+            if(homeLaptop)
+            {
+                filePath = @"C:\Users\Mikah\Source\Repos\Mikah-Kainen";
+            }
+            else
+            {
+                filePath = @"Z:\PacMan\PacMan";
+            }
+            filePath += @"\Stuffs.txt";
+
+            var fileToConvetBack = System.IO.File.ReadAllText(filePath);
             Dictionary<int, (int, TileType)> meow = JsonConvert.DeserializeObject<Dictionary<int, (int, TileType)>>(fileToConvetBack);
 
             TextureDictionary.Clear();
