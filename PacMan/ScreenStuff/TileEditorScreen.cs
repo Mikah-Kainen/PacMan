@@ -18,11 +18,11 @@ namespace PacMan.ScreenStuff
         Vector2 tileSize;
         Sprite[,] grid;
         List<Sprite> pallet;
+        ColorWheel colorWheel;
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
             base.Load(graphics, content, bounds, screenManager, inputManager);
-
 
             OpenFileDialog dialog = new OpenFileDialog();
 
@@ -58,7 +58,7 @@ namespace PacMan.ScreenStuff
             pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * paintSize.X, 2 * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
 
             var textureDictionary = ScreenManager.Settings.TextureDictionary;
-            int xPos = 0;
+            int xPos = 1;
             int yPos = 1;
             foreach(var kvp in textureDictionary)
             {
@@ -70,6 +70,8 @@ namespace PacMan.ScreenStuff
                     yPos++;
                 }
             }
+            colorWheel = new ColorWheel(new Vector2(bounds.Width * fraction * 9/8, bounds.Height * fraction * 9/8), 50, graphics);
+
             Objects.AddRange(pallet);
         }
 
@@ -85,7 +87,8 @@ namespace PacMan.ScreenStuff
                 sprite?.Draw(spriteBatch);
             }
 
-            base.Draw(spriteBatch);
+            colorWheel.Draw(spriteBatch);
+            //base.Draw(spriteBatch);
         }
 
 
