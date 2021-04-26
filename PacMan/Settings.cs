@@ -49,19 +49,20 @@ namespace PacMan
 
             //Read from file
 
-            bool homeLaptop = true;
+            //bool homeLaptop = false;
+            //string filePath = "";
+            //if(homeLaptop)
+            //{
+            //    filePath = @"C:\Users\mikah\source\repos\Mikah-Kainen\PacMan\PacMan";
+            //}
+            //else
+            //{
+            //    filePath = @"Z:\PacMan\PacMan";
+            //}
+            //filePath += @"\Stuffs.txt";
 
+            string filePath = "Stuffs.json";
 
-            string filePath = "";
-            if(homeLaptop)
-            {
-                filePath = @"C:\Users\mikah\source\repos\Mikah-Kainen\PacMan\PacMan";
-            }
-            else
-            {
-                filePath = @"Z:\PacMan\PacMan";
-            }
-            filePath += @"\Stuffs.txt";
 
             var fileToConvetBack = System.IO.File.ReadAllText(filePath);
             Dictionary<int, (int, TileType)> meow = JsonConvert.DeserializeObject<Dictionary<int, (int, TileType)>>(fileToConvetBack);

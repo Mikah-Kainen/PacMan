@@ -70,7 +70,8 @@ namespace PacMan.ScreenStuff
                     yPos++;
                 }
             }
-            colorWheel = new ColorWheel(new Vector2(bounds.Width * fraction * 9/8, bounds.Height * fraction * 9/8), 50, graphics);
+            colorWheel = new ColorWheel(new Vector2(bounds.Width * fraction * 9/8, bounds.Height * fraction * 9/8), 100, graphics);
+
 
             Objects.AddRange(pallet);
         }
