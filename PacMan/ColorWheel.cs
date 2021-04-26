@@ -46,6 +46,23 @@ namespace PacMan
                 sprite.Draw(spriteBatch);
             }
         }
+
+        public (float radius, float theta) CartesianToPolar(Point startPoint, Point endPoint)
+        {
+            (float radius, float theta) returnInfo;
+            returnInfo.radius = Distance(startPoint, endPoint);
+            returnInfo.theta = (float)Math.Atan((endPoint.Y - startPoint.Y)/(endPoint.X - startPoint.X));
+            return returnInfo;
+        }
+
+
+        private float Distance(Point startPoint, Point endPoint)
+        {
+            float deltaX = endPoint.X - startPoint.X;
+            float deltaY = endPoint.Y - startPoint.Y;
+
+            return (float)Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+        }
         
     }
 }

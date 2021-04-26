@@ -50,7 +50,7 @@ namespace PacMan.ScreenStuff
             }
 
 
-            Vector2 paintSize = new Vector2(bounds.Width * (1 - fraction) / 10, bounds.Height * (1 - fraction) / 10);
+            Vector2 paintSize = new Vector2(bounds.Width * (1 - fraction) / 5, bounds.Height * (1 - fraction) / 5);
             Vector2 paintOrigin = new Vector2(paintSize.X / 2, paintSize.Y / 2);
             pallet = new List<Sprite>();
 
@@ -64,7 +64,7 @@ namespace PacMan.ScreenStuff
             {
                 pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), kvp.Key, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
                 xPos++;
-                if(xPos > 5)
+                if(xPos > 7)
                 {
                     xPos = 0;
                     yPos++;
@@ -88,7 +88,7 @@ namespace PacMan.ScreenStuff
             }
 
             colorWheel.Draw(spriteBatch);
-            //base.Draw(spriteBatch);
+            base.Draw(spriteBatch);
         }
 
 

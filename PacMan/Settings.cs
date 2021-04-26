@@ -49,7 +49,7 @@ namespace PacMan
 
             //Read from file
 
-            bool homeLaptop = false;
+            bool homeLaptop = true;
 
 
             string filePath = "";
