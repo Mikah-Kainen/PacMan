@@ -14,15 +14,21 @@ namespace PacMan.ScreenStuff
     class TileEditorScreen : Screen
     {
         GraphicsDevice graphicsDevice => GraphicsDeviceManager.GraphicsDevice;
+        Point mousePos => InputManager.MouseState.Position;
         Texture2D pixelMap;
         Vector2 tileSize;
         Sprite[,] grid;
         List<Sprite> pallet;
         ColorWheel colorWheel;
+        float fraction = 3 / 4f;
+        Rectangle gridHitbox;
+        Color currentColor;
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
             base.Load(graphics, content, bounds, screenManager, inputManager);
+            gridHitbox = new Rectangle(Bounds.Left, Bounds.Top, (int)(Bounds.Width * fraction), (int)(Bounds.Height * fraction));
+            currentColor = Color.White;
 
             OpenFileDialog dialog = new OpenFileDialog();
 
@@ -33,7 +39,6 @@ namespace PacMan.ScreenStuff
             }
 
             //define a fraction and multiply bounds by that
-            float fraction = 3/ 4f;
             tileSize = new Vector2(bounds.Width * fraction / pixelMap.Width, bounds.Height * fraction / pixelMap.Height);
             Color[] pixels = new Color[pixelMap.Width * pixelMap.Height];
             pixelMap.GetData<Color>(pixels);
@@ -78,7 +83,24 @@ namespace PacMan.ScreenStuff
 
         public override void Update(GameTime gameTime)
         {
-
+            if (InputManager.MouseState.LeftButton)
+            {
+                if (gridHitbox.Contains(mousePos))
+                {
+                    ////////////////////////////thsi might not work if the tile iscenter origin
+                    Sprite spriteToChange = grid[(int)(mousePos.X / tileSize.X), (int)(mousePos.Y / tileSize.Y)];
+                }
+                else
+                {
+                    foreach(Sprite sprite in pallet)
+                    {
+                        if(sprite.HitBox.Contains(mousePos))
+                        {
+                            currentColor = sprite.Tint;
+                        }
+                    }
+                }
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
