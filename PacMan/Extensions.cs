@@ -21,6 +21,11 @@ namespace PacMan
             return texture;
         }
 
+        public static Sprite CreateSprite(this Color color, GraphicsDevice device, Vector2 tileSize, Point posInGrid)
+        {
+            return new Sprite(Color.White.CreatePixel(device), color, new Vector2(posInGrid.X * tileSize.X, posInGrid.Y * tileSize.Y), tileSize, Vector2.Zero);
+        }
+
         public static Tile CreateTile(this (Color color, TileType tileType) tuple, GraphicsDevice device, Vector2 tileSize, Point posInGrid)
         {
             return new Tile(Color.White.CreatePixel(device), tuple.color, tileSize, tuple.tileType, posInGrid);

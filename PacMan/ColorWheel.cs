@@ -10,11 +10,17 @@ namespace PacMan
     public class ColorWheel
     {
         private List<Sprite> sprites;
+        private int size;
+        private Vector2 position;
+        private Dictionary<Point, Color> posToColor;
         public ColorWheel(Vector2 position, int size, GraphicsDeviceManager graphics)
         {
             Texture2D pixel = Color.White.CreatePixel(graphics.GraphicsDevice);
             sprites = new List<Sprite>();
+            this.size = size;
+            this.position = position;
 
+            posToColor = new Dictionary<Point, Color>();
             //Keep track of a dictionary that is from (x, y) -> Color
 
 
@@ -46,8 +52,9 @@ namespace PacMan
                     convertedTheta = convertedTheta * 180 / Math.PI - 90;
 
                     Color currentColor = HsvToRgb(convertedTheta, PolarInfo.radius / radius, 1);
-              
-                    sprites.Add(new Sprite(pixel, currentColor, new Vector2(i + x, y + z), Vector2.One, Vector2.Zero));
+                    Vector2 tempPos = new Vector2(i + x, y + z);
+                    posToColor.Add(tempPos.ToPoint(), currentColor);
+                    sprites.Add(new Sprite(pixel, currentColor, tempPos, Vector2.One, Vector2.Zero));
                 }
             }
 
@@ -178,6 +185,16 @@ namespace PacMan
             if (i < 0) return 0;
             if (i > 255) return 255;
             return i;
+        }
+
+
+        public Color? GetColor(Point targetPosition)
+        {
+            if (posToColor.ContainsKey(targetPosition))
+            {
+                return posToColor[targetPosition];
+            }
+            return null;
         }
     }
 }

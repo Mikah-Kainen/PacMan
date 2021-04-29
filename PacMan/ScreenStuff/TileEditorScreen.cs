@@ -13,6 +13,11 @@ namespace PacMan.ScreenStuff
 {
     class TileEditorScreen : Screen
     {
+        /// <summary>
+        /// ///////////////// SAVEEEEEEE
+        /// FIX dictionary
+        /// add button to add pallets (optional)
+        /// </summary>
         GraphicsDevice graphicsDevice => GraphicsDeviceManager.GraphicsDevice;
         Point mousePos => InputManager.MouseState.Position;
         Texture2D pixelMap;
@@ -22,13 +27,13 @@ namespace PacMan.ScreenStuff
         ColorWheel colorWheel;
         float fraction = 3 / 4f;
         Rectangle gridHitbox;
-        Color currentColor;
+        Sprite currentPallet;
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
             base.Load(graphics, content, bounds, screenManager, inputManager);
             gridHitbox = new Rectangle(Bounds.Left, Bounds.Top, (int)(Bounds.Width * fraction), (int)(Bounds.Height * fraction));
-            currentColor = Color.White;
+            currentPallet = null;
 
             OpenFileDialog dialog = new OpenFileDialog();
 
@@ -50,7 +55,7 @@ namespace PacMan.ScreenStuff
             {
                 for (int x = 0; x < pixelMap.Width; x++)
                 {
-                    grid[y, x] = ScreenManager.Settings.TextureDictionary[pixels[x + y * pixelMap.Width]].CreateTile(GraphicsDeviceManager.GraphicsDevice, tileSize, new Point(x, y));
+                    grid[y, x] = pixels[x + y * pixelMap.Width].CreateSprite(GraphicsDeviceManager.GraphicsDevice, tileSize, new Point(x, y));
                 }
             }
 
@@ -71,7 +76,17 @@ namespace PacMan.ScreenStuff
                 xPos++;
                 if(xPos > 7)
                 {
-                    xPos = 0;
+                    xPos = 1;
+                    yPos++;
+                }
+            }
+            for(int i = 0; i < 3; i ++)
+            {
+                pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
+                xPos++;
+                if (xPos > 7)
+                {
+                    xPos = 1;
                     yPos++;
                 }
             }
@@ -83,12 +98,17 @@ namespace PacMan.ScreenStuff
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.MouseState.LeftButton)
+            if (InputManager.MouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
-                if (gridHitbox.Contains(mousePos))
+                if (gridHitbox.Contains(mousePos) && currentPallet != null)
                 {
-                    ////////////////////////////thsi might not work if the tile iscenter origin
-                    Sprite spriteToChange = grid[(int)(mousePos.X / tileSize.X), (int)(mousePos.Y / tileSize.Y)];
+                    ////////////////////////////this might not work if the tile is center origin
+                    Sprite spriteToChange = grid[(int)(mousePos.Y / tileSize.Y), (int)(mousePos.X / tileSize.X)];
+                    spriteToChange.Tint = currentPallet.Tint;
+                }
+                else if (colorWheel.GetColor(mousePos).HasValue)
+                {
+                    currentPallet.Tint = colorWheel.GetColor(mousePos).Value;
                 }
                 else
                 {
@@ -96,7 +116,7 @@ namespace PacMan.ScreenStuff
                     {
                         if(sprite.HitBox.Contains(mousePos))
                         {
-                            currentColor = sprite.Tint;
+                            currentPallet = sprite;
                         }
                     }
                 }
