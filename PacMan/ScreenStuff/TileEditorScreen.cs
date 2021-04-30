@@ -15,7 +15,6 @@ namespace PacMan.ScreenStuff
     {
         /// <summary>
         /// ///////////////// SAVEEEEEEE
-        /// FIX dictionary
         /// add button to add pallets (optional)
         /// </summary>
         GraphicsDevice graphicsDevice => GraphicsDeviceManager.GraphicsDevice;
@@ -102,11 +101,10 @@ namespace PacMan.ScreenStuff
             {
                 if (gridHitbox.Contains(mousePos) && currentPallet != null)
                 {
-                    ////////////////////////////this might not work if the tile is center origin
                     Sprite spriteToChange = grid[(int)(mousePos.Y / tileSize.Y), (int)(mousePos.X / tileSize.X)];
                     spriteToChange.Tint = currentPallet.Tint;
                 }
-                else if (colorWheel.GetColor(mousePos).HasValue)
+                else if (colorWheel.GetColor(mousePos).HasValue && currentPallet != null)
                 {
                     currentPallet.Tint = colorWheel.GetColor(mousePos).Value;
                 }

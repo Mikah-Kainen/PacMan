@@ -18,7 +18,7 @@ namespace PacMan
         /// <summary>
         /// Vector2 pos, Vector2 scale, Point posInGrid
         /// </summary>
-        public Dictionary<Color, (Color color, TileType tileType)> TextureDictionary { get; private set; }
+        public Dictionary<Color, TileType> TextureDictionary { get; private set; }
         public Settings(GraphicsDevice graphicsDevice)
         {
             DirectionDictionary = new Dictionary<Keys, Directions>
@@ -38,13 +38,13 @@ namespace PacMan
 
             //Func<Vector2, Vector2, Point, Tile>
 
-            TextureDictionary = new Dictionary<Color, (Color color, TileType type)>
+            TextureDictionary = new Dictionary<Color, TileType>
             {
-                [Color.Black] =              (Color.Black, TileType.Wall     ),
-                [new Color(255, 28, 36)] =   (Color.Red,   TileType.Background),
-                [new Color(237, 28, 36)] =   (Color.Red,   TileType.Background),
-                [new Color(34, 177, 76)] =   (Color.Green, TileType.Background),
-                [new Color(255, 255, 255)] = (Color.White, TileType.Background),
+                [Color.Black] =              TileType.Wall     ,
+                [new Color(255, 28, 36)] =   TileType.Background,
+                [new Color(237, 28, 36)] =   TileType.Background,
+                [new Color(34, 177, 76)] =   TileType.Background,
+                [new Color(255, 255, 255)] = TileType.Background,
             };
 
             //Read from file
@@ -70,7 +70,7 @@ namespace PacMan
             TextureDictionary.Clear();
             foreach (var pair in meow)
             {
-                TextureDictionary.Add(pair.Key.FromArgb(), (pair.Value.Item1.FromArgb(), pair.Value.Item2));
+                TextureDictionary.Add(pair.Key.FromArgb(), pair.Value.Item2);
             }
         }
     }
