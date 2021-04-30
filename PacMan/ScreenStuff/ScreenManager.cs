@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using static PacMan.Enum;
+
 namespace PacMan
 {
     public class ScreenManager
@@ -10,16 +12,27 @@ namespace PacMan
         public Screen CurrentScreen { get; private set; }
         public Settings Settings { get; private set; }
         public MyStack<Screen> PreviousScreens { get; private set; }
+
+        public Dictionary<Screens, Screen> ScreenDictionary { get; set; }
         public ScreenManager(Settings settings)
         {
             Settings = settings;
             PreviousScreens = new MyStack<Screen>();
+            ScreenDictionary = new Dictionary<Screens, Screen>();
         }
 
-        public void SetScreen(Screen currentScreen)
+        public void Add(Screens name, Screen screen)
         {
+            ScreenDictionary.Add(name, screen);
+        }
+
+        public void SetScreen(Screens name)
+        {
+            if (!ScreenDictionary.ContainsKey(name)) { return; }
+            Screen currentScreen = ScreenDictionary[name];
             PreviousScreens.Push(CurrentScreen);
             CurrentScreen = currentScreen;
+
         }
 
         public void LeaveScreen()

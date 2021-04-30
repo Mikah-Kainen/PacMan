@@ -21,5 +21,11 @@ namespace PacMan
             Wall,
             Background,
         }
+
+        public enum Screens
+        {
+            Game,
+            Editor,
+        }
     }
 }

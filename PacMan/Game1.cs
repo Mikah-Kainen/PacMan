@@ -19,7 +19,6 @@ namespace PacMan
         public Screen CurrentScreen;
         private ScreenManager screenManager;
         private InputManager inputManager;
-        private List<Screen> screens;
         private Settings settings;
         private Vector2 screenSize;
 
@@ -28,7 +27,6 @@ namespace PacMan
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            screens = new List<Screen>();
             screenSize = new Vector2(800, 800);
             graphics.PreferredBackBufferWidth = (int)screenSize.X;
             graphics.PreferredBackBufferHeight = (int)screenSize.Y;
@@ -41,14 +39,14 @@ namespace PacMan
             settings = new Settings(GraphicsDevice);
             screenManager = new ScreenManager(settings);
             inputManager = new InputManager();
-            screens.Add(new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
-            screens.Add(new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
+            screenManager.Add(Enum.Screens.Editor, new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
+            screenManager.Add(Enum.Screens.Game, new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
 
 
 
 
 
-            screenManager.SetScreen(screens[0]);
+            screenManager.SetScreen(Enum.Screens.Editor);
 
             base.Initialize();
         }

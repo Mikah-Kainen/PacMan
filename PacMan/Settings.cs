@@ -14,11 +14,12 @@ namespace PacMan
     public class Settings
     {
         public Dictionary<Keys, Directions> DirectionDictionary { get; private set; }
-        
         /// <summary>
         /// Vector2 pos, Vector2 scale, Point posInGrid
         /// </summary>
-        public Dictionary<Color, TileType> TextureDictionary { get; private set; }
+        public Dictionary<Color, TileType> ColorDictionary { get; private set; }
+
+        public string DictionaryPath;
         public Settings(GraphicsDevice graphicsDevice)
         {
             DirectionDictionary = new Dictionary<Keys, Directions>
@@ -30,22 +31,18 @@ namespace PacMan
                 
             };
 
-            Texture2D whitePixel = Color.White.CreatePixel(graphicsDevice);
 
-            //If you want to store this in json
-            //Change it to be a Dictionary<Color, (Color, TileType)>
-            //Function that takes in a color and tile type and whatever and returns tile
 
-            //Func<Vector2, Vector2, Point, Tile>
+            //Texture2D whitePixel = Color.White.CreatePixel(graphicsDevice);
 
-            TextureDictionary = new Dictionary<Color, TileType>
-            {
-                [Color.Black] =              TileType.Wall     ,
-                [new Color(255, 28, 36)] =   TileType.Background,
-                [new Color(237, 28, 36)] =   TileType.Background,
-                [new Color(34, 177, 76)] =   TileType.Background,
-                [new Color(255, 255, 255)] = TileType.Background,
-            };
+            //TextureDictionary = new Dictionary<Color, TileType>
+            //{
+            //    [Color.Black] =              TileType.Wall     ,
+            //    [new Color(255, 28, 36)] =   TileType.Background,
+            //    [new Color(237, 28, 36)] =   TileType.Background,
+            //    [new Color(34, 177, 76)] =   TileType.Background,
+            //    [new Color(255, 255, 255)] = TileType.Background,
+            //};
 
             //Read from file
 
@@ -61,16 +58,16 @@ namespace PacMan
             //}
             //filePath += @"\Stuffs.txt";
 
-            string filePath = "Stuffs.json";
+            DictionaryPath = "Stuffs.json";
 
 
-            var fileToConvetBack = System.IO.File.ReadAllText(filePath);
-            Dictionary<int, (int, TileType)> meow = JsonConvert.DeserializeObject<Dictionary<int, (int, TileType)>>(fileToConvetBack);
+            var fileToConvetBack = System.IO.File.ReadAllText(DictionaryPath);
+            Dictionary<int, TileType> meow = JsonConvert.DeserializeObject<Dictionary<int, TileType>>(fileToConvetBack);
 
-            TextureDictionary.Clear();
+            ColorDictionary = new Dictionary<Color, TileType>();
             foreach (var pair in meow)
             {
-                TextureDictionary.Add(pair.Key.FromArgb(), pair.Value.Item2);
+                ColorDictionary.Add(pair.Key.FromArgb(), pair.Value);
             }
         }
     }

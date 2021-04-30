@@ -27,6 +27,7 @@ namespace PacMan.ScreenStuff
         float fraction = 3 / 4f;
         Rectangle gridHitbox;
         Sprite currentPallet;
+        System.IO.Stream pacManMapStream;
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
@@ -39,7 +40,8 @@ namespace PacMan.ScreenStuff
             var result = dialog.ShowDialog();
             if(result == DialogResult.OK)
             {
-                pixelMap = Texture2D.FromStream(graphicsDevice, dialog.OpenFile());
+                pacManMapStream = dialog.OpenFile();
+                pixelMap = Texture2D.FromStream(graphicsDevice, pacManMapStream);
             }
 
             //define a fraction and multiply bounds by that
@@ -66,12 +68,15 @@ namespace PacMan.ScreenStuff
             //
             pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * paintSize.X, 2 * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
 
-            var textureDictionary = ScreenManager.Settings.TextureDictionary;
+            var textureDictionary = ScreenManager.Settings.ColorDictionary;
             int xPos = 1;
             int yPos = 1;
             foreach(var kvp in textureDictionary)
             {
-                pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), kvp.Key, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
+                if (pallet.Count < 14)
+                {
+                    pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), kvp.Key, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
+                }
                 xPos++;
                 if(xPos > 7)
                 {
@@ -118,6 +123,39 @@ namespace PacMan.ScreenStuff
                         }
                     }
                 }
+            }
+            if(InputManager.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Space))
+            {
+                ScreenManager.Settings.ColorDictionary.Clear();
+                ScreenManager.Settings.ColorDictionary.Add(Color.Black, TileType.Wall);
+                foreach(Sprite pixel in grid)
+                {
+                    if(!ScreenManager.Settings.ColorDictionary.ContainsKey(pixel.Tint))
+                    {
+                        ScreenManager.Settings.ColorDictionary.Add(pixel.Tint, TileType.Background);
+                    }
+                }
+
+                Dictionary<int, TileType> argbDictionary = new Dictionary<int, TileType>();
+                foreach(KeyValuePair<Color, TileType> kvp in ScreenManager.Settings.ColorDictionary)
+                {
+                    argbDictionary.Add(kvp.Key.ToArgb(), kvp.Value);
+                }
+                string serializedDictionary = JsonConvert.SerializeObject(argbDictionary);
+                System.IO.File.WriteAllText(ScreenManager.Settings.DictionaryPath, serializedDictionary);
+
+
+
+
+                Color.White.CreatePixel(graphicsDevice).SaveAsPng(pacManMapStream, //width, height)
+
+
+
+
+
+
+                ScreenManager.LeaveScreen();
+                ScreenManager.SetScreen(Enum.Screens.Game);
             }
         }
 
