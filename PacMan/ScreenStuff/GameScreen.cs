@@ -46,10 +46,9 @@ namespace PacMan
             ;
 
 
-            Init();
         }
 
-        public void Init()
+        public override void Init()
         {
             walls = new List<Tile>();
             ghosts = new List<Ghost>();
@@ -125,6 +124,7 @@ namespace PacMan
             var ghostPos = PositionToTile(ghosts[0].Pos);
             var pacmanPos = PositionToTile(pacman.Pos);
 
+            UpdatePacman();
             
             ghosts[0].path = Traversals.AStar(PositionToTile(ghosts[0].Pos), PositionToTile(pacman.Pos), Heuristic, grid);
  
@@ -277,7 +277,7 @@ namespace PacMan
                     case Directions.Up:
                         //if (pacTile.)
                         //{
-                        //    pacman.Pos.Y -= pacman.speed;
+                            pacman.Pos.Y -= pacman.speed;
                         //}
                         pacman.Rotation = 3 * (float)Math.PI / 2;
                         break;

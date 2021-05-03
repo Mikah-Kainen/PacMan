@@ -44,13 +44,10 @@ namespace PacMan
 
 
 
-
-
             screenManager.SetScreen(Enum.Screens.Editor);
 
             base.Initialize();
         }
-
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);

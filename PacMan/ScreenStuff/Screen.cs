@@ -17,6 +17,11 @@ namespace PacMan
         public List<GameObject> Objects { get; set; }
         public Rectangle Bounds { get; set; }
 
+        public virtual void Init()
+        {
+
+        }
+
         public void Load(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
             Bounds = bounds;

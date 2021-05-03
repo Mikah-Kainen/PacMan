@@ -27,7 +27,8 @@ namespace PacMan.ScreenStuff
         float fraction = 3 / 4f;
         Rectangle gridHitbox;
         Sprite currentPallet;
-        System.IO.Stream pacManMapStream;
+        string fileName;
+
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
@@ -38,10 +39,14 @@ namespace PacMan.ScreenStuff
             OpenFileDialog dialog = new OpenFileDialog();
 
             var result = dialog.ShowDialog();
-            if(result == DialogResult.OK)
+            if (result == DialogResult.OK)
             {
-                pacManMapStream = dialog.OpenFile();
+                var pacManMapStream = dialog.OpenFile();
+
+                fileName = dialog.FileName;
                 pixelMap = Texture2D.FromStream(graphicsDevice, pacManMapStream);
+
+                pacManMapStream.Close();
             }
 
             //define a fraction and multiply bounds by that
@@ -71,20 +76,20 @@ namespace PacMan.ScreenStuff
             var textureDictionary = ScreenManager.Settings.ColorDictionary;
             int xPos = 1;
             int yPos = 1;
-            foreach(var kvp in textureDictionary)
+            foreach (var kvp in textureDictionary)
             {
                 if (pallet.Count < 14)
                 {
                     pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), kvp.Key, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
                 }
                 xPos++;
-                if(xPos > 7)
+                if (xPos > 7)
                 {
                     xPos = 1;
                     yPos++;
                 }
             }
-            for(int i = 0; i < 3; i ++)
+            for (int i = 0; i < 3; i++)
             {
                 pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
                 xPos++;
@@ -94,7 +99,7 @@ namespace PacMan.ScreenStuff
                     yPos++;
                 }
             }
-            colorWheel = new ColorWheel(new Vector2(bounds.Width * fraction * 9/8, bounds.Height * fraction * 9/8), 100, graphics);
+            colorWheel = new ColorWheel(new Vector2(bounds.Width * fraction * 9 / 8, bounds.Height * fraction * 9 / 8), 100, graphics);
 
 
             Objects.AddRange(pallet);
@@ -115,29 +120,29 @@ namespace PacMan.ScreenStuff
                 }
                 else
                 {
-                    foreach(Sprite sprite in pallet)
+                    foreach (Sprite sprite in pallet)
                     {
-                        if(sprite.HitBox.Contains(mousePos))
+                        if (sprite.HitBox.Contains(mousePos))
                         {
                             currentPallet = sprite;
                         }
                     }
                 }
             }
-            if(InputManager.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Space))
+            if (InputManager.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Space))
             {
                 ScreenManager.Settings.ColorDictionary.Clear();
                 ScreenManager.Settings.ColorDictionary.Add(Color.Black, TileType.Wall);
-                foreach(Sprite pixel in grid)
+                foreach (Sprite pixel in grid)
                 {
-                    if(!ScreenManager.Settings.ColorDictionary.ContainsKey(pixel.Tint))
+                    if (!ScreenManager.Settings.ColorDictionary.ContainsKey(pixel.Tint))
                     {
                         ScreenManager.Settings.ColorDictionary.Add(pixel.Tint, TileType.Background);
                     }
                 }
 
                 Dictionary<int, TileType> argbDictionary = new Dictionary<int, TileType>();
-                foreach(KeyValuePair<Color, TileType> kvp in ScreenManager.Settings.ColorDictionary)
+                foreach (KeyValuePair<Color, TileType> kvp in ScreenManager.Settings.ColorDictionary)
                 {
                     argbDictionary.Add(kvp.Key.ToArgb(), kvp.Value);
                 }
@@ -145,23 +150,47 @@ namespace PacMan.ScreenStuff
                 System.IO.File.WriteAllText(ScreenManager.Settings.DictionaryPath, serializedDictionary);
 
 
+                //1000 / 10
+                //1000 / 10
+                //generate a 100x100 2d array of colors
+
+                //Create a 2d color array
+                //Calculate its size
+
+                int ySize = grid.GetLength(0);
+                int xSize = grid.GetLength(1);
+
+                Color[] pixelMap = new Color[grid.Length];
+
+                for (int y = 0; y < ySize; y++)
+                {
+                    for (int x = 0; x < xSize; x++)
+                    {
+                        pixelMap[x + y * xSize] = grid[y, x].Tint;
+                    }
+                }
+
+                Texture2D pixelMapTexture = new Texture2D(graphicsDevice, xSize, ySize);
+                pixelMapTexture.SetData(pixelMap);
 
 
-                Color.White.CreatePixel(graphicsDevice).SaveAsPng(pacManMapStream, //width, height)
 
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.FileName = fileName;
+                var readWriteStream = dialog.OpenFile();
 
-
-
-
+                pixelMapTexture.SaveAsPng(readWriteStream, xSize, ySize);
+                readWriteStream.Close();
 
                 ScreenManager.LeaveScreen();
                 ScreenManager.SetScreen(Enum.Screens.Game);
+                ScreenManager.CurrentScreen.Init();
             }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            foreach(Sprite sprite in grid)
+            foreach (Sprite sprite in grid)
             {
                 sprite?.Draw(spriteBatch);
             }
@@ -175,7 +204,7 @@ namespace PacMan.ScreenStuff
         {
             Vector2 index = new Vector2(mousePos.X / tileSize.X, mousePos.Y / tileSize.Y);
 
-            if(index.X > pixelMap.Width || index.Y > pixelMap.Height)
+            if (index.X > pixelMap.Width || index.Y > pixelMap.Height)
             {
                 return;
             }
