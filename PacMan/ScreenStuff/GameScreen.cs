@@ -111,7 +111,7 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(46, 236, 158, 147), new Vector2(76, 73.5f)));
             frameList.Add(new AnimationFrame(new Rectangle(45, 43, 161, 154), new Vector2(80.5f, 77)));
             frameList.Add(new AnimationFrame(new Rectangle(235, 233, 160, 156), new Vector2(80, 78)));
-            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), new Vector2(TileSize.X / frameList[0].HitBox.Width, TileSize.Y / frameList[0].HitBox.Height), frameList, 1f, 1, ScreenManager, InputManager, TimeSpan.FromMilliseconds(600)));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), new Vector2((TileSize.X - 5) / frameList[0].HitBox.Width, (TileSize.Y - 5) / frameList[0].HitBox.Height), frameList, 1f, 1, ScreenManager, InputManager, TimeSpan.FromMilliseconds(600)));
             Objects.Add(pacman);
             foreach(Ghost ghost in ghosts)
             {
@@ -125,8 +125,11 @@ namespace PacMan
             var pacmanPos = PositionToTile(pacman.Pos);
 
             UpdatePacman();
-            
-            ghosts[0].path = Traversals.AStar(PositionToTile(ghosts[0].Pos), PositionToTile(pacman.Pos), Heuristic, grid);
+
+            if (IsOnTile(ghosts[0].Pos, new Vector2(ghosts[0].HitBox.Width, ghosts[0].HitBox.Height)))
+            {
+                ghosts[0].path = Traversals.AStar(PositionToTile(ghosts[0].Pos), PositionToTile(pacman.Pos), Heuristic, grid);
+            }
  
             if (ghostPos.PositionInGrid == pacmanPos.PositionInGrid)
             {
@@ -316,6 +319,11 @@ namespace PacMan
         private int Heuristic(Tile currentTile, Tile targetTile)
         {
             return (int)(Math.Abs(currentTile.PositionInGrid.X - targetTile.PositionInGrid.X) + Math.Abs(currentTile.PositionInGrid.Y - targetTile.PositionInGrid.Y));
+        }
+
+        private bool IsOnTile(Vector2 middlePos, Vector2 size)
+        {
+            return PositionToTile(middlePos + size * 1 / 2).PositionInGrid == PositionToTile(middlePos - size * 1 / 2).PositionInGrid;
         }
     }
 }

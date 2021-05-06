@@ -39,13 +39,13 @@ namespace PacMan
             settings = new Settings(GraphicsDevice);
             screenManager = new ScreenManager(settings);
             inputManager = new InputManager();
-            screenManager.Add(Enum.Screens.Editor, new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
+            //screenManager.Add(Enum.Screens.Editor, new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
             screenManager.Add(Enum.Screens.Game, new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
 
 
 
-            screenManager.SetScreen(Enum.Screens.Editor);
-
+            screenManager.SetScreen(Enum.Screens.Game);
+            screenManager.CurrentScreen.Init();
             base.Initialize();
         }
         protected override void LoadContent()
