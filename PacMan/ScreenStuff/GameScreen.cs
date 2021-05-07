@@ -21,7 +21,7 @@ namespace PacMan
         private List<Ghost> ghosts;
         private List<Tile> walls;
         
-        public Vector2 TileSize;
+        public static Vector2 TileSize;
         public static Dictionary<Point, Tile> PointToTile;
         private Tile[,] grid;
         private Rectangle screen => GraphicsDeviceManager.GraphicsDevice.Viewport.Bounds;
@@ -138,19 +138,13 @@ namespace PacMan
 
             base.Update(gameTime);
 
-            foreach (Tile wall in walls)
-            {
-                int index = 1;
-                if (pacman.HitBox.Intersects(wall.HitBox))
-                {
-                    while (pacman.HitBox.Intersects(wall.HitBox))
-                    {
-                        pacman.Pos = pacman.PreviousPositions[index];
-                        index++;
-                    }
-                    pacman.CurrentDirection = Directions.None;
-                }
-            }
+            //foreach (Tile wall in walls)
+            //{
+            //    if (pacman.HitBox.Intersects(wall.HitBox))
+            //    {
+            //        pacman.CurrentDirection = Directions.None;
+            //    }
+            //}
         }
 
         public override void Draw(SpriteBatch spriteBatch)

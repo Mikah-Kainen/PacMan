@@ -19,8 +19,7 @@ namespace PacMan
         private InputManager inputManager;
         public Directions CurrentDirection { get; set; }
         public Directions PreviousDirection { get; set; }
-        public Vector2[] PreviousPositions { get; set; }
-
+        Point posInGrid;
         Func<Vector2, Tile> getTile;
         public override Rectangle HitBox
         {
@@ -38,8 +37,8 @@ namespace PacMan
             this.inputManager = inputManager;
             CurrentDirection = Directions.None;
             PreviousDirection = Directions.None;
-            PreviousPositions = new Vector2[2];
             this.getTile = getTile;
+            posInGrid = getTile(Pos).PositionInGrid;
         }
 
         public Pacman(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, TimeSpan timeBetweenFrames, int iterationsPerUpdate, ScreenManager screenManager, InputManager inputManager)
@@ -50,8 +49,6 @@ namespace PacMan
             this.screenManager = screenManager;
             this.inputManager = inputManager;
             CurrentDirection = Directions.None;
-            PreviousPositions = new Vector2[8];
-
         }
 
 
@@ -79,51 +76,81 @@ namespace PacMan
                 }
             }
 
-            //THESE ARE NOT THE RIGHT NUMBERS
             //x = Math.Min(currentCell.X - currentCell.Width / 2, x)
             //LeftSide: x = Math.Min(currentCell.X - currentCell.Width / 2, x + speed)
             //RightSide: x = Math.Max(currentCell.X - currentCell.Width / 2, x + speed)
             //LeftSide: y = Math.Min(currentCell.X - currentCell.Width / 2, x + speed)
             //RightSide: y = Math.Max(currentCell.X - currentCell.Width / 2, x + speed)
 
-            Vector2 deltaDistance = Pos - PreviousPositions[0];
-            PreviousPositions[0] = Pos;
             bool goingSameDirection = CurrentDirection == PreviousDirection;
+
             if (goingSameDirection || IsOnTile(Pos, HitBox))
             {
-                Point posInGrid = getTile(Pos).PositionInGrid;
+                posInGrid = getTile(Pos).PositionInGrid;
+                List<Point> corners = new List<Point>();
+                corners.Add(getTile(new Vector2(HitBox.Left, HitBox.Top)).PositionInGrid);
+                corners.Add(getTile(new Vector2(HitBox.Left, HitBox.Bottom)).PositionInGrid);
+                corners.Add(getTile(new Vector2(HitBox.Right, HitBox.Top)).PositionInGrid);
+                corners.Add(getTile(new Vector2(HitBox.Right, HitBox.Bottom)).PositionInGrid);
+                foreach (Point point in corners)
+                {
+                    if (GameScreen.PointToTile[point].TileType == TileType.Wall)
+                    {
+                        CurrentDirection = Directions.None;
+                        ////////////////////////
+                        //////////Move backwards once in current directions, then switch to going in the old direction
+                        //////////////
+                        ///////////////(maybe get rid of space between pacman and walls so old direction doesnt update as often)
+                    }
+                }
                 switch (CurrentDirection)
                 {
                     case Directions.Up:
-                        if (goingSameDirection || GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileType.Background)
+                        if(GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y - 1)].TileType == TileType.Wall)
+                        {
+                            Pos.Y = Math.Max(Pos.Y - speed, (float)(posInGrid.Y) * GameScreen.TileSize.Y + HitBox.Height / 2 + 5);
+                        }
+                        else
                         {
                             Pos.Y -= speed;
-                            Rotation = 3 * (float)Math.PI / 2;
                         }
+                        Rotation = 3 * (float)Math.PI / 2;
                         break;
 
                     case Directions.Down:
-                        if (goingSameDirection || GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y - 1)].TileType == TileType.Background)
+                        if (GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileType.Wall)
+                        {
+                            Pos.Y = Math.Min(Pos.Y + speed, (float)(posInGrid.Y + 1) * GameScreen.TileSize.Y - HitBox.Height / 2 - 3);
+                        }
+                        else
                         {
                             Pos.Y += speed;
-                            Rotation = (float)Math.PI / 2;
                         }
+                        Rotation = (float)Math.PI / 2;
                         break;
 
                     case Directions.Left:
-                        if (goingSameDirection || GameScreen.PointToTile[new Point(posInGrid.X - 1, posInGrid.Y)].TileType == TileType.Background)
+                        if (GameScreen.PointToTile[new Point(posInGrid.X - 1, posInGrid.Y)].TileType == TileType.Wall)
+                        {
+                            Pos.X = Math.Max(Pos.X - speed, (float)(posInGrid.X) * GameScreen.TileSize.X + HitBox.Width / 2 + 5);
+                        }
+                        else
                         {
                             Pos.X -= speed;
-                            Rotation = (float)Math.PI;
                         }
+                        Rotation = (float)Math.PI;
                         break;
 
                     case Directions.Right:
-                        if (goingSameDirection || GameScreen.PointToTile[new Point(posInGrid.X + 1, posInGrid.Y)].TileType == TileType.Background)
+                        if (GameScreen.PointToTile[new Point(posInGrid.X + 1, posInGrid.Y)].TileType == TileType.Wall)
+                        {
+                            Pos.X = Math.Min(Pos.X + speed, (float)(posInGrid.X + 1) * GameScreen.TileSize.X - HitBox.Width / 2 - 3);
+                        }
+                        else
                         {
                             Pos.X += speed;
-                            Rotation = 0;
                         }
+                        Rotation = 0;
                         break;
 
                     default:

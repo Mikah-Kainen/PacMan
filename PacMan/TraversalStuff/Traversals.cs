@@ -60,7 +60,7 @@ namespace PacMan.TraversalStuff
                 currentPosition.WasVisited = true;
             }
         
-
+            
             while (finalPosition.Founder != null)
             {
                 returnStack.Push(finalPosition);
