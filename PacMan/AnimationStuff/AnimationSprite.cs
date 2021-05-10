@@ -48,7 +48,7 @@ namespace PacMan
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Tex, Pos, CurrentFrame.HitBox, Tint, Rotation, CurrentFrame.Origin, Scale, SpriteEffects.None, 1);
+            spriteBatch.Draw(Tex, Pos, CurrentFrame.HitBox, Tint, Rotation, CurrentFrame.Origin, Scale * CurrentFrame.Scale, SpriteEffects.None, 1);
         }
 
     }

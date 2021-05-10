@@ -21,13 +21,15 @@ namespace PacMan
         public Directions PreviousDirection { get; set; }
 
         public Directions NextDirection { get; set; }
+
+        private Vector2 previousPos;
         Point posInGrid;
         Func<Vector2, Tile> getTile;
         public override Rectangle HitBox
         {
             get
             {
-                return new Rectangle((int)(Pos.X - Frames[1].HitBox.Width * Scale.X / 2), (int)(Pos.Y - Frames[1].HitBox.Height * Scale.Y / 2), (int)(Frames[1].HitBox.Width * Scale.X), (int)(Frames[1].HitBox.Height * Scale.Y));
+                return new Rectangle((int)(Pos.X - Frames[currentIndex].Origin.X * Frames[currentIndex].Scale.X * Scale.X), (int)(Pos.Y - Frames[currentIndex].Origin.Y *Frames[currentIndex].Scale.Y * Scale.Y), (int)(Frames[currentIndex].HitBox.Width * Frames[currentIndex].Scale.X * Scale.X), (int)(Frames[currentIndex].HitBox.Height * Frames[currentIndex].Scale.Y * Scale.Y));
             }
         }
 
@@ -41,6 +43,7 @@ namespace PacMan
             PreviousDirection = Directions.None;
             this.getTile = getTile;
             posInGrid = getTile(Pos).PositionInGrid;
+            previousPos = new Vector2();
         }
 
         public Pacman(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, TimeSpan timeBetweenFrames, int iterationsPerUpdate, ScreenManager screenManager, InputManager inputManager)
@@ -56,7 +59,6 @@ namespace PacMan
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
             Keys[] currentKeys = inputManager.KeyboardState.GetPressedKeys();
             int index = 0;
             if (currentKeys.Length > 0)
@@ -77,12 +79,6 @@ namespace PacMan
                 }
             }
 
-            //x = Math.Min(currentCell.X - currentCell.Width / 2, x)
-            //LeftSide: x = Math.Min(currentCell.X - currentCell.Width / 2, x + speed)
-            //RightSide: x = Math.Max(currentCell.X - currentCell.Width / 2, x + speed)
-            //LeftSide: y = Math.Min(currentCell.X - currentCell.Width / 2, x + speed)
-            //RightSide: y = Math.Max(currentCell.X - currentCell.Width / 2, x + speed)
-
             bool goingSamePlane = GoingSamePlane(CurrentDirection, PreviousDirection);
 
             if (goingSamePlane || IsOnTile(Pos, HitBox))
@@ -93,12 +89,17 @@ namespace PacMan
                 }
                 PreviousDirection = CurrentDirection;
                 posInGrid = getTile(Pos).PositionInGrid;
+                previousPos = Pos;
+
+                Vector2 padding = new Vector2(1, 1);
+                //padding = Vector2.Zero;
+
                 switch (CurrentDirection)
                 {
                     case Directions.Up:
                         if(GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y - 1)].TileType == TileType.Wall)
                         {
-                            Pos.Y = Math.Max(Pos.Y - speed, (float)(posInGrid.Y) * GameScreen.TileSize.Y + HitBox.Height / 2 + 5);
+                            Pos.Y = Math.Max(Pos.Y - speed, (float)(posInGrid.Y) * GameScreen.TileSize.Y + HitBox.Height / 2 + padding.Y);
                         }
                         else
                         {
@@ -110,7 +111,7 @@ namespace PacMan
                     case Directions.Down:
                         if (GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileType.Wall)
                         {
-                            Pos.Y = Math.Min(Pos.Y + speed, (float)(posInGrid.Y + 1) * GameScreen.TileSize.Y - HitBox.Height / 2 - 3);
+                            Pos.Y = Math.Min(Pos.Y + speed, (float)(posInGrid.Y + 1) * GameScreen.TileSize.Y - HitBox.Height / 2 - padding.X);
                         }
                         else
                         {
@@ -122,7 +123,7 @@ namespace PacMan
                     case Directions.Left:
                         if (GameScreen.PointToTile[new Point(posInGrid.X - 1, posInGrid.Y)].TileType == TileType.Wall)
                         {
-                            Pos.X = Math.Max(Pos.X - speed, (float)(posInGrid.X) * GameScreen.TileSize.X + HitBox.Width / 2 + 5);
+                            Pos.X = Math.Max(Pos.X - speed, (float)(posInGrid.X) * GameScreen.TileSize.X + HitBox.Width / 2 + padding.Y);
                         }
                         else
                         {
@@ -134,7 +135,7 @@ namespace PacMan
                     case Directions.Right:
                         if (GameScreen.PointToTile[new Point(posInGrid.X + 1, posInGrid.Y)].TileType == TileType.Wall)
                         {
-                            Pos.X = Math.Min(Pos.X + speed, (float)(posInGrid.X + 1) * GameScreen.TileSize.X - HitBox.Width / 2 - 3);
+                            Pos.X = Math.Min(Pos.X + speed, (float)(posInGrid.X + 1) * GameScreen.TileSize.X - HitBox.Width / 2 - padding.X);
                         }
                         else
                         {
@@ -142,10 +143,14 @@ namespace PacMan
                         }
                         Rotation = 0;
                         break;
-
-                    default:
-                        currentIndex = 1;
-                        break;
+                }
+                if (previousPos != Pos)
+                {
+                    base.Update(gameTime);
+                }
+                else 
+                {
+                    currentIndex = 1;
                 }
             }
             if (HitBorder())
