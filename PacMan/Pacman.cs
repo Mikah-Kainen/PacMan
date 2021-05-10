@@ -19,6 +19,8 @@ namespace PacMan
         private InputManager inputManager;
         public Directions CurrentDirection { get; set; }
         public Directions PreviousDirection { get; set; }
+
+        public Directions NextDirection { get; set; }
         Point posInGrid;
         Func<Vector2, Tile> getTile;
         public override Rectangle HitBox
@@ -71,8 +73,7 @@ namespace PacMan
                 }
                 if (shouldScan)
                 {
-                    PreviousDirection = CurrentDirection;
-                    CurrentDirection = screenManager.Settings.DirectionDictionary[currentKeys[index]];
+                    NextDirection = screenManager.Settings.DirectionDictionary[currentKeys[index]];
                 }
             }
 
@@ -82,27 +83,16 @@ namespace PacMan
             //LeftSide: y = Math.Min(currentCell.X - currentCell.Width / 2, x + speed)
             //RightSide: y = Math.Max(currentCell.X - currentCell.Width / 2, x + speed)
 
-            bool goingSameDirection = CurrentDirection == PreviousDirection;
+            bool goingSamePlane = GoingSamePlane(CurrentDirection, PreviousDirection);
 
-            if (goingSameDirection || IsOnTile(Pos, HitBox))
+            if (goingSamePlane || IsOnTile(Pos, HitBox))
             {
-                posInGrid = getTile(Pos).PositionInGrid;
-                List<Point> corners = new List<Point>();
-                corners.Add(getTile(new Vector2(HitBox.Left, HitBox.Top)).PositionInGrid);
-                corners.Add(getTile(new Vector2(HitBox.Left, HitBox.Bottom)).PositionInGrid);
-                corners.Add(getTile(new Vector2(HitBox.Right, HitBox.Top)).PositionInGrid);
-                corners.Add(getTile(new Vector2(HitBox.Right, HitBox.Bottom)).PositionInGrid);
-                foreach (Point point in corners)
+                if(CanMove(NextDirection))
                 {
-                    if (GameScreen.PointToTile[point].TileType == TileType.Wall)
-                    {
-                        CurrentDirection = Directions.None;
-                        ////////////////////////
-                        //////////Move backwards once in current directions, then switch to going in the old direction
-                        //////////////
-                        ///////////////(maybe get rid of space between pacman and walls so old direction doesnt update as often)
-                    }
+                    CurrentDirection = NextDirection;
                 }
+                PreviousDirection = CurrentDirection;
+                posInGrid = getTile(Pos).PositionInGrid;
                 switch (CurrentDirection)
                 {
                     case Directions.Up:
@@ -200,6 +190,49 @@ namespace PacMan
         {
             Vector2 size = new Vector2(hitBox.Width, hitBox.Height);
             return getTile(middlePos + size * 1 / 2).PositionInGrid == getTile(middlePos - size * 1 / 2).PositionInGrid;
+        }
+
+        private bool GoingSamePlane(Enum.Directions currentDirection, Enum.Directions previousDirection)
+        {
+            if(currentDirection == Directions.Up || currentDirection == Directions.Down)
+            {
+                return previousDirection == Directions.Up || previousDirection == Directions.Down;
+            }
+            else if(currentDirection == Directions.None)
+            {
+                return false;
+            }
+            else
+            {
+                return previousDirection == Directions.Right || previousDirection == Directions.Left;
+            }
+        }
+
+        private bool CanMove(Enum.Directions nextDirection)
+        {
+            if(!IsOnTile(Pos, HitBox))
+            {
+                return false;
+            }
+
+            Point pacPoint = getTile(Pos).PositionInGrid;
+            switch(nextDirection)
+            {
+                case Directions.Up:
+                    return GameScreen.PointToTile[new Point(pacPoint.X, pacPoint.Y - 1)].TileType == TileType.Background;
+
+                case Directions.Down:
+                    return GameScreen.PointToTile[new Point(pacPoint.X, pacPoint.Y + 1)].TileType == TileType.Background;
+
+                case Directions.Right:
+                    return GameScreen.PointToTile[new Point(pacPoint.X + 1, pacPoint.Y)].TileType == TileType.Background;
+
+                case Directions.Left:
+                    return GameScreen.PointToTile[new Point(pacPoint.X - 1, pacPoint.Y)].TileType == TileType.Background;
+
+                default:
+                    return true;
+            }
         }
     }
 }
