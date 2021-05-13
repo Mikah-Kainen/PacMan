@@ -22,6 +22,8 @@ namespace PacMan
         private Settings settings;
         private Vector2 screenSize;
 
+        SpriteFont font;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -39,18 +41,20 @@ namespace PacMan
             settings = new Settings(GraphicsDevice);
             screenManager = new ScreenManager(settings);
             inputManager = new InputManager();
-            //screenManager.Add(Enum.Screens.Editor, new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
-            screenManager.Add(Enum.Screens.Game, new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
+            screenManager.Add(Screens.Editor, new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
+            screenManager.Add(Screens.Game, new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
 
 
 
-            screenManager.SetScreen(Enum.Screens.Game);
+            screenManager.SetScreen(Screens.Editor);
             screenManager.CurrentScreen.Init();
             base.Initialize();
         }
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            font = Content.Load<SpriteFont>("Font");
 
             // TODO: use this.Content to load your game content here
         }
@@ -79,6 +83,8 @@ namespace PacMan
             spriteBatch.Begin();
 
             screenManager.CurrentScreen.Draw(spriteBatch);
+
+            spriteBatch.DrawString(font, "Hi Mikah", new Vector2(100, 100), Color.Black);
 
             spriteBatch.End();
 

@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-using static PacMan.Enum;
-
 namespace PacMan
 {
     public class Tile : Sprite, ITraversable<Tile>, IComparable<Tile>

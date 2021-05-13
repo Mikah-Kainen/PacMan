@@ -4,8 +4,9 @@ using System.Text;
 
 namespace PacMan
 {
-    public static class Enum
-    {
+    //We don't need this to be inside of a static class
+    //public static class Enum
+    //{
         public enum Directions
         {
             Up = 1,
@@ -20,6 +21,7 @@ namespace PacMan
         {
             Wall,
             Background,
+            Teleport,
         }
 
         public enum Screens
@@ -27,5 +29,5 @@ namespace PacMan
             Game,
             Editor,
         }
-    }
+  //  }
 }

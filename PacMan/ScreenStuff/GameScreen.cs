@@ -11,8 +11,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-using static PacMan.Enum;
-
 namespace PacMan
 {
     public class GameScreen : Screen
@@ -108,6 +106,8 @@ namespace PacMan
             {
                 Objects.Add(ghost);
             }
+
+            grid[3, 0].TileType = TileType.Teleport;
         }
 
         public override void Update(GameTime gameTime)

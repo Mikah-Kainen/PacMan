@@ -6,9 +6,6 @@ using System;
 using System.Collections.Generic;
 
 using System.Text;
-
-using static PacMan.Enum;
-
 namespace PacMan
 {
     public class Pacman : AnimationSprite
@@ -97,7 +94,11 @@ namespace PacMan
                 switch (CurrentDirection)
                 {
                     case Directions.Up:
-                        if(GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y - 1)].TileType == TileType.Wall)
+                        if(posInGrid.Y == 0 && getTile(Pos).TileType == TileType.Teleport)
+                        {
+                            Pos.Y = Math.Abs(Pos.Y - screenManager.CurrentScreen.Bounds.Height);
+                        }
+                        else if(GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y - 1)].TileType == TileType.Wall)
                         {
                             Pos.Y = Math.Max(Pos.Y - speed, (float)(posInGrid.Y) * GameScreen.TileSize.Y + HitBox.Height / 2 + padding.Y);
                         }
@@ -109,7 +110,11 @@ namespace PacMan
                         break;
 
                     case Directions.Down:
-                        if (GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileType.Wall)
+                        if(posInGrid.Y == 19)
+                        {
+
+                        }
+                        else if (GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileType.Wall)
                         {
                             Pos.Y = Math.Min(Pos.Y + speed, (float)(posInGrid.Y + 1) * GameScreen.TileSize.Y - HitBox.Height / 2 - padding.X);
                         }
@@ -121,6 +126,10 @@ namespace PacMan
                         break;
 
                     case Directions.Left:
+                        if (posInGrid.X == 0)
+                        {
+
+                        }    
                         if (GameScreen.PointToTile[new Point(posInGrid.X - 1, posInGrid.Y)].TileType == TileType.Wall)
                         {
                             Pos.X = Math.Max(Pos.X - speed, (float)(posInGrid.X) * GameScreen.TileSize.X + HitBox.Width / 2 + padding.Y);
@@ -133,6 +142,10 @@ namespace PacMan
                         break;
 
                     case Directions.Right:
+                        if(posInGrid.X == 19)
+                        {
+
+                        }
                         if (GameScreen.PointToTile[new Point(posInGrid.X + 1, posInGrid.Y)].TileType == TileType.Wall)
                         {
                             Pos.X = Math.Min(Pos.X + speed, (float)(posInGrid.X + 1) * GameScreen.TileSize.X - HitBox.Width / 2 - padding.X);
@@ -167,25 +180,25 @@ namespace PacMan
         public bool HitBorder()
         {
             bool returnValue = false;
-            if (Pos.X - base.CurrentFrame.HitBox.Width * Scale.X / 2 <= screenManager.CurrentScreen.Bounds.Left)
+            if (Pos.X - base.CurrentFrame.HitBox.Width * Scale.X * Frames[currentIndex].Scale.X / 2 <= screenManager.CurrentScreen.Bounds.Left)
             {
                 returnValue = true;
-                Pos.X = (int)(base.CurrentFrame.HitBox.Width * Scale.X / 2 + screenManager.CurrentScreen.Bounds.Left);
+                Pos.X = (int)(base.CurrentFrame.HitBox.Width * Scale.X * Frames[currentIndex].Scale.X / 2 + screenManager.CurrentScreen.Bounds.Left);
             }
-            else if (Pos.X + base.CurrentFrame.HitBox.Width * Scale.X / 2 >= screenManager.CurrentScreen.Bounds.Right)
+            else if (Pos.X + base.CurrentFrame.HitBox.Width * Scale.X * Frames[currentIndex].Scale.X / 2 >= screenManager.CurrentScreen.Bounds.Right)
             {
                 returnValue = true;
-                Pos.X = (int)(screenManager.CurrentScreen.Bounds.Right - base.CurrentFrame.HitBox.Width * Scale.X / 2);
+                Pos.X = (int)(screenManager.CurrentScreen.Bounds.Right - base.CurrentFrame.HitBox.Width * Scale.X * Frames[currentIndex].Scale.X / 2);
             }
-            else if (Pos.Y - base.CurrentFrame.HitBox.Height * Scale.Y / 2 <= screenManager.CurrentScreen.Bounds.Top)
+            else if (Pos.Y - base.CurrentFrame.HitBox.Height * Scale.Y * Frames[currentIndex].Scale.Y / 2 <= screenManager.CurrentScreen.Bounds.Top)
             {
                 returnValue = true;
-                Pos.Y = (int)(base.CurrentFrame.HitBox.Height * Scale.Y / 2 + screenManager.CurrentScreen.Bounds.Top);
+                Pos.Y = (int)(base.CurrentFrame.HitBox.Height * Scale.Y * Frames[currentIndex].Scale.Y / 2 + screenManager.CurrentScreen.Bounds.Top);
             }
-            else if (Pos.Y + base.CurrentFrame.HitBox.Height * Scale.Y / 2 >= screenManager.CurrentScreen.Bounds.Bottom)
+            else if (Pos.Y + base.CurrentFrame.HitBox.Height * Scale.Y * Frames[currentIndex].Scale.Y / 2 >= screenManager.CurrentScreen.Bounds.Bottom)
             {
                 returnValue = true;
-                Pos.Y = (int)(screenManager.CurrentScreen.Bounds.Bottom - base.CurrentFrame.HitBox.Height * Scale.Y / 2);
+                Pos.Y = (int)(screenManager.CurrentScreen.Bounds.Bottom - base.CurrentFrame.HitBox.Height * Scale.Y * Frames[currentIndex].Scale.Y / 2);
             }
 
             return returnValue;
@@ -197,7 +210,7 @@ namespace PacMan
             return getTile(middlePos + size * 1 / 2).PositionInGrid == getTile(middlePos - size * 1 / 2).PositionInGrid;
         }
 
-        private bool GoingSamePlane(Enum.Directions currentDirection, Enum.Directions previousDirection)
+        private bool GoingSamePlane(Directions currentDirection, Directions previousDirection)
         {
             if(currentDirection == Directions.Up || currentDirection == Directions.Down)
             {
@@ -213,7 +226,7 @@ namespace PacMan
             }
         }
 
-        private bool CanMove(Enum.Directions nextDirection)
+        private bool CanMove(Directions nextDirection)
         {
             if(!IsOnTile(Pos, HitBox))
             {

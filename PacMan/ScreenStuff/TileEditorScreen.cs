@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using static PacMan.Enum;
 
 namespace PacMan.ScreenStuff
 {
@@ -28,10 +27,12 @@ namespace PacMan.ScreenStuff
         Rectangle gridHitbox;
         Sprite currentPallet;
         string fileName;
+        TileSelectionDialog tileDialog;
 
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
+            tileDialog = new TileSelectionDialog(graphics, inputManager);
             base.Load(graphics, content, bounds, screenManager, inputManager);
             gridHitbox = new Rectangle(Bounds.Left, Bounds.Top, (int)(Bounds.Width * fraction), (int)(Bounds.Height * fraction));
             currentPallet = null;
@@ -107,6 +108,7 @@ namespace PacMan.ScreenStuff
 
         public override void Update(GameTime gameTime)
         {
+            tileDialog.Update(gameTime);
             if (InputManager.MouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
                 if (gridHitbox.Contains(mousePos) && currentPallet != null)
@@ -127,6 +129,22 @@ namespace PacMan.ScreenStuff
                             currentPallet = sprite;
                         }
                     }
+                }
+            }
+            if(InputManager.MouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
+            {
+                bool isOnPallet = false;
+                foreach(Sprite pallet in pallet)
+                {
+                    if(pallet.HitBox.Contains(mousePos))
+                    {
+                        currentPallet = pallet;
+                        isOnPallet = true;
+                    }
+                }
+                if(isOnPallet)
+                {
+
                 }
             }
             if (InputManager.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Space))
@@ -183,7 +201,7 @@ namespace PacMan.ScreenStuff
                 readWriteStream.Close();
 
                 ScreenManager.LeaveScreen();
-                ScreenManager.SetScreen(Enum.Screens.Game);
+                ScreenManager.SetScreen(Screens.Game);
                 ScreenManager.CurrentScreen.Init();
             }
         }
@@ -197,6 +215,7 @@ namespace PacMan.ScreenStuff
 
             colorWheel.Draw(spriteBatch);
             base.Draw(spriteBatch);
+            tileDialog.Draw(spriteBatch);
         }
 
 
