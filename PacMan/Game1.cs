@@ -22,7 +22,6 @@ namespace PacMan
         private Settings settings;
         private Vector2 screenSize;
 
-        SpriteFont font;
 
         public Game1()
         {
@@ -54,7 +53,6 @@ namespace PacMan
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            font = Content.Load<SpriteFont>("Font");
 
             // TODO: use this.Content to load your game content here
         }
@@ -83,8 +81,6 @@ namespace PacMan
             spriteBatch.Begin();
 
             screenManager.CurrentScreen.Draw(spriteBatch);
-
-            spriteBatch.DrawString(font, "Hi Mikah", new Vector2(100, 100), Color.Black);
 
             spriteBatch.End();
 

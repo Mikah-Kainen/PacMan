@@ -32,7 +32,7 @@ namespace PacMan.ScreenStuff
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
-            tileDialog = new TileSelectionDialog(graphics, inputManager);
+            tileDialog = new TileSelectionDialog(graphics, inputManager, content);
             base.Load(graphics, content, bounds, screenManager, inputManager);
             gridHitbox = new Rectangle(Bounds.Left, Bounds.Top, (int)(Bounds.Width * fraction), (int)(Bounds.Height * fraction));
             currentPallet = null;
