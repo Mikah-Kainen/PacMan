@@ -8,7 +8,7 @@ namespace PacMan.TraversalStuff
     {
 
 
-        public static Stack<T> AStar<T>(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid)
+        public static Stack<T> AStar<T>(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previousPosition)
             where T : IComparable<T>, ITraversable<T>
         {
             if (startingPosition.PositionInGrid.Equals(targetPosition.PositionInGrid))
@@ -41,7 +41,7 @@ namespace PacMan.TraversalStuff
 
                 foreach (T neightbor in currentPosition.Neighbors)
                 {
-                    if (!neightbor.IsObstacle)
+                    if (!neightbor.IsObstacle && !neightbor.Equals(previousPosition))
                     {
                         if (neightbor.KnownDistance > currentPosition.KnownDistance + currentPosition.Weight)
                         {
@@ -58,6 +58,7 @@ namespace PacMan.TraversalStuff
                     }
                 }
                 currentPosition.WasVisited = true;
+                previousPosition = currentPosition;
             }
         
             

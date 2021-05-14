@@ -32,7 +32,7 @@ namespace PacMan.ScreenStuff
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
-            tileDialog = new TileSelectionDialog(graphics, inputManager, content);
+            tileDialog = new TileSelectionDialog(new Vector2(250, 500), Vector2.One, new Vector2(100, 60), Vector2.Zero, graphics, inputManager, content);
             base.Load(graphics, content, bounds, screenManager, inputManager);
             gridHitbox = new Rectangle(Bounds.Left, Bounds.Top, (int)(Bounds.Width * fraction), (int)(Bounds.Height * fraction));
             currentPallet = null;
@@ -108,7 +108,6 @@ namespace PacMan.ScreenStuff
 
         public override void Update(GameTime gameTime)
         {
-            tileDialog.Update(gameTime);
             if (InputManager.MouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
                 if (gridHitbox.Contains(mousePos) && currentPallet != null)
@@ -144,7 +143,7 @@ namespace PacMan.ScreenStuff
                 }
                 if(isOnPallet)
                 {
-
+                    Objects.Add(tileDialog);
                 }
             }
             if (InputManager.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Space))
@@ -215,7 +214,6 @@ namespace PacMan.ScreenStuff
 
             colorWheel.Draw(spriteBatch);
             base.Draw(spriteBatch);
-            tileDialog.Draw(spriteBatch);
         }
 
 

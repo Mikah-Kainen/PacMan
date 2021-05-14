@@ -85,7 +85,7 @@ namespace PacMan
 
 
             // 175 193
-            Vector2 pacSize = new Vector2(TileSize.X - 2, TileSize.Y - 2);
+            Vector2 pacSize = new Vector2(TileSize.X - 5, TileSize.Y - 5);
 
             var frameList = new List<AnimationFrame>();
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f), new Vector2(pacSize.X / 136f, pacSize.Y / 193f)));
@@ -95,12 +95,14 @@ namespace PacMan
 
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
+            Vector2 ghostSize = new Vector2(TileSize.X - 2, TileSize.Y - 2);
+
             frameList = new List<AnimationFrame>();
-            frameList.Add(new AnimationFrame(new Rectangle(234, 47, 162, 148), new Vector2(81, 74), Vector2.One));
-            frameList.Add(new AnimationFrame(new Rectangle(46, 236, 158, 147), new Vector2(76, 73.5f), Vector2.One));
-            frameList.Add(new AnimationFrame(new Rectangle(45, 43, 161, 154), new Vector2(80.5f, 77), Vector2.One));
-            frameList.Add(new AnimationFrame(new Rectangle(235, 233, 160, 156), new Vector2(80, 78), Vector2.One));
-            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), new Vector2((TileSize.X - 5) / frameList[0].HitBox.Width, (TileSize.Y - 5) / frameList[0].HitBox.Height), frameList, 1f, 1, ScreenManager, InputManager, TimeSpan.FromMilliseconds(600)));
+            frameList.Add(new AnimationFrame(new Rectangle(234, 47, 162, 148), new Vector2(81, 74), new Vector2(ghostSize.X / 162, ghostSize.Y / 148)));
+            frameList.Add(new AnimationFrame(new Rectangle(46, 236, 158, 147), new Vector2(76, 73.5f), new Vector2(ghostSize.X / 158, ghostSize.Y / 147)));
+            frameList.Add(new AnimationFrame(new Rectangle(45, 43, 161, 154), new Vector2(80.5f, 77), new Vector2(ghostSize.X / 161, ghostSize.Y / 154)));
+            frameList.Add(new AnimationFrame(new Rectangle(235, 233, 160, 156), new Vector2(80, 78), new Vector2(ghostSize.X / 160, ghostSize.Y / 156)));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, 1f, PositionToTile));
             Objects.Add(pacman);
             foreach (Ghost ghost in ghosts)
             {
@@ -119,7 +121,7 @@ namespace PacMan
 
             if (IsOnTile(ghosts[0].Pos, ghosts[0].HitBox))
             {
-                ghosts[0].path = Traversals.AStar(PositionToTile(ghosts[0].Pos), PositionToTile(pacman.Pos), Heuristic, grid);
+                ghosts[0].path = Traversals.AStar(PositionToTile(ghosts[0].Pos), PositionToTile(pacman.Pos), Heuristic, grid, ghosts[0].PreviousTile);
             }
 
             if (ghostPos.PositionInGrid == pacmanPos.PositionInGrid)

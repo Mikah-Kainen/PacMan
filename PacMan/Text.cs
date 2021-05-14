@@ -25,7 +25,7 @@ namespace PacMan
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(Font, Message, new Vector2(100, 100), Color);
+            spriteBatch.DrawString(Font, Message, Pos, Color);
         }
     }
 }

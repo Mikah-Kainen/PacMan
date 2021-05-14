@@ -8,21 +8,22 @@ using System.Text;
 
 namespace PacMan
 {
-    public class TileSelectionDialog
+    public class TileSelectionDialog : GameObject
     {
         public List<Button> Buttons { get; set; }
         public List<Text> Texts { get; set; }
         public Vector2 Size { get; set; }
         string[] buttonNames;
 
-        public TileSelectionDialog(GraphicsDeviceManager graphicsDeviceManager, InputManager input, ContentManager content)
+        public TileSelectionDialog(Vector2 pos, Vector2 size, Vector2 scale, Vector2 origin, GraphicsDeviceManager graphicsDeviceManager, InputManager input, ContentManager content)
+            : base(pos, size, scale, origin)
         {
             buttonNames = Enum.GetNames(typeof(TileType));
             Buttons = new List<Button>();
             Texts = new List<Text>();
-            Vector2 incriment = new Vector2(0, 20);
-            Vector2 currentPos = new Vector2(100, 100);
-            Size = new Vector2(100, 20);
+            Vector2 incriment = new Vector2(0, HitBox.Height / buttonNames.Length);
+            Vector2 currentPos = pos;
+            Size = new Vector2(HitBox.Width, HitBox.Height / buttonNames.Length);
 
             Texture2D whitePixel = Color.White.CreatePixel(graphicsDeviceManager.GraphicsDevice);
             SpriteFont font = content.Load<SpriteFont>("Font");
@@ -34,7 +35,7 @@ namespace PacMan
             }
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             foreach(Button button in Buttons)
             {
@@ -45,7 +46,7 @@ namespace PacMan
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             foreach (Button button in Buttons)
             {
@@ -56,5 +57,6 @@ namespace PacMan
                 text.Draw(spriteBatch);
             }
         }
+
     }
 }
