@@ -27,7 +27,10 @@ namespace PacMan
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Tex, HitBox, Tint);
+            if (IsVisable)
+            {
+                spriteBatch.Draw(Tex, HitBox, Tint);
+            }
         }
 
        

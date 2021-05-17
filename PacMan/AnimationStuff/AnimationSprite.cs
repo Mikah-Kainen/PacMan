@@ -21,7 +21,7 @@ namespace PacMan
         {
             get
             {
-                return new Rectangle((int)(Pos.X - CurrentFrame.HitBox.Width * Scale.X / 2), (int)(Pos.Y - CurrentFrame.HitBox.Height * Scale.Y / 2), (int)(CurrentFrame.HitBox.Width * Scale.X), (int)(CurrentFrame.HitBox.Height * Scale.Y));
+                return new Rectangle((int)(Pos.X - CurrentFrame.HitBox.Width * Scale.X * CurrentFrame.Scale.X / 2), (int)(Pos.Y - CurrentFrame.HitBox.Height * Scale.Y * CurrentFrame.Scale.Y / 2), (int)(CurrentFrame.HitBox.Width * Scale.X * CurrentFrame.Scale.X), (int)(CurrentFrame.HitBox.Height * Scale.Y * CurrentFrame.Scale.Y));
             }
         }
 

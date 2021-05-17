@@ -13,6 +13,8 @@ namespace PacMan
         public Vector2 Size { get; internal set; }
 
         public Vector2 Origin;
+
+        public bool IsVisable { get; set; }
         public virtual Rectangle HitBox
         {
             get
@@ -28,12 +30,14 @@ namespace PacMan
             }
         }
         public Vector2 Scale { get; internal set; }
+        public object Tag { get; set; }
         public GameObject(Vector2 pos, Vector2 size, Vector2 scale, Vector2 origin)
         {
             Pos = pos;
             Size = size;
             Scale = scale;
             Origin = origin;
+            IsVisable = true;
         }
 
         public abstract void Update(GameTime gameTime);

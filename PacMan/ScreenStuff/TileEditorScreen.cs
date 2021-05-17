@@ -21,20 +21,23 @@ namespace PacMan.ScreenStuff
         Texture2D pixelMap;
         Vector2 tileSize;
         Sprite[,] grid;
-        List<Sprite> pallet;
+        List<Pallet> pallets;
         ColorWheel colorWheel;
         float fraction = 3 / 4f;
         Rectangle gridHitbox;
-        Sprite currentPallet;
+        Pallet currentPallet;
         string fileName;
         TileSelectionDialog tileDialog;
+
 
         //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
-            tileDialog = new TileSelectionDialog(new Vector2(250, 500), Vector2.One, new Vector2(100, 60), Vector2.Zero, graphics, inputManager, content);
             base.Load(graphics, content, bounds, screenManager, inputManager);
             gridHitbox = new Rectangle(Bounds.Left, Bounds.Top, (int)(Bounds.Width * fraction), (int)(Bounds.Height * fraction));
+            tileDialog = new TileSelectionDialog(new Vector2(gridHitbox.Width + 20, 20), Vector2.One, new Vector2(100, 60), Vector2.Zero, graphics, inputManager, content);
+            tileDialog.IsVisable = false;
+            Objects.Add(tileDialog);
             currentPallet = null;
 
             OpenFileDialog dialog = new OpenFileDialog();
@@ -69,19 +72,17 @@ namespace PacMan.ScreenStuff
 
             Vector2 paintSize = new Vector2(bounds.Width * (1 - fraction) / 5, bounds.Height * (1 - fraction) / 5);
             Vector2 paintOrigin = new Vector2(paintSize.X / 2, paintSize.Y / 2);
-            pallet = new List<Sprite>();
+            pallets = new List<Pallet>();
 
-            //
-            pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * paintSize.X, 2 * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
-
+           
             var textureDictionary = ScreenManager.Settings.ColorDictionary;
             int xPos = 1;
             int yPos = 1;
             foreach (var kvp in textureDictionary)
             {
-                if (pallet.Count < 14)
+                if (pallets.Count < 14)
                 {
-                    pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), kvp.Key, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
+                    pallets.Add(new Pallet(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), kvp.Key, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin), kvp.Value));
                 }
                 xPos++;
                 if (xPos > 7)
@@ -92,7 +93,7 @@ namespace PacMan.ScreenStuff
             }
             for (int i = 0; i < 3; i++)
             {
-                pallet.Add(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin));
+                pallets.Add(new Pallet(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin), TileType.Background));
                 xPos++;
                 if (xPos > 7)
                 {
@@ -102,30 +103,29 @@ namespace PacMan.ScreenStuff
             }
             colorWheel = new ColorWheel(new Vector2(bounds.Width * fraction * 9 / 8, bounds.Height * fraction * 9 / 8), 100, graphics);
 
-
-            Objects.AddRange(pallet);
+            Objects.AddRange(pallets);
         }
 
         public override void Update(GameTime gameTime)
         {
             if (InputManager.MouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
-                if (gridHitbox.Contains(mousePos) && currentPallet != null)
+                if (gridHitbox.Contains(mousePos) && currentPallet.PaintContainer != null)
                 {
                     Sprite spriteToChange = grid[(int)(mousePos.Y / tileSize.Y), (int)(mousePos.X / tileSize.X)];
-                    spriteToChange.Tint = currentPallet.Tint;
+                    spriteToChange.Tint = currentPallet.PaintContainer.Tint;
                 }
-                else if (colorWheel.GetColor(mousePos).HasValue && currentPallet != null)
+                else if (colorWheel.GetColor(mousePos).HasValue && currentPallet.PaintContainer != null)
                 {
-                    currentPallet.Tint = colorWheel.GetColor(mousePos).Value;
+                    currentPallet.PaintContainer.Tint = colorWheel.GetColor(mousePos).Value;
                 }
                 else
                 {
-                    foreach (Sprite sprite in pallet)
+                    foreach (Pallet pallet in pallets)
                     {
-                        if (sprite.HitBox.Contains(mousePos))
+                        if (pallet.PaintContainer.HitBox.Contains(mousePos))
                         {
-                            currentPallet = sprite;
+                            currentPallet = pallet;
                         }
                     }
                 }
@@ -133,9 +133,9 @@ namespace PacMan.ScreenStuff
             if(InputManager.MouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed)
             {
                 bool isOnPallet = false;
-                foreach(Sprite pallet in pallet)
+                foreach(Pallet pallet in pallets)
                 {
-                    if(pallet.HitBox.Contains(mousePos))
+                    if(pallet.PaintContainer.HitBox.Contains(mousePos))
                     {
                         currentPallet = pallet;
                         isOnPallet = true;
@@ -143,7 +143,7 @@ namespace PacMan.ScreenStuff
                 }
                 if(isOnPallet)
                 {
-                    Objects.Add(tileDialog);
+                    tileDialog.IsVisable = true;
                 }
             }
             if (InputManager.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Space))
@@ -203,6 +203,14 @@ namespace PacMan.ScreenStuff
                 ScreenManager.SetScreen(Screens.Game);
                 ScreenManager.CurrentScreen.Init();
             }
+
+            base.Update(gameTime);
+
+            if(tileDialog.SelectedType != TileType.None)
+            {
+                currentPallet.TileType = tileDialog.SelectedType;
+                tileDialog.IsVisable = false;
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -213,6 +221,7 @@ namespace PacMan.ScreenStuff
             }
 
             colorWheel.Draw(spriteBatch);
+
             base.Draw(spriteBatch);
         }
 

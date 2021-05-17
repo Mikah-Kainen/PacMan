@@ -22,6 +22,7 @@ namespace PacMan
             Wall,
             Background,
             Teleport,
+            None,
         }
 
         public enum Screens
