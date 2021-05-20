@@ -108,8 +108,6 @@ namespace PacMan
             {
                 Objects.Add(ghost);
             }
-
-            grid[3, 0].TileType = TileType.Teleport;
         }
 
         public override void Update(GameTime gameTime)

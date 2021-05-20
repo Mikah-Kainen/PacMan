@@ -65,7 +65,9 @@ namespace PacMan.ScreenStuff
             {
                 for (int x = 0; x < pixelMap.Width; x++)
                 {
-                    grid[y, x] = pixels[x + y * pixelMap.Width].CreateSprite(GraphicsDeviceManager.GraphicsDevice, tileSize, new Point(x, y));
+                    Sprite currentSprite = pixels[x + y * pixelMap.Width].CreateSprite(GraphicsDeviceManager.GraphicsDevice, tileSize, new Point(x, y));
+                    currentSprite.Tag = ScreenManager.Settings.ColorDictionary[currentSprite.Tint];
+                    grid[y, x] = currentSprite;
                 }
             }
 
@@ -114,10 +116,12 @@ namespace PacMan.ScreenStuff
                 {
                     Sprite spriteToChange = grid[(int)(mousePos.Y / tileSize.Y), (int)(mousePos.X / tileSize.X)];
                     spriteToChange.Tint = currentPallet.PaintContainer.Tint;
+                    spriteToChange.Tag = currentPallet.TileType;
                 }
                 else if (colorWheel.GetColor(mousePos).HasValue && currentPallet.PaintContainer != null)
                 {
                     currentPallet.PaintContainer.Tint = colorWheel.GetColor(mousePos).Value;
+                    currentPallet.TileType = TileType.Background;
                 }
                 else
                 {
@@ -144,6 +148,7 @@ namespace PacMan.ScreenStuff
                 if(isOnPallet)
                 {
                     tileDialog.IsVisable = true;
+                    tileDialog.CurrentPalletType = currentPallet.TileType;
                 }
             }
             if (InputManager.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Space))
@@ -154,7 +159,7 @@ namespace PacMan.ScreenStuff
                 {
                     if (!ScreenManager.Settings.ColorDictionary.ContainsKey(pixel.Tint))
                     {
-                        ScreenManager.Settings.ColorDictionary.Add(pixel.Tint, TileType.Background);
+                        ScreenManager.Settings.ColorDictionary.Add(pixel.Tint, (TileType)pixel.Tag);
                     }
                 }
 
@@ -209,6 +214,18 @@ namespace PacMan.ScreenStuff
             if(tileDialog.SelectedType != TileType.None)
             {
                 currentPallet.TileType = tileDialog.SelectedType;
+                int currentArgb = currentPallet.PaintContainer.Tint.ToArgb();
+                foreach(Sprite tile in grid)
+                {
+                    if(tile.Tint.ToArgb() == currentArgb)
+                    {
+                        tile.Tag = currentPallet.TileType;
+                    }
+                }
+                if (ScreenManager.Settings.ColorDictionary.ContainsKey(currentPallet.PaintContainer.Tint))
+                {
+                    ScreenManager.Settings.ColorDictionary[currentPallet.PaintContainer.Tint] = tileDialog.SelectedType;
+                }
                 tileDialog.IsVisable = false;
             }
         }

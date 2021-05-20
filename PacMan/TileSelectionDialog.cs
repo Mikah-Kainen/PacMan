@@ -14,6 +14,24 @@ namespace PacMan
         public List<Text> Texts { get; set; }
         public Vector2 Size { get; set; }
         public TileType SelectedType { get; set; }
+        public TileType CurrentPalletType 
+        {
+
+            set 
+            { 
+                foreach(Button button in Buttons)
+                {
+                    if((TileType)button.Tag == value)
+                    {
+                        button.Tint = Color.Yellow;
+                    }
+                    else
+                    {
+                        button.Tint = Color.White;
+                    }
+                }
+            } 
+        }
         public TileSelectionDialog(Vector2 pos, Vector2 size, Vector2 scale, Vector2 origin, GraphicsDeviceManager graphicsDeviceManager, InputManager input, ContentManager content)
             : base(pos, size, scale, origin)
         {
@@ -29,12 +47,15 @@ namespace PacMan
             SpriteFont font = content.Load<SpriteFont>("Font");
             foreach (TileType type in buttonTypes)
             {
-                Buttons.Add(new Button(whitePixel, Color.White, currentPos, Size, Vector2.Zero, input)
+                if (type != TileType.None)
                 {
-                    Tag = type
-                });
-                Texts.Add(new Text(currentPos, Vector2.One, Size, Vector2.Zero, font, type.ToString(), Color.Black));
-                currentPos += incriment;
+                    Buttons.Add(new Button(whitePixel, Color.White, currentPos, Size, Vector2.Zero, input)
+                    {
+                        Tag = type
+                    });
+                    Texts.Add(new Text(currentPos, Vector2.One, Size, Vector2.Zero, font, type.ToString(), Color.Black));
+                    currentPos += incriment;
+                }
             }
         }
 

@@ -10,15 +10,11 @@ namespace PacMan
     public class ColorWheel
     {
         private List<Sprite> sprites;
-        private int size;
-        private Vector2 position;
         private Dictionary<Point, Color> posToColor;
         public ColorWheel(Vector2 position, int size, GraphicsDeviceManager graphics)
         {
             Texture2D pixel = Color.White.CreatePixel(graphics.GraphicsDevice);
             sprites = new List<Sprite>();
-            this.size = size;
-            this.position = position;
 
             posToColor = new Dictionary<Point, Color>();
             //Keep track of a dictionary that is from (x, y) -> Color
