@@ -43,8 +43,8 @@ namespace PacMan
             Color[] pixels = new Color[pixelMap.Width * pixelMap.Height];
             pixelMap.GetData(pixels);
 
-            float xChunk = (int)screen.Width / pixelMap.Width + 1;
-            float yChunk = (int)screen.Height / pixelMap.Height + 1;
+            float xChunk = screen.Width / pixelMap.Width;
+            float yChunk = screen.Height / pixelMap.Height;
 
             TileSize = new Vector2(xChunk, yChunk);
 
@@ -83,26 +83,26 @@ namespace PacMan
 
             //What is a good width and height for the pacman?
 
-
-            // 175 193
-            Vector2 pacSize = new Vector2(TileSize.X - 5, TileSize.Y - 5);
+            float pacSpeed = TileSize.X / 20;
+            Vector2 pacSize = new Vector2(TileSize.X - pacSpeed, TileSize.Y - pacSpeed);
 
             var frameList = new List<AnimationFrame>();
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f), new Vector2(pacSize.X / 136f, pacSize.Y / 193f)));
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f), new Vector2(pacSize.X / 180f, pacSize.Y / 193f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f), new Vector2(pacSize.X / 195f, pacSize.Y / 193f)));
-            pacman = new Pacman(pacmansprite, Color.White, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), scale: Vector2.One, frameList, TimeSpan.FromMilliseconds(100), 2f, ScreenManager, InputManager, PositionToTile);
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), scale: Vector2.One, frameList, TimeSpan.FromMilliseconds(100), pacSpeed, ScreenManager, InputManager, PositionToTile);
 
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
-            Vector2 ghostSize = new Vector2(TileSize.X - 2, TileSize.Y - 2);
+            float ghostSpeed = TileSize.X / 40;
+            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed, TileSize.Y - ghostSpeed);
 
             frameList = new List<AnimationFrame>();
             frameList.Add(new AnimationFrame(new Rectangle(234, 47, 162, 148), new Vector2(81, 74), new Vector2(ghostSize.X / 162, ghostSize.Y / 148)));
             frameList.Add(new AnimationFrame(new Rectangle(46, 236, 158, 147), new Vector2(76, 73.5f), new Vector2(ghostSize.X / 158, ghostSize.Y / 147)));
             frameList.Add(new AnimationFrame(new Rectangle(45, 43, 161, 154), new Vector2(80.5f, 77), new Vector2(ghostSize.X / 161, ghostSize.Y / 154)));
             frameList.Add(new AnimationFrame(new Rectangle(235, 233, 160, 156), new Vector2(80, 78), new Vector2(ghostSize.X / 160, ghostSize.Y / 156)));
-            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, 1f, PositionToTile));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, PositionToTile));
             Objects.Add(pacman);
             foreach (Ghost ghost in ghosts)
             {
