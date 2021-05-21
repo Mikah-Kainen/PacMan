@@ -43,16 +43,6 @@ namespace PacMan
             previousPos = new Vector2();
         }
 
-        public Pacman(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, TimeSpan timeBetweenFrames, int iterationsPerUpdate, ScreenManager screenManager, InputManager inputManager)
-    : base(tex, tint, pos, scale, frames, timeBetweenFrames)
-        {
-            speed = 1;
-            this.iterationsPerUpdate = iterationsPerUpdate;
-            this.screenManager = screenManager;
-            this.inputManager = inputManager;
-            CurrentDirection = Directions.None;
-        }
-
 
         public override void Update(GameTime gameTime)
         {
@@ -110,9 +100,12 @@ namespace PacMan
                         break;
 
                     case Directions.Down:
-                        if(posInGrid.Y == 19)
+                        if (posInGrid.Y == 18)
                         {
-
+                            if (getTile(Pos).TileType == TileType.Teleport)
+                            {
+                                Pos.Y = Math.Abs(Pos.Y - screenManager.CurrentScreen.Bounds.Height);
+                            }
                         }
                         else if (GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileType.Wall)
                         {
@@ -126,9 +119,9 @@ namespace PacMan
                         break;
 
                     case Directions.Left:
-                        if (posInGrid.X == 0)
+                        if (posInGrid.X == 0 & getTile(Pos).TileType == TileType.Teleport)
                         {
-
+                            Pos.X = Math.Abs(Pos.X - screenManager.CurrentScreen.Bounds.Width);
                         }    
                         if (GameScreen.PointToTile[new Point(posInGrid.X - 1, posInGrid.Y)].TileType == TileType.Wall)
                         {
@@ -142,9 +135,9 @@ namespace PacMan
                         break;
 
                     case Directions.Right:
-                        if(posInGrid.X == 19)
+                        if (posInGrid.X == 18 & getTile(Pos).TileType == TileType.Teleport)
                         {
-
+                            Pos.X = Math.Abs(Pos.X - screenManager.CurrentScreen.Bounds.Width);
                         }
                         if (GameScreen.PointToTile[new Point(posInGrid.X + 1, posInGrid.Y)].TileType == TileType.Wall)
                         {
