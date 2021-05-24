@@ -48,6 +48,7 @@ namespace PacMan
 
         public override void Update(GameTime gameTime)
         {
+
             Keys[] currentKeys = inputManager.KeyboardState.GetPressedKeys();
             int index = 0;
             if (currentKeys.Length > 0)

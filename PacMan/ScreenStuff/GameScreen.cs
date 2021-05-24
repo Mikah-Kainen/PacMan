@@ -19,6 +19,7 @@ namespace PacMan
         private Pacman pacman;
         private List<Ghost> ghosts;
         private List<Tile> walls;
+        private Fruit fruit;
 
         public static Vector2 TileSize;
         public static Dictionary<Point, Tile> PointToTile;
@@ -90,7 +91,7 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f), new Vector2(pacSize.X / 136f, pacSize.Y / 193f)));
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f), new Vector2(pacSize.X / 180f, pacSize.Y / 193f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f), new Vector2(pacSize.X / 195f, pacSize.Y / 193f)));
-            pacman = new Pacman(pacmansprite, Color.White, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), scale: Vector2.One, frameList, TimeSpan.FromMilliseconds(100), pacSpeed, ScreenManager, InputManager, PositionToTile);
+            pacman = new Pacman(pacmansprite, Color.Transparent, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), scale: Vector2.One, frameList, TimeSpan.FromMilliseconds(100), pacSpeed, ScreenManager, InputManager, PositionToTile);
 
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
@@ -103,7 +104,13 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(45, 43, 161, 154), new Vector2(80.5f, 77), new Vector2(ghostSize.X / 161, ghostSize.Y / 154)));
             frameList.Add(new AnimationFrame(new Rectangle(235, 233, 160, 156), new Vector2(80, 78), new Vector2(ghostSize.X / 160, ghostSize.Y / 156)));
             ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, PositionToTile));
+
+
+            Vector2 fruitPos = new Vector2(300, 300);
+
+            fruit = new Fruit(Color.White.CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Transparent, Color.White, fruitPos, Vector2.Zero, new Vector2(50, 50), Vector2.Zero);
             Objects.Add(pacman);
+            Objects.Add(fruit);
             foreach (Ghost ghost in ghosts)
             {
                 Objects.Add(ghost);

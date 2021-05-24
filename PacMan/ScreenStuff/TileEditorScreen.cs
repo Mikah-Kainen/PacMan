@@ -13,9 +13,10 @@ namespace PacMan.ScreenStuff
     class TileEditorScreen : Screen
     {
         /// <summary>
-        /// ///////////////// SAVEEEEEEE
+        /// Write to new Json file and load from there
         /// add button to add pallets (optional)
         /// </summary>
+        
         GraphicsDevice graphicsDevice => GraphicsDeviceManager.GraphicsDevice;
         Point mousePos => InputManager.MouseState.Position;
         Texture2D pixelMap;
@@ -23,14 +24,13 @@ namespace PacMan.ScreenStuff
         Sprite[,] grid;
         List<Pallet> pallets;
         ColorWheel colorWheel;
-        float fraction = 3 / 4f;
+        float fraction = 4/5f;
         Rectangle gridHitbox;
         Pallet currentPallet;
         string fileName;
         TileSelectionDialog tileDialog;
 
 
-        //
         public TileEditorScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
             base.Load(graphics, content, bounds, screenManager, inputManager);
