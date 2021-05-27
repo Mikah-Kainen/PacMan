@@ -53,7 +53,7 @@ namespace PacMan
                     {
                         Tag = type
                     });
-                    Texts.Add(new Text(currentPos, Vector2.One, Size, Vector2.Zero, font, type.ToString(), Color.Black));
+                    Texts.Add(new Text(currentPos, Size, Vector2.Zero, font, type.ToString(), Color.Black));
                     currentPos += incriment;
                 }
             }

@@ -11,8 +11,8 @@ namespace PacMan
         public SpriteFont Font { get; set; }
         public string Message { get; set; }
         public Color Color { get; set; }
-        public Text(Vector2 pos, Vector2 size, Vector2 scale, Vector2 origin, SpriteFont font, string text, Color color)
-            : base(pos, size, scale, origin)
+        public Text(Vector2 pos, Vector2 size, Vector2 origin, SpriteFont font, string text, Color color)
+            : base(pos, size, Vector2.One, origin)
         {
             Font = font;
             Message = text;

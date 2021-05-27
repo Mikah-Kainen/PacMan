@@ -36,6 +36,7 @@ namespace PacMan
             /////////////////////////////////
             ////////////////////////////////It could be a big problem if the ghost ever gets to his target tile and has nowhere to go but I dont think that will ever happen
             /////////////////////////////////
+
             if(getTile(Pos) != CurrentTile)
             {
                 PreviousTile = CurrentTile;
@@ -53,19 +54,19 @@ namespace PacMan
                 {
                     path.Pop();
                 }
-                if (targetPos.X > Pos.X)
+                if (targetPos.X > HitBox.X)
                 {
                     CurrentDirection = Directions.Right;
                 }
-                else if (targetPos.X < Pos.X)
+                else if (targetPos.X < HitBox.X)
                 {
                     CurrentDirection = Directions.Left;
                 }
-                else if (targetPos.Y < Pos.Y)
+                else if (targetPos.Y < HitBox.Y)
                 {
                     CurrentDirection = Directions.Up;
                 }
-                else if (targetPos.Y > Pos.Y)
+                else if (targetPos.Y > HitBox.Y)
                 {
                     CurrentDirection = Directions.Down;
                 }
