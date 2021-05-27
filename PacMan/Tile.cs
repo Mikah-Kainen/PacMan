@@ -31,7 +31,7 @@ namespace PacMan
 
         public bool IsObstacle { get { return Tint == Color.Black; } }
         public Tile(Texture2D tex, Color tint, Vector2 scale, TileType tileType, Point posInGrid)
-            : base(tex, tint, Vector2.Zero, scale, new Vector2(.5f * scale.X * tex.Width, .5f * scale.Y * tex.Height))
+            : base(tex, tint, Vector2.Zero, scale, /*new Vector2(.5f * scale.X * tex.Width, .5f * scale.Y * tex.Height)*/ Vector2.Zero)
         {
             TileType = tileType;
             Neighbors = new List<Tile>();

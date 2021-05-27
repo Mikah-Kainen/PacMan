@@ -91,7 +91,7 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f), new Vector2(pacSize.X / 136f, pacSize.Y / 193f)));
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f), new Vector2(pacSize.X / 180f, pacSize.Y / 193f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f), new Vector2(pacSize.X / 195f, pacSize.Y / 193f)));
-            pacman = new Pacman(pacmansprite, Color.Transparent, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), scale: Vector2.One, frameList, TimeSpan.FromMilliseconds(100), pacSpeed, ScreenManager, InputManager, PositionToTile);
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), scale: Vector2.One, frameList, TimeSpan.FromMilliseconds(100), pacSpeed, ScreenManager, InputManager, PositionToTile);
 
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
@@ -106,9 +106,9 @@ namespace PacMan
             ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, PositionToTile));
 
 
-            Vector2 fruitPos = new Vector2(300, 300);
+            Vector2 fruitPos = new Vector2(300 + TileSize.X * .5f, 300 + TileSize.Y * .5f);
 
-            fruit = new Fruit(Color.White.CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Transparent, Color.White, fruitPos, Vector2.Zero, new Vector2(50, 50), Vector2.Zero);
+            fruit = new Fruit(Color.White.CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Transparent, Color.White, fruitPos, Vector2.Zero, TileSize, new Vector2(.5f, .5f));
             Objects.Add(pacman);
             Objects.Add(fruit);
             foreach (Ghost ghost in ghosts)

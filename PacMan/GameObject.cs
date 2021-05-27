@@ -19,14 +19,7 @@ namespace PacMan
         {
             get
             {
-                //if ()
-                //{
-                //    return new Rectangle((int)Pos.X, (int)Pos.Y, (int)(Size.X * Scale.X), (int)(Size.Y * Scale.Y));
-                //}
-                //else
-                //{
-                    return new Rectangle((int)Math.Round((Pos.X - Origin.X)), (int)Math.Round((Pos.Y - Origin.Y)), (int)Math.Round((Size.X * Scale.X)), (int)Math.Round((Size.Y * Scale.Y)));
-                //}
+                return new Rectangle((int)Math.Round((Pos.X - Origin.X * Scale.X)), (int)Math.Round((Pos.Y - Origin.Y * Scale.Y)), (int)Math.Round((Size.X * Scale.X)), (int)Math.Round((Size.Y * Scale.Y)));
             }
         }
         public Vector2 Scale { get; internal set; }
