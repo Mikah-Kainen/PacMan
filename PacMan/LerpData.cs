@@ -7,7 +7,7 @@ namespace PacMan
     public class LerpData<T>
     {
         T start;
-        T end;
+        public T End { get; set; }
         float percentComplete;
         float step;
         Func<T, T, float, T> lerpFunction;
@@ -17,7 +17,7 @@ namespace PacMan
         public LerpData(T start, T end, float step, Func<T, T, float, T> lerpFunction)
         {
             this.start = start;
-            this.end = end;
+            this.End = end;
             this.step = step;
             percentComplete = 0;
             this.lerpFunction = lerpFunction;
@@ -25,9 +25,9 @@ namespace PacMan
 
         public T GetCurrent()
         {
-            if (IsCompleted) { return end; }
+            if (IsCompleted) { return End; }
 
-            T returnValue = lerpFunction(start, end, percentComplete);
+            T returnValue = lerpFunction(start, End, percentComplete);
             percentComplete += step;
 
             return returnValue;

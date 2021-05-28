@@ -29,8 +29,6 @@ namespace PacMan
 
         Stopwatch watch;
 
-        private Text GhostPos;
-
         public GameScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
             base.Load(graphics, content, bounds, screenManager, inputManager);
@@ -45,7 +43,6 @@ namespace PacMan
             PointToTile = new Dictionary<Point, Tile>();
             pixelMap = ContentManager.Load<Texture2D>("pacmanmap");
             grid = new Tile[pixelMap.Width, pixelMap.Height];
-            GhostPos = new Text(new Vector2(ScreenManager.CurrentScreen.Bounds.Right - 100, ScreenManager.CurrentScreen.Bounds.Top + 40), Vector2.One, Vector2.Zero, ContentManager.Load<SpriteFont>("Font"), "Starting Position", Color.White);
 
             Color[] pixels = new Color[pixelMap.Width * pixelMap.Height];
             pixelMap.GetData(pixels);
@@ -109,15 +106,23 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(46, 236, 158, 147), new Vector2(76, 73.5f), new Vector2(ghostSize.X / 158, ghostSize.Y / 147)));
             frameList.Add(new AnimationFrame(new Rectangle(45, 43, 161, 154), new Vector2(80.5f, 77), new Vector2(ghostSize.X / 161, ghostSize.Y / 154)));
             frameList.Add(new AnimationFrame(new Rectangle(235, 233, 160, 156), new Vector2(80, 78), new Vector2(ghostSize.X / 160, ghostSize.Y / 156)));
-            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed / 2, PositionToTile));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, PositionToTile));
 
+            Vector2 fruitPos;
+            Random random = new Random();
+            do
+            {
+                fruitPos = new Vector2(random.Next(0, pixelMap.Width), random.Next(0, pixelMap.Height));
+            } while (PointToTile[fruitPos.ToPoint()].TileType != TileType.Background);
+            fruitPos = fruitPos * TileSize;
+            fruitPos += TileSize / 2;
 
-            Vector2 fruitPos = new Vector2(300 + TileSize.X * .5f, 300 + TileSize.Y * .5f);
+            Texture2D fruits = ContentManager.Load<Texture2D>("pacmanfruit");
+            Rectangle currentFrame = new Rectangle(0, 0, 52, 52);
 
-            fruit = new Fruit(Color.White.CreatePixel(GraphicsDeviceManager.GraphicsDevice), Color.Transparent, Color.White, fruitPos, Vector2.Zero, TileSize, new Vector2(.5f, .5f));
+            fruit = new Fruit(fruits, currentFrame, Color.Transparent, Color.White, fruitPos, Vector2.Zero, TileSize, new Vector2(.5f, .5f));
             Objects.Add(pacman);
             Objects.Add(fruit);
-            Objects.Add(GhostPos);
             foreach (Ghost ghost in ghosts)
             {
                 Objects.Add(ghost);
@@ -130,7 +135,6 @@ namespace PacMan
         {
             var ghostPos = PositionToTile(ghosts[0].Pos);
             var pacmanPos = PositionToTile(pacman.Pos);
-            GhostPos.Message = ghostPos.PositionInGrid.ToString() + "\n\r" + IsOnTile(ghosts[0].Pos, ghosts[0].HitBox).ToString();
 
             if (watch.ElapsedMilliseconds < 2000) return;
 
