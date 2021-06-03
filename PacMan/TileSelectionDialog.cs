@@ -13,15 +13,15 @@ namespace PacMan
         public List<Button> Buttons { get; set; }
         public List<Text> Texts { get; set; }
         public Vector2 Size { get; set; }
-        public TileType SelectedType { get; set; }
-        public TileType CurrentPalletType 
+        public TileTypes SelectedType { get; set; }
+        public TileTypes CurrentPalletType 
         {
 
             set 
             { 
                 foreach(Button button in Buttons)
                 {
-                    if((TileType)button.Tag == value)
+                    if((TileTypes)button.Tag == value)
                     {
                         button.Tint = Color.Yellow;
                     }
@@ -35,7 +35,7 @@ namespace PacMan
         public TileSelectionDialog(Vector2 pos, Vector2 size, Vector2 scale, Vector2 origin, GraphicsDeviceManager graphicsDeviceManager, InputManager input, ContentManager content)
             : base(pos, size, scale, origin)
         {
-            var buttonTypes = (TileType[])Enum.GetValues(typeof(TileType));
+            var buttonTypes = (TileTypes[])Enum.GetValues(typeof(TileTypes));
 
             Buttons = new List<Button>();
             Texts = new List<Text>();
@@ -45,9 +45,9 @@ namespace PacMan
 
             Texture2D whitePixel = Color.White.CreatePixel(graphicsDeviceManager.GraphicsDevice);
             SpriteFont font = content.Load<SpriteFont>("Font");
-            foreach (TileType type in buttonTypes)
+            foreach (TileTypes type in buttonTypes)
             {
-                if (type != TileType.None)
+                if (type != TileTypes.None)
                 {
                     Buttons.Add(new Button(whitePixel, Color.White, currentPos, Size, Vector2.Zero, input)
                     {
@@ -67,13 +67,13 @@ namespace PacMan
                 {
                     if (button.IsClicked())
                     {
-                        SelectedType = (TileType)button.Tag;
+                        SelectedType = (TileTypes)button.Tag;
                     }
                 }
             }
             else
             {
-                SelectedType = TileType.None;
+                SelectedType = TileTypes.None;
             }
         }
 

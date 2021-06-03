@@ -20,7 +20,7 @@ namespace PacMan
             return texture;
         }
 
-        public static Tile CreateTile(this Color color, GraphicsDevice device, TileType tileType, Vector2 scale, Point posInGrid)
+        public static Tile CreateTile(this Color color, GraphicsDevice device, TileTypes tileType, Vector2 scale, Point posInGrid)
         {
             return new Tile(color.CreatePixel(device), color, scale, tileType, posInGrid);
         }
@@ -30,7 +30,7 @@ namespace PacMan
             return new Sprite(Color.White.CreatePixel(device), color, new Vector2(posInGrid.X * tileSize.X, posInGrid.Y * tileSize.Y), tileSize, Vector2.Zero);
         }
 
-        public static Tile CreateTile(this (Color color, TileType tileType) tuple, GraphicsDevice device, Vector2 tileSize, Point posInGrid)
+        public static Tile CreateTile(this (Color color, TileTypes tileType) tuple, GraphicsDevice device, Vector2 tileSize, Point posInGrid)
         {
             return new Tile(Color.White.CreatePixel(device), tuple.color, tileSize, tuple.tileType, posInGrid);
         }

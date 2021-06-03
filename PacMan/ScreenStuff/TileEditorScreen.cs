@@ -95,7 +95,7 @@ namespace PacMan.ScreenStuff
             }
             for (int i = 0; i < 3; i++)
             {
-                pallets.Add(new Pallet(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin), TileType.Background));
+                pallets.Add(new Pallet(new Sprite(Color.White.CreatePixel(graphics.GraphicsDevice), Color.White, new Vector2(2 * xPos * paintSize.X, 2 * yPos * paintSize.Y + bounds.Height * fraction), paintSize, paintOrigin), TileTypes.Background));
                 xPos++;
                 if (xPos > 7)
                 {
@@ -121,7 +121,7 @@ namespace PacMan.ScreenStuff
                 else if (colorWheel.GetColor(mousePos).HasValue && currentPallet.PaintContainer != null)
                 {
                     currentPallet.PaintContainer.Tint = colorWheel.GetColor(mousePos).Value;
-                    currentPallet.TileType = TileType.Background;
+                    currentPallet.TileType = TileTypes.Background;
                 }
                 else
                 {
@@ -154,17 +154,17 @@ namespace PacMan.ScreenStuff
             if (InputManager.KeyboardState.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Space))
             {
                 ScreenManager.Settings.ColorDictionary.Clear();
-                ScreenManager.Settings.ColorDictionary.Add(Color.Black, TileType.Wall);
+                ScreenManager.Settings.ColorDictionary.Add(Color.Black, TileTypes.Wall);
                 foreach (Sprite pixel in grid)
                 {
                     if (!ScreenManager.Settings.ColorDictionary.ContainsKey(pixel.Tint))
                     {
-                        ScreenManager.Settings.ColorDictionary.Add(pixel.Tint, (TileType)pixel.Tag);
+                        ScreenManager.Settings.ColorDictionary.Add(pixel.Tint, (TileTypes)pixel.Tag);
                     }
                 }
 
-                Dictionary<int, TileType> argbDictionary = new Dictionary<int, TileType>();
-                foreach (KeyValuePair<Color, TileType> kvp in ScreenManager.Settings.ColorDictionary)
+                Dictionary<int, TileTypes> argbDictionary = new Dictionary<int, TileTypes>();
+                foreach (KeyValuePair<Color, TileTypes> kvp in ScreenManager.Settings.ColorDictionary)
                 {
                     argbDictionary.Add(kvp.Key.ToArgb(), kvp.Value);
                 }
@@ -211,7 +211,7 @@ namespace PacMan.ScreenStuff
 
             base.Update(gameTime);
 
-            if(tileDialog.SelectedType != TileType.None)
+            if(tileDialog.SelectedType != TileTypes.None)
             {
                 currentPallet.TileType = tileDialog.SelectedType;
                 int currentArgb = currentPallet.PaintContainer.Tint.ToArgb();

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PacMan
 {
-    public class LerpData<T>
+    public struct LerpData<T>
     {
         T start;
         public T End { get; set; }
@@ -12,7 +12,7 @@ namespace PacMan
         float step;
         Func<T, T, float, T> lerpFunction;
 
-        public bool IsCompleted => percentComplete >= 1;
+        public bool IsComplete => percentComplete >= 1;
 
         public LerpData(T start, T end, float step, Func<T, T, float, T> lerpFunction)
         {
@@ -25,7 +25,7 @@ namespace PacMan
 
         public T GetCurrent()
         {
-            if (IsCompleted) { return End; }
+            if (IsComplete) { return End; }
 
             T returnValue = lerpFunction(start, End, percentComplete);
             percentComplete += step;

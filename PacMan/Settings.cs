@@ -16,7 +16,7 @@ namespace PacMan
         /// <summary>
         /// Vector2 pos, Vector2 scale, Point posInGrid
         /// </summary>
-        public Dictionary<Color, TileType> ColorDictionary { get; private set; }
+        public Dictionary<Color, TileTypes> ColorDictionary { get; private set; }
 
         public string DictionaryPath;
         public Settings(GraphicsDevice graphicsDevice)
@@ -62,9 +62,9 @@ namespace PacMan
             DictionaryPath = filePath;
 
             var fileToConvetBack = System.IO.File.ReadAllText(filePath);
-            Dictionary<int, TileType> meow = JsonConvert.DeserializeObject<Dictionary<int, TileType>>(fileToConvetBack);
+            Dictionary<int, TileTypes> meow = JsonConvert.DeserializeObject<Dictionary<int, TileTypes>>(fileToConvetBack);
 
-            ColorDictionary = new Dictionary<Color, TileType>();
+            ColorDictionary = new Dictionary<Color, TileTypes>();
             foreach (var pair in meow)
             {
                 ColorDictionary.Add(pair.Key.FromArgb(), pair.Value);

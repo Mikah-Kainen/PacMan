@@ -10,7 +10,7 @@ namespace PacMan
 {
     public class Tile : Sprite, ITraversable<Tile>, IComparable<Tile>
     {
-        public TileType TileType;
+        public TileTypes TileType;
 
         private Vector2 pos;
         public override ref Vector2 Pos => ref pos;
@@ -30,7 +30,7 @@ namespace PacMan
         public double Weight { get;  }
 
         public bool IsObstacle { get { return Tint == Color.Black; } }
-        public Tile(Texture2D tex, Color tint, Vector2 scale, TileType tileType, Point posInGrid)
+        public Tile(Texture2D tex, Color tint, Vector2 scale, TileTypes tileType, Point posInGrid)
             : base(tex, tint, Vector2.Zero, scale, /*new Vector2(.5f * scale.X * tex.Width, .5f * scale.Y * tex.Height)*/ Vector2.Zero)
         {
             TileType = tileType;

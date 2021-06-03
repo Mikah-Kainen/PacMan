@@ -87,7 +87,7 @@ namespace PacMan
                 switch (CurrentDirection)
                 {
                     case Directions.Up:
-                        if (posInGrid.Y == 0 && getTile(Pos).TileType == TileType.Teleport)
+                        if (posInGrid.Y == 0 && getTile(Pos).TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -97,7 +97,7 @@ namespace PacMan
                             }
                         }
 
-                        if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y - 1)].TileType == TileType.Wall)
+                        if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y - 1)].TileType == TileTypes.Wall)
                         {
                             Pos.Y = Math.Max(Pos.Y - speed, (float)(posInGrid.Y) * GameScreen.TileSize.Y + HitBox.Height / 2 + padding.Y);
                         }
@@ -110,7 +110,7 @@ namespace PacMan
                         break;
 
                     case Directions.Down:
-                        if (posInGrid.Y == 18 && getTile(Pos).TileType == TileType.Teleport)
+                        if (posInGrid.Y == 18 && getTile(Pos).TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -119,7 +119,7 @@ namespace PacMan
                                 Pos.Y = Pos.Y - screenManager.CurrentScreen.Bounds.Height + GameScreen.TileSize.Y * 2;
                             }
                         }
-                        if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileType.Wall)
+                        if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileTypes.Wall)
                         {
                             Pos.Y = Math.Min(Pos.Y + speed, (float)(posInGrid.Y + 1) * GameScreen.TileSize.Y - HitBox.Height / 2 - padding.X);
                         }
@@ -131,7 +131,7 @@ namespace PacMan
                         break;
 
                     case Directions.Left:
-                        if (posInGrid.X == 0 & getTile(Pos).TileType == TileType.Teleport)
+                        if (posInGrid.X == 0 & getTile(Pos).TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -141,7 +141,7 @@ namespace PacMan
                             }
                         }
 
-                        if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X - 1, posInGrid.Y)].TileType == TileType.Wall)
+                        if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X - 1, posInGrid.Y)].TileType == TileTypes.Wall)
                         {
                             Pos.X = Math.Max(Pos.X - speed, (float)(posInGrid.X) * GameScreen.TileSize.X + HitBox.Width / 2 + padding.Y);
                         }
@@ -153,7 +153,7 @@ namespace PacMan
                         break;
 
                     case Directions.Right:
-                        if (posInGrid.X == 18 & getTile(Pos).TileType == TileType.Teleport)
+                        if (posInGrid.X == 18 & getTile(Pos).TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -163,7 +163,7 @@ namespace PacMan
                             }
                         }
 
-                        if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X + 1, posInGrid.Y)].TileType == TileType.Wall)
+                        if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X + 1, posInGrid.Y)].TileType == TileTypes.Wall)
                         {
                             Pos.X = Math.Min(Pos.X + speed, (float)(posInGrid.X + 1) * GameScreen.TileSize.X - HitBox.Width / 2 - padding.X);
                         }
@@ -254,16 +254,16 @@ namespace PacMan
             switch (nextDirection)
             {
                 case Directions.Up:
-                    return GameScreen.PointToTile[new Point(pacPoint.X, pacPoint.Y - 1)].TileType != TileType.Wall;
+                    return GameScreen.PointToTile[new Point(pacPoint.X, pacPoint.Y - 1)].TileType != TileTypes.Wall;
 
                 case Directions.Down:
-                    return GameScreen.PointToTile[new Point(pacPoint.X, pacPoint.Y + 1)].TileType != TileType.Wall;
+                    return GameScreen.PointToTile[new Point(pacPoint.X, pacPoint.Y + 1)].TileType != TileTypes.Wall;
 
                 case Directions.Right:
-                    return GameScreen.PointToTile[new Point(pacPoint.X + 1, pacPoint.Y)].TileType != TileType.Wall;
+                    return GameScreen.PointToTile[new Point(pacPoint.X + 1, pacPoint.Y)].TileType != TileTypes.Wall;
 
                 case Directions.Left:
-                    return GameScreen.PointToTile[new Point(pacPoint.X - 1, pacPoint.Y)].TileType != TileType.Wall;
+                    return GameScreen.PointToTile[new Point(pacPoint.X - 1, pacPoint.Y)].TileType != TileTypes.Wall;
 
                 default:
                     return true;

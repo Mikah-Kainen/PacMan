@@ -22,6 +22,8 @@ namespace PacMan
         private Settings settings;
         private Vector2 screenSize;
 
+        public static Texture2D WhitePixel;
+
 
         public Game1()
         {
@@ -32,6 +34,8 @@ namespace PacMan
             graphics.PreferredBackBufferWidth = (int)screenSize.X;
             graphics.PreferredBackBufferHeight = (int)screenSize.Y;
             graphics.ApplyChanges();
+
+            WhitePixel = Color.White.CreatePixel(graphics.GraphicsDevice);
         }
 
         protected override void Initialize()

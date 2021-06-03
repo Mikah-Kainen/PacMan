@@ -29,6 +29,8 @@ namespace PacMan
 
         Stopwatch watch;
 
+        Sprite screenTint;
+
         public GameScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
             base.Load(graphics, content, bounds, screenManager, inputManager);
@@ -38,6 +40,9 @@ namespace PacMan
 
         public override void Init()
         {
+            screenTint = new Sprite(Game1.WhitePixel, Color.Red * .5f, Vector2.Zero, new Vector2(Bounds.Width, Bounds.Height), Vector2.Zero);
+            screenTint.IsVisable = false;
+
             walls = new List<Tile>();
             ghosts = new List<Ghost>();
             PointToTile = new Dictionary<Point, Tile>();
@@ -76,7 +81,7 @@ namespace PacMan
 
                     var tile = Objects[y + x * pixelMap.Width] as Tile;
 
-                    if (tile.TileType == TileType.Wall)
+                    if (tile.TileType == TileTypes.Wall)
                     {
                         walls.Add(tile);
                     }
@@ -113,7 +118,7 @@ namespace PacMan
             do
             {
                 fruitPos = new Vector2(random.Next(0, pixelMap.Width), random.Next(0, pixelMap.Height));
-            } while (PointToTile[fruitPos.ToPoint()].TileType != TileType.Background);
+            } while (PointToTile[fruitPos.ToPoint()].TileType != TileTypes.Background);
             fruitPos = fruitPos * TileSize;
             fruitPos += TileSize / 2;
 
@@ -128,6 +133,7 @@ namespace PacMan
                 Objects.Add(ghost);
             }
 
+            Objects.Add(screenTint);
             watch.Start();
         }
 
@@ -148,7 +154,11 @@ namespace PacMan
 
             if (ghostPos.PositionInGrid == pacmanPos.PositionInGrid)
             {
-
+                screenTint.IsVisable = true;
+            }
+            else
+            {
+                screenTint.IsVisable = false;
             }
 
             base.Update(gameTime);

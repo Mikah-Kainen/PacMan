@@ -10,8 +10,8 @@ namespace PacMan
     public class Pallet : GameObject
     {
         public Sprite PaintContainer { get; set; }
-        public TileType TileType { get; set; }
-        public Pallet(Sprite sprite, TileType type)
+        public TileTypes TileType { get; set; }
+        public Pallet(Sprite sprite, TileTypes type)
             : base(sprite.Pos, sprite.Size, sprite.Scale, sprite.Origin)
         {
             PaintContainer = sprite;
