@@ -12,24 +12,27 @@ namespace PacMan
     {
         LerpData<Vector2> scaleLerp;
         LerpData<Color> tintLerp;
-        Rectangle currentFrame;
-        Vector2 endScale;
         FruitStates currentState = FruitStates.ScaleIn;
         Stopwatch stopwatch = new Stopwatch();
         LerpData<Vector2> pulseLerp;
+        List<AnimationFrame> frames;
+        int currentIndex;
+        int count;
+        AnimationFrame currentFrame => frames[currentIndex];
 
         private Vector2 goalScaleUp;
         private Vector2 goalScaleDown;
 
         float scaleStep;
-        public Fruit(Texture2D tex, Rectangle currentFrame, Color startTint, Color endTint, Vector2 pos, Vector2 startScale, Vector2 endScale, Vector2 origin)
-           : base(tex, startTint, pos, startScale, new Vector2(currentFrame.Width * origin.X, currentFrame.Height * origin.Y))
+        public Fruit(Texture2D tex, Color startTint, Color endTint, Vector2 pos, Vector2 startScale, List<AnimationFrame> frames)
+           : base(tex, startTint, pos, startScale, frames[0].Origin)
         {
-            scaleStep = endScale.X / 5000f;
-            scaleLerp = new LerpData<Vector2>(startScale, new Vector2(endScale.X / currentFrame.Width, endScale.Y / currentFrame.Width), scaleStep, Vector2.Lerp);
+            this.frames = frames;
+            currentIndex = 0;
+            scaleStep = frames[currentIndex].Scale.X / 5000f;
+            scaleLerp = new LerpData<Vector2>(startScale, frames[currentIndex].Scale, scaleStep, Vector2.Lerp);
             tintLerp = new LerpData<Color>(startTint, endTint, (float)endTint.A / 1500f, Color.Lerp);
-            this.endScale = endScale;
-            this.currentFrame = currentFrame;
+            count = 0;
 
             goalScaleDown = scaleLerp.End * 0.9f;
             goalScaleUp = scaleLerp.End;
@@ -70,6 +73,12 @@ namespace PacMan
                     Scale = pulseLerp.GetCurrent();
                     if(pulseLerp.IsComplete)
                     {
+                        count++;
+                        if(count > 1)
+                        {
+                            count = 0;
+                            ChangeFruit(Pos);
+                        }
                         pulseLerp = new LerpData<Vector2>(goalScaleDown, goalScaleUp, scaleStep * 2, Vector2.Lerp);
                         currentState = FruitStates.ScaleUp;
                     }
@@ -81,14 +90,16 @@ namespace PacMan
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Tex, Pos, currentFrame, Tint, 0, Origin, Scale, SpriteEffects.None, 1);
+            spriteBatch.Draw(Tex, Pos, currentFrame.HitBox, Tint, 0, currentFrame.Origin, Scale, SpriteEffects.None, 1);
         }
 
 
-        public void ChangeFruit(Rectangle newFruitFrame)
+        public void ChangeFruit(Vector2 newPos)
         {
-            base.Origin = new Vector2(newFruitFrame.Width * Origin.X, newFruitFrame.Height * Origin.Y);
-            scaleLerp.End = new Vector2(endScale.X / newFruitFrame.Width, endScale.Y / newFruitFrame.Height);
+            currentIndex++;
+            Origin = currentFrame.Origin;
+            scaleLerp.End = currentFrame.Scale;
+            Pos = newPos;
         }
     }
 }
