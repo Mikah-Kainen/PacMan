@@ -139,8 +139,6 @@ namespace PacMan
 
         public override void Update(GameTime gameTime)
         {
-            var ghostPos = PositionToTile(ghosts[0].Pos);
-            var pacmanPos = PositionToTile(pacman.Pos);
 
             if (watch.ElapsedMilliseconds < 2000) return;
 
@@ -152,13 +150,13 @@ namespace PacMan
                 ghosts[0].path = Traversals.AStar(PositionToTile(ghosts[0].Pos), PositionToTile(pacman.Pos), Heuristic, grid, ghosts[0].PreviousTile);
             }
 
-            if (ghostPos.PositionInGrid == pacmanPos.PositionInGrid)
+            screenTint.IsVisable = false;
+            foreach (Ghost ghost in ghosts)
             {
-                screenTint.IsVisable = true;
-            }
-            else
-            {
-                screenTint.IsVisable = false;
+                if (pacman.HitBox.Intersects(ghost.HitBox))
+                {
+                    screenTint.IsVisable = true;
+                }
             }
 
             base.Update(gameTime);

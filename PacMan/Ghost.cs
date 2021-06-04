@@ -54,15 +54,7 @@ namespace PacMan
                 {
                     path.Pop();
                 }
-                if (targetPos.X > HitBox.X)
-                {
-                    CurrentDirection = Directions.Right;
-                }
-                else if (targetPos.X < HitBox.X)
-                {
-                    CurrentDirection = Directions.Left;
-                }
-                else if (targetPos.Y < HitBox.Y)
+                if (targetPos.Y < HitBox.Y)
                 {
                     CurrentDirection = Directions.Up;
                 }
@@ -70,6 +62,15 @@ namespace PacMan
                 {
                     CurrentDirection = Directions.Down;
                 }
+                else if (targetPos.X > HitBox.X)
+                {
+                    CurrentDirection = Directions.Right;
+                }
+                else if (targetPos.X < HitBox.X)
+                {
+                    CurrentDirection = Directions.Left;
+                }
+
             }
 
             switch (CurrentDirection)
