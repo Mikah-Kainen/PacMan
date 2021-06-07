@@ -12,7 +12,9 @@ namespace PacMan
         public virtual ref Vector2 Pos => ref position;
         public Vector2 Size { get; internal set; }
 
-        public Vector2 Origin;
+        private Vector2 origin;
+
+        public Vector2 Origin { get; set; }
 
         public bool IsVisable { get; set; }
         public virtual Rectangle HitBox

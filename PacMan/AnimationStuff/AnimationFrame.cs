@@ -9,7 +9,6 @@ namespace PacMan
     {
         public Rectangle HitBox { get; set; }
         public Vector2 Origin { get; set; }
-
         public Vector2 Scale { get; set; }
         public AnimationFrame(Rectangle hitbox, Vector2 origin, Vector2 scale)
         {

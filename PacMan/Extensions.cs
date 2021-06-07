@@ -50,5 +50,14 @@ namespace PacMan
 
             return new Color(red, green, blue, alpha);
         }
+
+        public static AnimationFrame CreateFrame(this Rectangle source, bool isMiddleOrigin, Vector2 scale)
+        {
+            if(isMiddleOrigin)
+            {
+                return new AnimationFrame(source, new Vector2(source.Width / 2, source.Height / 2), new Vector2(scale.X / source.Width, scale.Y / source.Height));
+            }
+            return new AnimationFrame(source, Vector2.Zero, new Vector2(scale.X / source.Width, scale.Y / source.Height));
+        }
     }
 }

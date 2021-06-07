@@ -80,7 +80,7 @@ namespace PacMan
 
             // TODO: Add your drawing code here
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(samplerState: SamplerState.PointClamp);
 
             screenManager.CurrentScreen.Draw(spriteBatch);
 

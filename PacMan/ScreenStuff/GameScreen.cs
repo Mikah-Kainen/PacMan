@@ -117,15 +117,15 @@ namespace PacMan
 
             Texture2D fruits = ContentManager.Load<Texture2D>("pacmanfruit");
             List<AnimationFrame> fruitFrames = new List<AnimationFrame>();
-            fruitFrames.Add(new AnimationFrame(new Rectangle(0, 0, 52, 52), new Vector2(26, 26), new Vector2(TileSize.X / 52, TileSize.Y / 52)));
-            fruitFrames.Add(new AnimationFrame(new Rectangle(0, 65, 49, 52), new Vector2(24.5f, 91), new Vector2(TileSize.X / 49, TileSize.Y / 52)));
-            fruitFrames.Add(new AnimationFrame(new Rectangle(1, 130, 52, 52), new Vector2(27, 156), new Vector2(TileSize.X / 52, TileSize.Y / 52)));
-            fruitFrames.Add(new AnimationFrame(new Rectangle(1, 195, 52, 56), new Vector2(27, 223), new Vector2(TileSize.X / 52, TileSize.Y / 56)));
-            fruitFrames.Add(new AnimationFrame(new Rectangle(1, 260, 53, 52), new Vector2(27.5f, 286), new Vector2(TileSize.X / 53, TileSize.Y / 52)));
-            fruitFrames.Add(new AnimationFrame(new Rectangle(6, 321, 48, 61), new Vector2(30, 351.5f), new Vector2(TileSize.X / 48, TileSize.Y / 61)));
-            fruitFrames.Add(new AnimationFrame(new Rectangle(2, 394, 48, 49), new Vector2(26, 418.5f), new Vector2(TileSize.X / 48, TileSize.Y / 49)));
-            fruitFrames.Add(new AnimationFrame(new Rectangle(10, 455, 32, 57), new Vector2(26, 483.5f), new Vector2(TileSize.X / 32, TileSize.Y / 57)));
-
+            fruitFrames.Add(new Rectangle(0, 0, 52, 52).CreateFrame(true, TileSize));
+            fruitFrames.Add(new Rectangle(0, 65, 49, 52).CreateFrame(true, TileSize));
+            fruitFrames.Add(new Rectangle(1, 130, 52, 52).CreateFrame(true, TileSize));
+            fruitFrames.Add(new Rectangle(1, 195, 52, 56).CreateFrame(true, TileSize));
+            fruitFrames.Add(new Rectangle(1, 260, 53, 52).CreateFrame(true, TileSize));
+            fruitFrames.Add(new Rectangle(6, 321, 48, 61).CreateFrame(true, TileSize));
+            fruitFrames.Add(new Rectangle(2, 394, 48, 49).CreateFrame(true, TileSize));
+            fruitFrames.Add(new Rectangle(10, 455, 32, 57).CreateFrame(true, TileSize));
+             
             fruit = new Fruit(fruits, Color.Transparent, Color.White, fruitPos, Vector2.Zero, fruitFrames);
             Objects.Add(pacman);
             Objects.Add(fruit);
