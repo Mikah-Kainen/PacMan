@@ -27,7 +27,6 @@ namespace PacMan
 
             CurrentTile = getTile(pos);
             PreviousTile = getTile(pos);
-
         }
 
 

@@ -37,6 +37,7 @@ namespace PacMan
         ScaleUp,
         ScaleDown,
         Delay,
+        ScaleOut,
     }
     //  }
 }

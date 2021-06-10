@@ -113,7 +113,7 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(235, 233, 160, 156), new Vector2(80, 78), new Vector2(ghostSize.X / 160, ghostSize.Y / 156)));
             ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, PositionToTile));
 
-            Vector2 fruitPos = CalculateFruitPos();
+            Vector2 fruitPos = CalculateNewFruitPos();
 
             Texture2D fruits = ContentManager.Load<Texture2D>("pacmanfruit");
             List<AnimationFrame> fruitFrames = new List<AnimationFrame>();
@@ -158,6 +158,11 @@ namespace PacMan
                 {
                     screenTint.IsVisable = true;
                 }
+            }
+
+            if(fruit.CurrentState != FruitStates.ScaleIn && fruit.CurrentState != FruitStates.ScaleOut && pacman.HitBox.Intersects(fruit.HitBox))
+            {
+                fruit.ChangeFruit(CalculateNewFruitPos());
             }
 
             base.Update(gameTime);
@@ -274,7 +279,7 @@ namespace PacMan
             return PositionToTile(middlePos + size * 1 / 2).PositionInGrid == PositionToTile(middlePos - size * 1 / 2).PositionInGrid;
         }
 
-        private Vector2 CalculateFruitPos()
+        private Vector2 CalculateNewFruitPos()
         {
             Vector2 fruitPos;
             Random random = new Random();

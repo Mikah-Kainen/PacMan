@@ -6,10 +6,10 @@ namespace PacMan
 {
     public struct LerpData<T>
     {
-        public T Start;
-        public T End { get; set; }
+        public T Start { get; }
+        public T End { get; }
         float percentComplete;
-        float step;
+        float step { get; }
         Func<T, T, float, T> lerpFunction;
 
         public bool IsComplete => percentComplete >= 1;
