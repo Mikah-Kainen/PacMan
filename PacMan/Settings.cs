@@ -27,9 +27,8 @@ namespace PacMan
                 [Keys.Down] = Directions.Down,
                 [Keys.Left] = Directions.Left,
                 [Keys.Right] = Directions.Right,
-                
-            };
 
+            };
 
 
             //Texture2D whitePixel = Color.White.CreatePixel(graphicsDevice);
@@ -45,7 +44,7 @@ namespace PacMan
 
             //Read from file
 
-            bool homeLaptop = false;
+            bool homeLaptop = true;
             string filePath = "";
             if (homeLaptop)
             {

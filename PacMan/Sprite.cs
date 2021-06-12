@@ -9,7 +9,7 @@ namespace PacMan
 {
     public class Sprite : GameObject
     {
-        public Texture2D Tex { get; private set; }
+        public Texture2D Tex { get; set; }
         public Color Tint { get; set; }
         public ScreenManager ScreenManager { get; private set; }
 

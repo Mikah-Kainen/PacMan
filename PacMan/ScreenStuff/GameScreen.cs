@@ -1,5 +1,4 @@
-﻿
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -29,7 +28,7 @@ namespace PacMan
 
         Stopwatch watch;
 
-        Sprite screenTint;
+        public static Sprite screenTint;
 
         public GameScreen(GraphicsDeviceManager graphics, ContentManager content, Rectangle bounds, ScreenManager screenManager, InputManager inputManager)
         {
@@ -125,7 +124,7 @@ namespace PacMan
             fruitFrames.Add(new Rectangle(6, 321, 48, 61).CreateFrame(true, TileSize));
             fruitFrames.Add(new Rectangle(2, 394, 48, 49).CreateFrame(true, TileSize));
             fruitFrames.Add(new Rectangle(10, 455, 32, 57).CreateFrame(true, TileSize));
-             
+
             fruit = new Fruit(fruits, Color.Transparent, Color.White, fruitPos, Vector2.Zero, fruitFrames);
             Objects.Add(pacman);
             Objects.Add(fruit);
@@ -145,22 +144,7 @@ namespace PacMan
 
             pacman.Update(gameTime);
 
-
-            if (IsOnTile(ghosts[0].Pos, ghosts[0].HitBox))
-            {
-                ghosts[0].path = Traversals.AStar(PositionToTile(ghosts[0].Pos), PositionToTile(pacman.Pos), Heuristic, grid, ghosts[0].PreviousTile);
-            }
-
-            screenTint.IsVisable = false;
-            foreach (Ghost ghost in ghosts)
-            {
-                if (pacman.HitBox.Intersects(ghost.HitBox))
-                {
-                    screenTint.IsVisable = true;
-                }
-            }
-
-            if(fruit.CurrentState != FruitStates.ScaleIn && fruit.CurrentState != FruitStates.ScaleOut && pacman.HitBox.Intersects(fruit.HitBox))
+            if (fruit.CurrentState != FruitStates.ScaleIn && fruit.CurrentState != FruitStates.ScaleOut && pacman.HitBox.Intersects(fruit.HitBox))
             {
                 fruit.ChangeFruit(CalculateNewFruitPos());
             }
