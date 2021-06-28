@@ -1,16 +1,19 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace PacMan.TraversalStuff
 {
-    public static class Traversals
+    public static class Traversals<T> where T : IComparable<T>, ITraversable<T>
     {
 
 
-        public static Stack<T> AStar<T>(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previousPosition)
-            where T : IComparable<T>, ITraversable<T>
+        public static Stack<T> AStar(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previousPosition)
         {
+            targetPosition = FindProperTarget(startingPosition, targetPosition);
+
             if (startingPosition.PositionInGrid.Equals(targetPosition.PositionInGrid))
             {
                 return null;
@@ -60,16 +63,96 @@ namespace PacMan.TraversalStuff
                 currentPosition.WasVisited = true;
                 previousPosition = currentPosition;
             }
-        
-            
-            while (finalPosition.Founder != null)
+
+            //if final is null return no path
+            if (finalPosition != null)
             {
-                returnStack.Push(finalPosition);
-                finalPosition = finalPosition.Founder;
+                while (finalPosition.Founder != null)
+                {
+                    returnStack.Push(finalPosition);
+                    finalPosition = finalPosition.Founder;
+                }
             }
 
             return returnStack;
         }
 
+
+        public static T FindProperTarget(T startingPosition, T targetPosition, T[,] grid)
+        {
+            if(targetPosition != null)
+            {
+                return targetPosition;
+            }
+
+            //Queue, enqueue the start,
+            //Loop: dequeue, enqueue the dequed node's neighbors
+            //If the node's neighbors are empty return that dequed neighbors node
+
+            List<T> PossibleTargets = new List<T>();
+            Queue<T> backingQueue = new Queue<T>();
+            backingQueue.Enqueue(startingPosition);
+
+            while (backingQueue.Count > 0)
+            {
+                T current = backingQueue.Dequeue();
+                if (IsInBounds(new Point(current.PositionInGrid.Y, current.PositionInGrid.X + 1), grid))
+                {
+                    if (!current.IsObstacle)
+                    {
+                        PossibleTargets.Add(grid[current.PositionInGrid.Y, current.PositionInGrid.X + 1]);
+                    }
+                    else
+                    {
+                        backingQueue.Enqueue(grid[current.PositionInGrid.Y, current.PositionInGrid.X + 1]);
+                    }
+                }
+                if (IsInBounds(new Point(current.PositionInGrid.Y, current.PositionInGrid.X - 1), grid))
+                {
+                    if (!current.IsObstacle)
+                    {
+                        PossibleTargets.Add(grid[current.PositionInGrid.Y, current.PositionInGrid.X - 1]);
+                    }
+                    else
+                    {
+                        backingQueue.Enqueue(grid[current.PositionInGrid.Y, current.PositionInGrid.X - 1]);
+                    }
+                }
+                if (IsInBounds(new Point(current.PositionInGrid.Y + 1, current.PositionInGrid.X), grid))
+                {
+                    if (!current.IsObstacle)
+                    {
+                        PossibleTargets.Add(grid[current.PositionInGrid.Y + 1, current.PositionInGrid.X]);
+                    }
+                    else
+                    {
+                        backingQueue.Enqueue(grid[current.PositionInGrid.Y + 1, current.PositionInGrid.X]);
+                    }
+                }
+                if (IsInBounds(new Point(current.PositionInGrid.Y - 1, current.PositionInGrid.X), grid))
+                {
+                    if (!current.IsObstacle)
+                    {
+                        PossibleTargets.Add(grid[current.PositionInGrid.Y - 1, current.PositionInGrid.X]);
+                    }
+                    else
+                    {
+                        backingQueue.Enqueue(grid[current.PositionInGrid.Y - 1, current.PositionInGrid.X]);
+                    }
+                }
+
+                if(PossibleTargets.Count > 0)
+                {
+
+                }
+            }
+
+            return default(T);
+        }
+
+        public static bool IsInBounds(Point currentPoint, T[,] grid)
+        {
+            return currentPoint.X < grid.GetLength(1) && currentPoint.X >= 0  && currentPoint.Y < grid.GetLength(0) && currentPoint.Y >= 0;
+        }
     }
 }

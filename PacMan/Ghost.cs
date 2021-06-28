@@ -14,6 +14,8 @@ namespace PacMan
         public Stack<Tile> Path;
         public Tile PreviousTile { get; set; }
         public Tile CurrentTile { get; set; }
+        public Corner Corner { get; set; }
+        public GhostStates CurrentState { get; set; }
         public Directions CurrentDirection { get; set; }
 
         private Func<Vector2, Tile> getTile;
@@ -28,6 +30,8 @@ namespace PacMan
             CurrentTile = getTile(pos);
             PreviousTile = getTile(pos);
 
+            CurrentState = GhostStates.StayHome;
+            Corner = Corner.BottomRight;
         }
 
 

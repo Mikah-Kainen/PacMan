@@ -30,6 +30,14 @@ namespace PacMan
             RunAway,
         };
 
+        public enum Corner
+        {
+            TopLeft,
+            TopRight,
+            BottomLeft,
+            BottomRight,
+        };
+
         public enum Ghosts
         {
             Red = 0,
@@ -45,9 +53,8 @@ namespace PacMan
         List<AnimationFrame>[] frames;
         Tile[,] grid;
         Pacman pacman;
-        List<GhostStates> ghostStates;
 
-        public Dictionary<(Texture2D, List<AnimationFrame>), Func<Vector2, Vector2>> targetPosDictionary { get; private set; }
+        public Dictionary<Corner, Tile> CornerToTile { get; private set; }
 
         /// <summary>
         /// //Maybe do some cool thing where the path a ghost just traveled on has a weight of 1 million so that it won't crash every time it gets stuck in a corner
@@ -70,16 +77,20 @@ namespace PacMan
             this.ghosts = ghosts;
             this.grid = grid;
             this.pacman = pacman;
-            ghostStates = new List<GhostStates>();
-            for(int i = 0; i < ghosts.Count; i ++)
-            {
-                ghostStates.Add(GhostStates.StayHome);
-            }
-            ghostStates[(int)Ghosts.Red] = GhostStates.ChasePacman;
+
+            ghosts[(int)Ghosts.Red].CurrentState = GhostStates.ChasePacman;
 
             PathCalculation = new Dictionary<Ghosts, Action<Vector2>>()
             {
                 [Ghosts.Red] = SetRedGhostPath,
+            };
+
+            CornerToTile = new Dictionary<Corner, Tile>()
+            {
+                [Corner.TopLeft] = grid[0, 0],
+                [Corner.TopRight] = grid[0, grid.GetLength(1) - 1],
+                [Corner.BottomLeft] = grid[grid.GetLength(0) - 1, 0],
+                [Corner.BottomRight] = grid[grid.GetLength(0) - 1, grid.GetLength(1) - 1],
             };
         }
 
@@ -90,7 +101,7 @@ namespace PacMan
             {
                 if (IsOnTile(ghosts[i].Pos, ghosts[i].HitBox))
                 {
-                    switch (ghostStates[i])
+                    switch (ghosts[i].CurrentState)
                     {
                         case GhostStates.StayHome:
                             PathCalculation[(Ghosts)i](ghosts[i].Pos);
@@ -103,7 +114,7 @@ namespace PacMan
 
                         case GhostStates.RunAway:
                             //inplement this pls
-                            PathCalculation[(Ghosts)i](ghosts[i].Corner);
+                            PathCalculation[(Ghosts)i](CornerToTile[ghosts[i].Corner].Pos);
                             break;
                     }
                 }
@@ -135,21 +146,21 @@ namespace PacMan
 
         public void SwitchMode()
         {
-            isChasing = !isChasing;
-            if (isChasing)
+            foreach (Ghost ghost in ghosts)
             {
-                for (int i = 0; i < ghosts.Count; i++)
+                switch (ghost.CurrentState)
                 {
-                    ghosts[i].Tex = ghostTextures[i];
-                    ghosts[i].Frames = frames[i];
-                }
-            }
-            else
-            {
-                for (int i = 0; i < ghosts.Count; i++)
-                {
-                    ghosts[i].Tex = runTex;
-                    ghosts[i].Frames = runFrames;
+                    case GhostStates.StayHome:
+                        ghost.CurrentState = GhostStates.ChasePacman;
+                        break;
+
+                    case GhostStates.ChasePacman:
+                        ghost.CurrentState = GhostStates.RunAway;
+                        break;
+
+                    case GhostStates.RunAway:
+                        ghost.CurrentState = GhostStates.ChasePacman;
+                        break;
                 }
             }
         }
@@ -157,7 +168,7 @@ namespace PacMan
         void SetRedGhostPath(Vector2 targetPos)
         {
             Ghost currentGhost = ghosts[(int)Ghosts.Red];
-            currentGhost.Path = Traversals.AStar(PositionToTile(currentGhost.Pos), PositionToTile(targetPos), Heuristic, grid, currentGhost.PreviousTile);
+            currentGhost.Path = Traversals<Tile>.AStar(PositionToTile(currentGhost.Pos), PositionToTile(targetPos), Heuristic, grid, currentGhost.PreviousTile);
         }
 
 

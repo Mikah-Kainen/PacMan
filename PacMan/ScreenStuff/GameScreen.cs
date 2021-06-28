@@ -158,6 +158,7 @@ namespace PacMan
             if (fruit.CurrentState != FruitStates.ScaleIn && fruit.CurrentState != FruitStates.ScaleOut && pacman.HitBox.Intersects(fruit.HitBox))
             {
                 fruit.ChangeFruit(CalculateNewFruitPos());
+                ghostManager.SwitchMode();
             }
 
             base.Update(gameTime);

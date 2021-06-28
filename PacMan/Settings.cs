@@ -44,17 +44,18 @@ namespace PacMan
 
             //Read from file
 
-            bool homeLaptop = false;
-            string filePath = "";
-            if (homeLaptop)
-            {
-                filePath = @"C:\Users\mikah\source\repos\Mikah-Kainen\PacMan\PacMan";
-            }
-            else
-            {
-                filePath = @"Z:\Visual Studio 2019\Projects\PacMan\PacMan";
-            }
-            filePath += @"\Stuffs.json";
+            //bool homeLaptop = false;
+            //string filePath = "";
+            //if (homeLaptop)
+            //{
+            //    filePath = @"C:\Users\mikah\source\repos\Mikah-Kainen\PacMan\PacMan";
+            //}
+            //else
+            //{
+            //    //filePath = @"Z:\Visual Studio 2019\Projects\PacMan\PacMan";
+                
+            //}
+            string filePath = "Stuffs.json";
 
             //    DictionaryPath = "Stuffs.json";
 
