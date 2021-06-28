@@ -11,43 +11,101 @@ namespace PacMan
 {
     public class GhostManager
     {
+        public enum FrameIndices
+        {
+            Runaway1 = 0,
+            Runaway2 = 1,
+            Fade1 = 2,
+            Fade2 = 3,
+            EyesRight = 4,
+            EyesDown = 5,
+            EyesLeft = 6, 
+            EyesUp = 7,
+        };
+
+        public enum GhostStates
+        {
+            StayHome,
+            ChasePacman,
+            RunAway,
+        };
+
+        public enum Ghosts
+        {
+            Red = 0,
+            Blue = 1,
+            Orange = 2,
+            Pink = 3,
+        };
+
+        public Dictionary<Ghosts, Action<Vector2>> PathCalculation;
+
         Texture2D[] ghostTextures;
-        Ghost[] ghosts;
+        List<Ghost> ghosts;
         List<AnimationFrame>[] frames;
-        Texture2D runTex;
-        List<AnimationFrame> runFrames;
         Tile[,] grid;
         Pacman pacman;
-        bool isChasing;
+        List<GhostStates> ghostStates;
 
         public Dictionary<(Texture2D, List<AnimationFrame>), Func<Vector2, Vector2>> targetPosDictionary { get; private set; }
 
-        public GhostManager(Texture2D[] ghostTextures, Ghost[] ghosts, List<AnimationFrame>[] frames, Texture2D runTex, List<AnimationFrame> runFrames, Tile[,] grid, ref Pacman pacman)
+        /// <summary>
+        /// //Maybe do some cool thing where the path a ghost just traveled on has a weight of 1 million so that it won't crash every time it gets stuck in a corner
+        /// </summary>
+        /// <param name="ghosts"></param>
+        /// <param name="specialGhostTex"></param>
+        /// <param name="specialGhostFrames"></param>
+        /// <param name="grid"></param>
+        /// <param name="pacman"></param>
+        public GhostManager(List<Ghost> ghosts, Texture2D specialGhostTex, List<AnimationFrame> specialGhostFrames, Tile[,] grid, ref Pacman pacman)
         {
-            this.ghostTextures = ghostTextures;
+            ghostTextures = new Texture2D[ghosts.Count];
+            frames = new List<AnimationFrame>[ghosts.Count];
+            for(int i = 0; i < ghostTextures.Length; i ++)
+            {
+                ghostTextures[i] = ghosts[i].Tex;
+                frames[i] = ghosts[i].Frames;
+            }
+
             this.ghosts = ghosts;
-            this.frames = frames;
-            this.runTex = runTex;
-            this.runFrames = runFrames;
             this.grid = grid;
             this.pacman = pacman;
-            isChasing = true;
-
-            targetPosDictionary = new Dictionary<(Texture2D, List<AnimationFrame>), Func<Vector2, Vector2>>();
-            for (int i = 0; i < ghosts.Length; i++)
+            ghostStates = new List<GhostStates>();
+            for(int i = 0; i < ghosts.Count; i ++)
             {
-                //                targetPosDictionary.Add((ghostTextures[i], frames[i]), pacman.Pos);
+                ghostStates.Add(GhostStates.StayHome);
             }
+            ghostStates[(int)Ghosts.Red] = GhostStates.ChasePacman;
+
+            PathCalculation = new Dictionary<Ghosts, Action<Vector2>>()
+            {
+                [Ghosts.Red] = SetRedGhostPath,
+            };
         }
 
 
         public void Update(GameTime gameTime)
         {
-            foreach (Ghost ghost in ghosts)
+            for (int i = 0; i < ghosts.Count; i++)
             {
-                if (IsOnTile(ghost.Pos, ghost.HitBox))
+                if (IsOnTile(ghosts[i].Pos, ghosts[i].HitBox))
                 {
-                    ghosts[0].path = Traversals.AStar(PositionToTile(ghost.Pos), PositionToTile(pacman.Pos), Heuristic, grid, ghost.PreviousTile);
+                    switch (ghostStates[i])
+                    {
+                        case GhostStates.StayHome:
+                            PathCalculation[(Ghosts)i](ghosts[i].Pos);
+                            break;
+
+                        case GhostStates.ChasePacman:
+                            //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
+                            PathCalculation[(Ghosts)i](pacman.Pos);
+                            break;
+
+                        case GhostStates.RunAway:
+                            //inplement this pls
+                            PathCalculation[(Ghosts)i](ghosts[i].Corner);
+                            break;
+                    }
                 }
             }
 
@@ -80,7 +138,7 @@ namespace PacMan
             isChasing = !isChasing;
             if (isChasing)
             {
-                for (int i = 0; i < ghosts.Length; i++)
+                for (int i = 0; i < ghosts.Count; i++)
                 {
                     ghosts[i].Tex = ghostTextures[i];
                     ghosts[i].Frames = frames[i];
@@ -88,12 +146,35 @@ namespace PacMan
             }
             else
             {
-                for (int i = 0; i < ghosts.Length; i++)
+                for (int i = 0; i < ghosts.Count; i++)
                 {
                     ghosts[i].Tex = runTex;
                     ghosts[i].Frames = runFrames;
                 }
             }
+        }
+
+        void SetRedGhostPath(Vector2 targetPos)
+        {
+            Ghost currentGhost = ghosts[(int)Ghosts.Red];
+            currentGhost.Path = Traversals.AStar(PositionToTile(currentGhost.Pos), PositionToTile(targetPos), Heuristic, grid, currentGhost.PreviousTile);
+        }
+
+
+        void SetBlueGhostPath()
+        {
+
+        }
+
+
+        void SetOrangeGhostPath()
+        {
+
+        }
+
+        void SetPinkGhostPath()
+        {
+
         }
 
         private bool IsOnTile(Vector2 middlePos, Rectangle Hitbox)
@@ -111,5 +192,7 @@ namespace PacMan
         {
             return (int)(Math.Abs(currentTile.PositionInGrid.X - targetTile.PositionInGrid.X) + Math.Abs(currentTile.PositionInGrid.Y - targetTile.PositionInGrid.Y));
         }
+
+
     }
 }

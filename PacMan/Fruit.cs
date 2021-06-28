@@ -25,8 +25,8 @@ namespace PacMan
         AnimationFrame currentFrame => frames[currentIndex];
         public Rectangle SourceRectangle => currentFrame.HitBox;
         public override Rectangle HitBox => new Rectangle((int)(Pos.X - currentFrame.Origin.X * Scale.X *currentFrame.Scale.X), (int)(Pos.Y - currentFrame.Origin.Y * Scale.Y * currentFrame.Scale.Y), (int)(currentFrame.HitBox.Width * Scale.X * currentFrame.Scale.X), (int)(currentFrame.HitBox.Height * Scale.Y * currentFrame.Scale.Y));
-        private Vector2 goalScaleUp => scaleLerp.End;
-        private Vector2 goalScaleDown => scaleLerp.End *.9f;
+        private Vector2 goalScaleUp => frames[currentIndex].Scale;
+        private Vector2 goalScaleDown => frames[currentIndex].Scale * .9f;
 
         float scaleStep;
 

@@ -4,19 +4,19 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using static PacMan.GhostManager;
 
 namespace PacMan
 {
     public class Ghost : AnimationSprite
     {
         private float speedPerUpdate;
-        public Stack<Tile> path;
+        public Stack<Tile> Path;
         public Tile PreviousTile { get; set; }
         public Tile CurrentTile { get; set; }
         public Directions CurrentDirection { get; set; }
 
         private Func<Vector2, Tile> getTile;
-
 
         public Ghost(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, float speedPerUpdate, Func<Vector2, Tile> getTile)
             : base(tex, tint, pos, scale, frames, TimeSpan.FromMilliseconds(100))
@@ -27,6 +27,7 @@ namespace PacMan
 
             CurrentTile = getTile(pos);
             PreviousTile = getTile(pos);
+
         }
 
 
@@ -42,16 +43,16 @@ namespace PacMan
                 CurrentTile = getTile(Pos);
             }
 
-            if (path == null || path.Count == 0)
+            if (Path == null || Path.Count == 0)
             {
                 CurrentDirection = Directions.None;
             }
             else
             {
-                Vector2 targetPos = path.Peek().Pos;
+                Vector2 targetPos = Path.Peek().Pos;
                 if (targetPos == Pos)
                 {
-                    path.Pop();
+                    Path.Pop();
                 }
                 if (targetPos.Y < HitBox.Y)
                 {

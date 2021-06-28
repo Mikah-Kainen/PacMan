@@ -17,6 +17,7 @@ namespace PacMan
     {
         Texture2D pixelMap;
         Pacman pacman;
+        GhostManager ghostManager;
         List<Ghost> ghosts;
         List<Tile> walls;
         Fruit fruit;
@@ -91,14 +92,14 @@ namespace PacMan
 
             //What is a good width and height for the pacman?
 
-            float pacSpeed = TileSize.X / 20;
+            float pacSpeed = TileSize.X / 10;
             Vector2 pacSize = new Vector2(TileSize.X - pacSpeed, TileSize.Y - pacSpeed);
 
             var frameList = new List<AnimationFrame>();
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f), new Vector2(pacSize.X / 136f, pacSize.Y / 193f)));
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f), new Vector2(pacSize.X / 180f, pacSize.Y / 193f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f), new Vector2(pacSize.X / 195f, pacSize.Y / 193f)));
-            pacman = new Pacman(pacmansprite, Color.White, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), scale: Vector2.One, frameList, TimeSpan.FromMilliseconds(100), pacSpeed, ScreenManager, InputManager, PositionToTile);
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), scale: Vector2.One, frameList, TimeSpan.FromMilliseconds(50), pacSpeed, ScreenManager, InputManager, PositionToTile);
 
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
@@ -125,13 +126,23 @@ namespace PacMan
             fruitFrames.Add(new Rectangle(2, 394, 48, 49).CreateFrame(true, TileSize));
             fruitFrames.Add(new Rectangle(10, 455, 32, 57).CreateFrame(true, TileSize));
 
+
+            Texture2D specialGhosts = ContentManager.Load<Texture2D>("SpecialGhostSpriteSheet");
+            List<AnimationFrame> specialGhostFrames = new List<AnimationFrame>();
+            specialGhostFrames.Add(new Rectangle(0, 0, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(0, 64, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(0, 128, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(0, 192, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(78, 0, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(78, 64, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(78, 128, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(78, 192, 58, 58).CreateFrame(true, TileSize));
+
+            ghostManager = new GhostManager(ghosts, specialGhosts, specialGhostFrames, grid, ref pacman);
+
             fruit = new Fruit(fruits, Color.Transparent, Color.White, fruitPos, Vector2.Zero, fruitFrames);
             Objects.Add(pacman);
             Objects.Add(fruit);
-            foreach (Ghost ghost in ghosts)
-            {
-                Objects.Add(ghost);
-            }
 
             Objects.Add(screenTint);
             watch.Start();
@@ -142,7 +153,7 @@ namespace PacMan
 
             if (watch.ElapsedMilliseconds < 2000) return;
 
-            pacman.Update(gameTime);
+            ghostManager.Update(gameTime);
 
             if (fruit.CurrentState != FruitStates.ScaleIn && fruit.CurrentState != FruitStates.ScaleOut && pacman.HitBox.Intersects(fruit.HitBox))
             {
@@ -158,6 +169,7 @@ namespace PacMan
             //spriteBatch.Draw(pixelMap, new Rectangle(10, 10, pixelMap.Width, pixelMap.Height), Color.White);
 
             base.Draw(spriteBatch);
+            ghostManager.Draw(spriteBatch);
         }
 
 
