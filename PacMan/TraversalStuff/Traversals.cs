@@ -8,16 +8,17 @@ namespace PacMan.TraversalStuff
 {
     public static class Traversals<T> where T : IComparable<T>, ITraversable<T>
     {
-
+    
 
         public static Stack<T> AStar(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previousPosition)
         {
-            targetPosition = FindProperTarget(startingPosition, targetPosition);
+            targetPosition = FindProperTarget(startingPosition, targetPosition, heuristicFunction, grid);
 
             if (startingPosition.PositionInGrid.Equals(targetPosition.PositionInGrid))
             {
                 return null;
             }
+
             Stack<T> returnStack = new Stack<T>();
             Heap<T> priorityQueue = new Heap<T>();
             foreach (T value in grid)
@@ -46,10 +47,10 @@ namespace PacMan.TraversalStuff
                 {
                     if (!neightbor.IsObstacle && !neightbor.Equals(previousPosition))
                     {
-                        if (neightbor.KnownDistance > currentPosition.KnownDistance + currentPosition.Weight)
+                        if (neightbor.KnownDistance > currentPosition.KnownDistance + neightbor.Weight)
                         {
                             neightbor.Founder = currentPosition;
-                            neightbor.KnownDistance = currentPosition.KnownDistance + currentPosition.Weight;
+                            neightbor.KnownDistance = currentPosition.KnownDistance + neightbor.Weight;
                             neightbor.FinalDistance = neightbor.KnownDistance + heuristicFunction(neightbor, targetPosition);
                             neightbor.WasVisited = false;
                         }
@@ -78,20 +79,21 @@ namespace PacMan.TraversalStuff
         }
 
 
-        public static T FindProperTarget(T startingPosition, T targetPosition, T[,] grid)
+        public static T FindProperTarget(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid)
         {
-            if(targetPosition != null)
+            if(!targetPosition.IsObstacle)
             {
                 return targetPosition;
             }
 
+            T closest = default(T);
             //Queue, enqueue the start,
             //Loop: dequeue, enqueue the dequed node's neighbors
             //If the node's neighbors are empty return that dequed neighbors node
 
-            List<T> PossibleTargets = new List<T>();
+            HashSet<T> PossibleTargets = new HashSet<T>();
             Queue<T> backingQueue = new Queue<T>();
-            backingQueue.Enqueue(startingPosition);
+            backingQueue.Enqueue(targetPosition);
 
             while (backingQueue.Count > 0)
             {
@@ -100,7 +102,7 @@ namespace PacMan.TraversalStuff
                 {
                     if (!current.IsObstacle)
                     {
-                        PossibleTargets.Add(grid[current.PositionInGrid.Y, current.PositionInGrid.X + 1]);
+                        PossibleTargets.Add(current);
                     }
                     else
                     {
@@ -111,7 +113,7 @@ namespace PacMan.TraversalStuff
                 {
                     if (!current.IsObstacle)
                     {
-                        PossibleTargets.Add(grid[current.PositionInGrid.Y, current.PositionInGrid.X - 1]);
+                        PossibleTargets.Add(current);
                     }
                     else
                     {
@@ -122,7 +124,7 @@ namespace PacMan.TraversalStuff
                 {
                     if (!current.IsObstacle)
                     {
-                        PossibleTargets.Add(grid[current.PositionInGrid.Y + 1, current.PositionInGrid.X]);
+                        PossibleTargets.Add(current);
                     }
                     else
                     {
@@ -133,7 +135,7 @@ namespace PacMan.TraversalStuff
                 {
                     if (!current.IsObstacle)
                     {
-                        PossibleTargets.Add(grid[current.PositionInGrid.Y - 1, current.PositionInGrid.X]);
+                        PossibleTargets.Add(current);
                     }
                     else
                     {
@@ -141,13 +143,24 @@ namespace PacMan.TraversalStuff
                     }
                 }
 
-                if(PossibleTargets.Count > 0)
-                {
 
+                if (PossibleTargets.Count > 0)
+                {
+                    int leastDistance = int.MaxValue;
+                    foreach(T target in PossibleTargets)
+                    {
+                        int temp = heuristicFunction(startingPosition, target);
+                        if(leastDistance > temp)
+                        {
+                            leastDistance = temp;
+                            closest = target;
+                        }
+                    }
+                    return closest;
                 }
             }
 
-            return default(T);
+            return closest;
         }
 
         public static bool IsInBounds(Point currentPoint, T[,] grid)

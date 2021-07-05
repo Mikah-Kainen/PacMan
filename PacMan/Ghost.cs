@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using static PacMan.GhostManager;
 
@@ -19,6 +20,8 @@ namespace PacMan
         public Directions CurrentDirection { get; set; }
 
         private Func<Vector2, Tile> getTile;
+        private Stopwatch watch;
+        private HashSet<Tile> hashSet;
 
         public Ghost(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, float speedPerUpdate, Func<Vector2, Tile> getTile)
             : base(tex, tint, pos, scale, frames, TimeSpan.FromMilliseconds(100))
@@ -27,11 +30,16 @@ namespace PacMan
             CurrentDirection = Directions.None;
             this.getTile = getTile;
 
+
             CurrentTile = getTile(pos);
             PreviousTile = getTile(pos);
 
             CurrentState = GhostStates.StayHome;
             Corner = Corner.BottomRight;
+
+            watch = new Stopwatch();
+            watch.Start();
+            hashSet = new HashSet<Tile>();
         }
 
 
@@ -40,12 +48,24 @@ namespace PacMan
             /////////////////////////////////
             ////////////////////////////////It could be a big problem if the ghost ever gets to his target tile and has nowhere to go but I dont think that will ever happen
             /////////////////////////////////
-
+            hashSet.Add(PreviousTile);
             if(getTile(Pos) != CurrentTile)
             {
                 PreviousTile = CurrentTile;
                 CurrentTile = getTile(Pos);
             }
+
+            if(watch.ElapsedMilliseconds > 3000)
+            {
+                if(hashSet.Count == 1)
+                {
+                    PreviousTile = null;
+                }
+
+                watch.Restart();
+                hashSet.Clear();
+            }
+
 
             if (Path == null || Path.Count == 0)
             {

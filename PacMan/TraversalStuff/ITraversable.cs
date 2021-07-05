@@ -13,7 +13,7 @@ namespace PacMan.TraversalStuff
         public double KnownDistance { get; set; }
         public Point PositionInGrid { get; set; }
         public bool IsObstacle { get; }
-        public double Weight { get; }
+        public double Weight { get; set; }
         public T Founder { get; set; }
     }
 }

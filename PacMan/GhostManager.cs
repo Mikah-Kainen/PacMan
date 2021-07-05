@@ -97,6 +97,21 @@ namespace PacMan
 
         public void Update(GameTime gameTime)
         {
+            GameScreen.screenTint.IsVisable = false;
+            foreach (Ghost ghost in ghosts)
+            {
+                if (pacman.HitBox.Intersects(ghost.HitBox))
+                {
+                    GameScreen.screenTint.IsVisable = true;
+                }
+            }
+
+            foreach (Ghost ghost in ghosts)
+            {
+                ghost.Update(gameTime);
+            }
+
+
             for (int i = 0; i < ghosts.Count; i++)
             {
                 if (IsOnTile(ghosts[i].Pos, ghosts[i].HitBox))
@@ -120,19 +135,6 @@ namespace PacMan
                 }
             }
 
-            GameScreen.screenTint.IsVisable = false;
-            foreach (Ghost ghost in ghosts)
-            {
-                if (pacman.HitBox.Intersects(ghost.HitBox))
-                {
-                    GameScreen.screenTint.IsVisable = true;
-                }
-            }
-
-            foreach (Ghost ghost in ghosts)
-            {
-                ghost.Update(gameTime);
-            }
         }
 
 
@@ -168,9 +170,15 @@ namespace PacMan
         void SetRedGhostPath(Vector2 targetPos)
         {
             Ghost currentGhost = ghosts[(int)Ghosts.Red];
+
+            if(currentGhost.PreviousTile == null)
+            {
+
+            }
+
             currentGhost.Path = Traversals<Tile>.AStar(PositionToTile(currentGhost.Pos), PositionToTile(targetPos), Heuristic, grid, currentGhost.PreviousTile);
         }
-
+        
 
         void SetBlueGhostPath()
         {
