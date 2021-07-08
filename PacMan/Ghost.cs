@@ -55,7 +55,7 @@ namespace PacMan
                 CurrentTile = getTile(Pos);
             }
 
-            if(watch.ElapsedMilliseconds > 3000)
+            if(watch.ElapsedMilliseconds > 500)
             {
                 if(hashSet.Count == 1)
                 {

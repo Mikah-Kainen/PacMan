@@ -11,6 +11,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
+using static PacMan.GhostManager;
+
 namespace PacMan
 {
     public class GameScreen : Screen
@@ -130,9 +132,15 @@ namespace PacMan
             Texture2D specialGhosts = ContentManager.Load<Texture2D>("SpecialGhostSpriteSheet");
             List<AnimationFrame> specialGhostFrames = new List<AnimationFrame>();
             specialGhostFrames.Add(new Rectangle(0, 0, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(0, 0, 58, 58).CreateFrame(true, TileSize));
             specialGhostFrames.Add(new Rectangle(0, 64, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(0, 64, 58, 58).CreateFrame(true, TileSize));
+
+            specialGhostFrames.Add(new Rectangle(0, 128, 58, 58).CreateFrame(true, TileSize));
             specialGhostFrames.Add(new Rectangle(0, 128, 58, 58).CreateFrame(true, TileSize));
             specialGhostFrames.Add(new Rectangle(0, 192, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(0, 192, 58, 58).CreateFrame(true, TileSize));
+
             specialGhostFrames.Add(new Rectangle(78, 0, 58, 58).CreateFrame(true, TileSize));
             specialGhostFrames.Add(new Rectangle(78, 64, 58, 58).CreateFrame(true, TileSize));
             specialGhostFrames.Add(new Rectangle(78, 128, 58, 58).CreateFrame(true, TileSize));
@@ -158,7 +166,17 @@ namespace PacMan
             if (fruit.CurrentState != FruitStates.ScaleIn && fruit.CurrentState != FruitStates.ScaleOut && pacman.HitBox.Intersects(fruit.HitBox))
             {
                 fruit.ChangeFruit(CalculateNewFruitPos());
-                ghostManager.SwitchMode();
+                ///If I add in the fade out state I should check for it here as well
+                if (ghostManager.GeneralState != GhostStates.RunAway)
+                {
+                    ghostManager.SwitchMode();
+                }
+                if(ghostManager.GeneralState == GhostStates.FadeRun)
+                {
+                    ghostManager.SwitchMode();
+                    ghostManager.SwitchMode();
+                }
+                ghostManager.StopWatch.Restart();
             }
 
             base.Update(gameTime);

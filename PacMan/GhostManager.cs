@@ -5,6 +5,7 @@ using PacMan.TraversalStuff;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace PacMan
@@ -25,9 +26,10 @@ namespace PacMan
 
         public enum GhostStates
         {
-            StayHome,
-            ChasePacman,
-            RunAway,
+            StayHome = 10,
+            ChasePacman = 11,
+            RunAway = 0,
+            FadeRun = 1,
         };
 
         public enum Corner
@@ -54,16 +56,14 @@ namespace PacMan
         Tile[,] grid;
         Pacman pacman;
 
+        Texture2D specialGhostTex;
+        List<AnimationFrame> runAwayFrames;
+        List<AnimationFrame> fadeRunFrames;
+        //MAKE THIS A SPAN FOR BETTERNESS
         public Dictionary<Corner, Tile> CornerToTile { get; private set; }
+        public Stopwatch StopWatch;
+        public GhostStates GeneralState { get; set; }
 
-        /// <summary>
-        /// //Maybe do some cool thing where the path a ghost just traveled on has a weight of 1 million so that it won't crash every time it gets stuck in a corner
-        /// </summary>
-        /// <param name="ghosts"></param>
-        /// <param name="specialGhostTex"></param>
-        /// <param name="specialGhostFrames"></param>
-        /// <param name="grid"></param>
-        /// <param name="pacman"></param>
         public GhostManager(List<Ghost> ghosts, Texture2D specialGhostTex, List<AnimationFrame> specialGhostFrames, Tile[,] grid, ref Pacman pacman)
         {
             ghostTextures = new Texture2D[ghosts.Count];
@@ -72,6 +72,19 @@ namespace PacMan
             {
                 ghostTextures[i] = ghosts[i].Tex;
                 frames[i] = ghosts[i].Frames;
+            }
+
+            this.specialGhostTex = specialGhostTex;
+            runAwayFrames = new List<AnimationFrame>();
+            fadeRunFrames = new List<AnimationFrame>();
+
+            for(int i = 0; i < 4; i ++)
+            {
+                runAwayFrames.Add(specialGhostFrames[i]);
+            }
+            for(int i = 4; i < 8; i ++)
+            {
+                fadeRunFrames.Add(specialGhostFrames[i]);
             }
 
             this.ghosts = ghosts;
@@ -92,6 +105,9 @@ namespace PacMan
                 [Corner.BottomLeft] = grid[grid.GetLength(0) - 1, 0],
                 [Corner.BottomRight] = grid[grid.GetLength(0) - 1, grid.GetLength(1) - 1],
             };
+            StopWatch = new Stopwatch();
+            StopWatch.Start();
+            GeneralState = GhostStates.ChasePacman;
         }
 
 
@@ -111,7 +127,14 @@ namespace PacMan
                 ghost.Update(gameTime);
             }
 
-
+            if(StopWatch.ElapsedMilliseconds > 6000 && GeneralState == GhostStates.RunAway)
+            {
+                SwitchMode();
+            }
+            if (StopWatch.ElapsedMilliseconds > 1000 && GeneralState == GhostStates.FadeRun)
+            {
+                SwitchMode();
+            }
             for (int i = 0; i < ghosts.Count; i++)
             {
                 if (IsOnTile(ghosts[i].Pos, ghosts[i].HitBox))
@@ -123,12 +146,21 @@ namespace PacMan
                             break;
 
                         case GhostStates.ChasePacman:
+                            ghosts[i].Tex = ghostTextures[i];
+                            ghosts[i].Frames = frames[i];
                             //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
                             PathCalculation[(Ghosts)i](pacman.Pos);
                             break;
 
                         case GhostStates.RunAway:
-                            //inplement this pls
+                            ghosts[i].Tex = specialGhostTex;
+                            ghosts[i].Frames = runAwayFrames;
+                            PathCalculation[(Ghosts)i](CornerToTile[ghosts[i].Corner].Pos);
+                            break;
+
+                        case GhostStates.FadeRun:
+                            ghosts[i].Tex = specialGhostTex;
+                            ghosts[i].Frames = fadeRunFrames;
                             PathCalculation[(Ghosts)i](CornerToTile[ghosts[i].Corner].Pos);
                             break;
                     }
@@ -148,12 +180,12 @@ namespace PacMan
 
         public void SwitchMode()
         {
+            StopWatch.Restart();
             foreach (Ghost ghost in ghosts)
             {
                 switch (ghost.CurrentState)
                 {
                     case GhostStates.StayHome:
-                        ghost.CurrentState = GhostStates.ChasePacman;
                         break;
 
                     case GhostStates.ChasePacman:
@@ -161,9 +193,28 @@ namespace PacMan
                         break;
 
                     case GhostStates.RunAway:
+                        ghost.CurrentState = GhostStates.FadeRun;
+                        break;
+
+                    case GhostStates.FadeRun:
                         ghost.CurrentState = GhostStates.ChasePacman;
                         break;
                 }
+            }
+
+            switch (GeneralState)
+            {
+                case GhostStates.ChasePacman:
+                    GeneralState = GhostStates.RunAway;
+                    break;
+
+                case GhostStates.RunAway:
+                    GeneralState = GhostStates.FadeRun;
+                    break;
+
+                case GhostStates.FadeRun:
+                    GeneralState = GhostStates.ChasePacman;
+                    break;
             }
         }
 
