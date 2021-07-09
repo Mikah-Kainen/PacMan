@@ -12,7 +12,7 @@ namespace PacMan
     public class Ghost : AnimationSprite
     {
         private float speedPerUpdate;
-        public Stack<Tile> Path;
+        public Stack<Tile> Path { get; set; }
         public Tile PreviousTile { get; set; }
         public Tile CurrentTile { get; set; }
         public Corner Corner { get; set; }

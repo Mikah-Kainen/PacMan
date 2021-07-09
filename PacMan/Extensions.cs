@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
+using PacMan.TraversalStuff;
+
 using System;
 using System.Collections.Generic;
 
@@ -58,6 +60,23 @@ namespace PacMan
                 return new AnimationFrame(source, new Vector2(source.Width / 2, source.Height / 2), new Vector2(scale.X / source.Width, scale.Y / source.Height));
             }
             return new AnimationFrame(source, Vector2.Zero, new Vector2(scale.X / source.Width, scale.Y / source.Height));
+        }
+
+    }
+
+    public static class GhostExtensions
+    {
+        private static int Heuristic(Tile currentTile, Tile targetTile)
+        {
+            return (int)(Math.Abs(currentTile.PositionInGrid.X - targetTile.PositionInGrid.X) + Math.Abs(currentTile.PositionInGrid.Y - targetTile.PositionInGrid.Y));
+        }
+        public static Tile PositionToTile(Vector2 position, Tile[,] grid)
+        {
+            return grid[(int)((position.X) / GameScreen.TileSize.X), (int)((position.Y) / GameScreen.TileSize.Y)];
+        }
+        public static void SetPath(this Ghost ghost, Vector2 targetPos, Tile[,] grid)
+        {
+            ghost.Path = Traversals<Tile>.AStar(PositionToTile(ghost.Pos, grid), PositionToTile(targetPos, grid), Heuristic, grid, ghost.PreviousTile);
         }
     }
 }

@@ -48,7 +48,7 @@ namespace PacMan
             Pink = 3,
         };
 
-        public Dictionary<Ghosts, Action<Vector2>> PathCalculation;
+        public Dictionary<Ghosts, Func<Vector2>> GetTarget;
 
         Texture2D[] ghostTextures;
         List<Ghost> ghosts;
@@ -93,9 +93,9 @@ namespace PacMan
 
             ghosts[(int)Ghosts.Red].CurrentState = GhostStates.ChasePacman;
 
-            PathCalculation = new Dictionary<Ghosts, Action<Vector2>>()
+            GetTarget = new Dictionary<Ghosts, Func<Vector2>>()
             {
-                [Ghosts.Red] = SetRedGhostPath,
+                [Ghosts.Red] = GetRedGhostTarget,
             };
 
             CornerToTile = new Dictionary<Corner, Tile>()
@@ -129,11 +129,11 @@ namespace PacMan
 
             if(StopWatch.ElapsedMilliseconds > 6000 && GeneralState == GhostStates.RunAway)
             {
-                SwitchMode();
+                SwitchMode(GhostStates.FadeRun);
             }
             if (StopWatch.ElapsedMilliseconds > 1000 && GeneralState == GhostStates.FadeRun)
             {
-                SwitchMode();
+                SwitchMode(GhostStates.ChasePacman);
             }
             for (int i = 0; i < ghosts.Count; i++)
             {
@@ -142,26 +142,28 @@ namespace PacMan
                     switch (ghosts[i].CurrentState)
                     {
                         case GhostStates.StayHome:
-                            PathCalculation[(Ghosts)i](ghosts[i].Pos);
+                            //PathCalculation[(Ghosts)i](ghosts[i].Pos);
+                            ghosts[i].SetPath(ghosts[i].Pos, grid);
                             break;
 
                         case GhostStates.ChasePacman:
                             ghosts[i].Tex = ghostTextures[i];
                             ghosts[i].Frames = frames[i];
                             //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
-                            PathCalculation[(Ghosts)i](pacman.Pos);
+                            ghosts[i].SetPath(GetTarget[(Ghosts)i](), grid);
                             break;
 
                         case GhostStates.RunAway:
                             ghosts[i].Tex = specialGhostTex;
                             ghosts[i].Frames = runAwayFrames;
-                            PathCalculation[(Ghosts)i](CornerToTile[ghosts[i].Corner].Pos);
+                            ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
                             break;
 
                         case GhostStates.FadeRun:
                             ghosts[i].Tex = specialGhostTex;
                             ghosts[i].Frames = fadeRunFrames;
-                            PathCalculation[(Ghosts)i](CornerToTile[ghosts[i].Corner].Pos);
+                            ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
+                            //////I will probably need to uncomment this if I ever make the ghost go in a circle after it reaches it's corner
                             break;
                     }
                 }
@@ -178,7 +180,7 @@ namespace PacMan
             }
         }
 
-        public void SwitchMode()
+        public void SwitchMode(GhostStates newState)
         {
             StopWatch.Restart();
             foreach (Ghost ghost in ghosts)
@@ -188,81 +190,79 @@ namespace PacMan
                     case GhostStates.StayHome:
                         break;
 
-                    case GhostStates.ChasePacman:
-                        ghost.CurrentState = GhostStates.RunAway;
-                        break;
-
-                    case GhostStates.RunAway:
-                        ghost.CurrentState = GhostStates.FadeRun;
-                        break;
-
-                    case GhostStates.FadeRun:
-                        ghost.CurrentState = GhostStates.ChasePacman;
+                    default:
+                        ghost.CurrentState = newState;
                         break;
                 }
             }
 
-            switch (GeneralState)
-            {
-                case GhostStates.ChasePacman:
-                    GeneralState = GhostStates.RunAway;
-                    break;
-
-                case GhostStates.RunAway:
-                    GeneralState = GhostStates.FadeRun;
-                    break;
-
-                case GhostStates.FadeRun:
-                    GeneralState = GhostStates.ChasePacman;
-                    break;
-            }
+            GeneralState = newState;
         }
 
-        void SetRedGhostPath(Vector2 targetPos)
+        Vector2 GetRedGhostTarget()
         {
-            Ghost currentGhost = ghosts[(int)Ghosts.Red];
+            Vector2 targetPos = pacman.Pos;
 
-            if(currentGhost.PreviousTile == null)
-            {
 
-            }
-
-            currentGhost.Path = Traversals<Tile>.AStar(PositionToTile(currentGhost.Pos), PositionToTile(targetPos), Heuristic, grid, currentGhost.PreviousTile);
+            return targetPos;
         }
         
-
-        void SetBlueGhostPath()
+        Vector2 GetPinkGhostTarget()
         {
+            Vector2 targetPos = Vector2.Zero;
 
+            switch (pacman.CurrentDirection)
+            {
+                case Directions.Up:
+                    targetPos = new Vector2(pacman.Pos.X - GameScreen.TileSize.X * 4, pacman.Pos.Y + GameScreen.TileSize.Y * 4);
+                    break;
+
+                case Directions.Down:
+                    targetPos = new Vector2(pacman.Pos.X, pacman.Pos.Y - GameScreen.TileSize.Y * 4);
+                    break;
+
+                case Directions.Left:
+                    targetPos = new Vector2(pacman.Pos.X - GameScreen.TileSize.X * 4, pacman.Pos.Y);
+                    break;
+
+                case Directions.Right:
+                    targetPos = new Vector2(pacman.Pos.X + GameScreen.TileSize.X * 4, pacman.Pos.Y);
+                    break;
+
+                case Directions.None:
+                    targetPos = new Vector2(pacman.Pos.X + GameScreen.TileSize.X * 4, pacman.Pos.Y);
+                    break;
+            }
+
+            return targetPos;
+        }
+
+        Vector2 GetBlueGhostTarget()
+        {
+            Vector2 targetPos = pacman.Pos;
+
+
+            return targetPos;
         }
 
 
-        void SetOrangeGhostPath()
+        Vector2 GetOrangeGhostTarget()
         {
+            Vector2 targetPos = pacman.Pos;
 
+
+            return targetPos;
         }
 
-        void SetPinkGhostPath()
-        {
-
-        }
 
         private bool IsOnTile(Vector2 middlePos, Rectangle Hitbox)
         {
             Vector2 size = new Vector2(Hitbox.Width, Hitbox.Height);
             return PositionToTile(middlePos + size * 1 / 2).PositionInGrid == PositionToTile(middlePos - size * 1 / 2).PositionInGrid;
         }
-
         public Tile PositionToTile(Vector2 position)
         {
             return grid[(int)((position.X) / GameScreen.TileSize.X), (int)((position.Y) / GameScreen.TileSize.Y)];
         }
-
-        private int Heuristic(Tile currentTile, Tile targetTile)
-        {
-            return (int)(Math.Abs(currentTile.PositionInGrid.X - targetTile.PositionInGrid.X) + Math.Abs(currentTile.PositionInGrid.Y - targetTile.PositionInGrid.Y));
-        }
-
-
     }
 }

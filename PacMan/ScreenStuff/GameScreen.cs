@@ -169,12 +169,7 @@ namespace PacMan
                 ///If I add in the fade out state I should check for it here as well
                 if (ghostManager.GeneralState != GhostStates.RunAway)
                 {
-                    ghostManager.SwitchMode();
-                }
-                if(ghostManager.GeneralState == GhostStates.FadeRun)
-                {
-                    ghostManager.SwitchMode();
-                    ghostManager.SwitchMode();
+                    ghostManager.SwitchMode(GhostStates.RunAway);
                 }
                 ghostManager.StopWatch.Restart();
             }
