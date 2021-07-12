@@ -10,6 +10,8 @@ namespace PacMan
 {
     public class Pacman : AnimationSprite
     {
+        Tile[,] grid;
+
         public float speed;
         public int iterationsPerUpdate;
         private ScreenManager screenManager;
@@ -21,7 +23,6 @@ namespace PacMan
 
         private Vector2 previousPos;
         Point posInGrid;
-        Func<Vector2, Tile> getTile;
         private bool loadingTeleport;
         public override Rectangle HitBox
         {
@@ -31,16 +32,17 @@ namespace PacMan
             }
         }
 
-        public Pacman(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, TimeSpan timeBetweenFrames, float speedPerUpdate, ScreenManager screenManager, InputManager inputManager, Func<Vector2, Tile> getTile)
+        public Pacman(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, TimeSpan timeBetweenFrames, float speedPerUpdate, ScreenManager screenManager, InputManager inputManager, Tile[,] grid)
             : base(tex, tint, pos, scale, frames, timeBetweenFrames)
         {
+            this.grid = grid;
+
             speed = speedPerUpdate;
             this.screenManager = screenManager;
             this.inputManager = inputManager;
             CurrentDirection = Directions.None;
             PreviousDirection = Directions.None;
-            this.getTile = getTile;
-            posInGrid = getTile(Pos).PositionInGrid;
+            posInGrid = GameScreen.PositionToTile(Pos, grid).PositionInGrid;
             previousPos = new Vector2();
             loadingTeleport = false;
         }
@@ -77,7 +79,7 @@ namespace PacMan
                     CurrentDirection = NextDirection;
                 }
                 PreviousDirection = CurrentDirection;
-                posInGrid = getTile(Pos).PositionInGrid;
+                posInGrid = GameScreen.PositionToTile(Pos, grid).PositionInGrid;
                 previousPos = Pos;
 
                 Vector2 padding = new Vector2(1, 1);
@@ -87,7 +89,7 @@ namespace PacMan
                 switch (CurrentDirection)
                 {
                     case Directions.Up:
-                        if (posInGrid.Y == 0 && getTile(Pos).TileType == TileTypes.Teleport)
+                        if (posInGrid.Y == 0 && GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -110,7 +112,7 @@ namespace PacMan
                         break;
 
                     case Directions.Down:
-                        if (posInGrid.Y == 18 && getTile(Pos).TileType == TileTypes.Teleport)
+                        if (posInGrid.Y == 18 && GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -131,7 +133,7 @@ namespace PacMan
                         break;
 
                     case Directions.Left:
-                        if (posInGrid.X == 0 & getTile(Pos).TileType == TileTypes.Teleport)
+                        if (posInGrid.X == 0 & GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -153,7 +155,7 @@ namespace PacMan
                         break;
 
                     case Directions.Right:
-                        if (posInGrid.X == 18 & getTile(Pos).TileType == TileTypes.Teleport)
+                        if (posInGrid.X == 18 & GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -224,7 +226,7 @@ namespace PacMan
         private bool IsOnTile(Rectangle hitBox)
         {
             Vector2 size = new Vector2(hitBox.Width, hitBox.Height);
-            return getTile(new Vector2(hitBox.X, hitBox.Y + hitBox.Height)).PositionInGrid.Equals(getTile(new Vector2(hitBox.X + hitBox.Width, hitBox.Y)).PositionInGrid);
+            return GameScreen.PositionToTile(new Vector2(hitBox.X, hitBox.Y + hitBox.Height), grid).PositionInGrid.Equals(GameScreen.PositionToTile(new Vector2(hitBox.X + hitBox.Width, hitBox.Y), grid).PositionInGrid);
         }
 
         private bool GoingSamePlane(Directions currentDirection, Directions previousDirection)
@@ -250,7 +252,7 @@ namespace PacMan
                 return false;
             }
 
-            Point pacPoint = getTile(Pos).PositionInGrid;
+            Point pacPoint = GameScreen.PositionToTile(Pos, grid).PositionInGrid;
             switch (nextDirection)
             {
                 case Directions.Up:

@@ -12,7 +12,7 @@ namespace PacMan.TraversalStuff
 
         public static Stack<T> AStar(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previousPosition)
         {
-            targetPosition = FindProperTarget(startingPosition, targetPosition, heuristicFunction, grid);
+            //targetPosition = FindProperTarget(startingPosition, targetPosition, heuristicFunction, grid);
 
             if (startingPosition.PositionInGrid.Equals(targetPosition.PositionInGrid))
             {

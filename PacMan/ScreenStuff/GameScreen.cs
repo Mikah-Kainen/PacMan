@@ -93,7 +93,7 @@ namespace PacMan
             Texture2D pacmansprite = ContentManager.Load<Texture2D>("pacmansprite");
 
             //What is a good width and height for the pacman?
-
+            #region makePacman
             float pacSpeed = TileSize.X / 10;
             Vector2 pacSize = new Vector2(TileSize.X - pacSpeed, TileSize.Y - pacSpeed);
 
@@ -101,8 +101,11 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(0, 0, 136, 193), new Vector2(68, 96.5f), new Vector2(pacSize.X / 136f, pacSize.Y / 193f)));
             frameList.Add(new AnimationFrame(new Rectangle(240, 0, 180, 193), new Vector2(90, 96.5f), new Vector2(pacSize.X / 180f, pacSize.Y / 193f)));
             frameList.Add(new AnimationFrame(new Rectangle(465, 0, 195, 193), new Vector2(97.5f, 96.5f), new Vector2(pacSize.X / 195f, pacSize.Y / 193f)));
-            pacman = new Pacman(pacmansprite, Color.White, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), scale: Vector2.One, frameList, TimeSpan.FromMilliseconds(50), pacSpeed, ScreenManager, InputManager, PositionToTile);
+            pacman = new Pacman(pacmansprite, Color.White, new Vector2(TileSize.X * .5f + TileSize.X * 3, TileSize.Y * .5f + TileSize.Y * 5), scale: Vector2.One, frameList, TimeSpan.FromMilliseconds(50), pacSpeed, ScreenManager, InputManager, grid);
 
+            #endregion
+
+            #region makeGhosts
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
             float ghostSpeed = TileSize.X / 40;
@@ -113,8 +116,18 @@ namespace PacMan
             frameList.Add(new AnimationFrame(new Rectangle(46, 236, 158, 147), new Vector2(76, 73.5f), new Vector2(ghostSize.X / 158, ghostSize.Y / 147)));
             frameList.Add(new AnimationFrame(new Rectangle(45, 43, 161, 154), new Vector2(80.5f, 77), new Vector2(ghostSize.X / 161, ghostSize.Y / 154)));
             frameList.Add(new AnimationFrame(new Rectangle(235, 233, 160, 156), new Vector2(80, 78), new Vector2(ghostSize.X / 160, ghostSize.Y / 156)));
-            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, PositionToTile));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid));
 
+            frameList = new List<AnimationFrame>();
+            frameList.Add(new Rectangle(235, 420, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(45, 610, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(45, 420, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(235, 610, 160, 160).CreateFrame(true, ghostSize));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid));
+            
+            #endregion
+
+            #region makeFruit
             Vector2 fruitPos = CalculateNewFruitPos();
 
             Texture2D fruits = ContentManager.Load<Texture2D>("pacmanfruit");
@@ -128,6 +141,7 @@ namespace PacMan
             fruitFrames.Add(new Rectangle(2, 394, 48, 49).CreateFrame(true, TileSize));
             fruitFrames.Add(new Rectangle(10, 455, 32, 57).CreateFrame(true, TileSize));
 
+            #endregion
 
             Texture2D specialGhosts = ContentManager.Load<Texture2D>("SpecialGhostSpriteSheet");
             List<AnimationFrame> specialGhostFrames = new List<AnimationFrame>();
@@ -272,9 +286,28 @@ namespace PacMan
         }
 
 
-        public Tile PositionToTile(Vector2 position)
+        public static Tile PositionToTile(Vector2 position, Tile[,] grid)
         {
-            return grid[(int)((position.X) / TileSize.X), (int)((position.Y) / TileSize.Y)];
+            int xPoint = (int)(position.X / TileSize.X);
+            int yPoint = (int)(position.Y / TileSize.Y);
+            if(xPoint < 0)
+            {
+                xPoint = 0;
+            }
+            else if(xPoint >= 19)
+            {
+                xPoint = 18;
+            }
+
+            if(yPoint < 0)
+            {
+                yPoint = 0;
+            }
+            else if(yPoint >= 19)
+            {
+                yPoint = 18;
+            }
+            return grid[xPoint, yPoint];
         }
 
 
@@ -286,7 +319,7 @@ namespace PacMan
         private bool IsOnTile(Vector2 middlePos, Rectangle Hitbox)
         {
             Vector2 size = new Vector2(Hitbox.Width, Hitbox.Height);
-            return PositionToTile(middlePos + size * 1 / 2).PositionInGrid == PositionToTile(middlePos - size * 1 / 2).PositionInGrid;
+            return PositionToTile(middlePos + size * 1 / 2, grid).PositionInGrid == PositionToTile(middlePos - size * 1 / 2, grid).PositionInGrid;
         }
 
         private Vector2 CalculateNewFruitPos()

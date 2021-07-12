@@ -43,9 +43,9 @@ namespace PacMan
         public enum Ghosts
         {
             Red = 0,
-            Blue = 1,
-            Orange = 2,
-            Pink = 3,
+            Pink = 1,
+            Blue = 2,
+            Orange = 3,
         };
 
         public Dictionary<Ghosts, Func<Vector2>> GetTarget;
@@ -96,6 +96,7 @@ namespace PacMan
             GetTarget = new Dictionary<Ghosts, Func<Vector2>>()
             {
                 [Ghosts.Red] = GetRedGhostTarget,
+                [Ghosts.Pink] = GetPinkGhostTarget,
             };
 
             CornerToTile = new Dictionary<Corner, Tile>()
@@ -162,7 +163,7 @@ namespace PacMan
                         case GhostStates.FadeRun:
                             ghosts[i].Tex = specialGhostTex;
                             ghosts[i].Frames = fadeRunFrames;
-                            ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
+                            //ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
                             //////I will probably need to uncomment this if I ever make the ghost go in a circle after it reaches it's corner
                             break;
                     }
@@ -209,16 +210,21 @@ namespace PacMan
         
         Vector2 GetPinkGhostTarget()
         {
+            ///////////////////////////////////////////////////////////////When THe pink ghost target is a wall or is off the grid it stops moving!
+            ///////////////////////////
+            //////////////////////////////
+            /////////////////////////////
+
             Vector2 targetPos = Vector2.Zero;
 
             switch (pacman.CurrentDirection)
             {
                 case Directions.Up:
-                    targetPos = new Vector2(pacman.Pos.X - GameScreen.TileSize.X * 4, pacman.Pos.Y + GameScreen.TileSize.Y * 4);
+                    targetPos = new Vector2(pacman.Pos.X - GameScreen.TileSize.X * 4, pacman.Pos.Y - GameScreen.TileSize.Y * 4);
                     break;
 
                 case Directions.Down:
-                    targetPos = new Vector2(pacman.Pos.X, pacman.Pos.Y - GameScreen.TileSize.Y * 4);
+                    targetPos = new Vector2(pacman.Pos.X, pacman.Pos.Y + GameScreen.TileSize.Y * 4);
                     break;
 
                 case Directions.Left:
@@ -258,11 +264,7 @@ namespace PacMan
         private bool IsOnTile(Vector2 middlePos, Rectangle Hitbox)
         {
             Vector2 size = new Vector2(Hitbox.Width, Hitbox.Height);
-            return PositionToTile(middlePos + size * 1 / 2).PositionInGrid == PositionToTile(middlePos - size * 1 / 2).PositionInGrid;
-        }
-        public Tile PositionToTile(Vector2 position)
-        {
-            return grid[(int)((position.X) / GameScreen.TileSize.X), (int)((position.Y) / GameScreen.TileSize.Y)];
+            return GameScreen.PositionToTile(middlePos + size * 1 / 2, grid).PositionInGrid == GameScreen.PositionToTile(middlePos - size * 1 / 2, grid).PositionInGrid;
         }
     }
 }

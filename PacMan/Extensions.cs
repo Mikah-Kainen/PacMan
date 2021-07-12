@@ -70,13 +70,9 @@ namespace PacMan
         {
             return (int)(Math.Abs(currentTile.PositionInGrid.X - targetTile.PositionInGrid.X) + Math.Abs(currentTile.PositionInGrid.Y - targetTile.PositionInGrid.Y));
         }
-        public static Tile PositionToTile(Vector2 position, Tile[,] grid)
-        {
-            return grid[(int)((position.X) / GameScreen.TileSize.X), (int)((position.Y) / GameScreen.TileSize.Y)];
-        }
         public static void SetPath(this Ghost ghost, Vector2 targetPos, Tile[,] grid)
         {
-            ghost.Path = Traversals<Tile>.AStar(PositionToTile(ghost.Pos, grid), PositionToTile(targetPos, grid), Heuristic, grid, ghost.PreviousTile);
+            ghost.Path = Traversals<Tile>.AStar(GameScreen.PositionToTile(ghost.Pos, grid), GameScreen.PositionToTile(targetPos, grid), Heuristic, grid, ghost.PreviousTile);
         }
     }
 }

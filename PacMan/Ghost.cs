@@ -19,23 +19,26 @@ namespace PacMan
         public GhostStates CurrentState { get; set; }
         public Directions CurrentDirection { get; set; }
 
-        private Func<Vector2, Tile> getTile;
+        Tile[,] grid;
+
         private Stopwatch watch;
         private HashSet<Tile> hashSet;
 
-        public Ghost(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, float speedPerUpdate, Func<Vector2, Tile> getTile)
+        public Ghost(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, float speedPerUpdate, Tile[,] grid)
             : base(tex, tint, pos, scale, frames, TimeSpan.FromMilliseconds(100))
         {
             this.speedPerUpdate = speedPerUpdate;
             CurrentDirection = Directions.None;
-            this.getTile = getTile;
 
 
-            CurrentTile = getTile(pos);
-            PreviousTile = getTile(pos);
+            CurrentTile = GameScreen.PositionToTile(pos, grid);
+            PreviousTile = GameScreen.PositionToTile(pos, grid);
 
-            CurrentState = GhostStates.StayHome;
+            //CurrentState = GhostStates.StayHome;
+            CurrentState = GhostStates.ChasePacman;
             Corner = Corner.BottomRight;
+
+            this.grid = grid;
 
             watch = new Stopwatch();
             watch.Start();
@@ -49,10 +52,10 @@ namespace PacMan
             ////////////////////////////////It could be a big problem if the ghost ever gets to his target tile and has nowhere to go but I dont think that will ever happen
             /////////////////////////////////
             hashSet.Add(PreviousTile);
-            if(getTile(Pos) != CurrentTile)
+            if(GameScreen.PositionToTile(Pos, grid) != CurrentTile)
             {
                 PreviousTile = CurrentTile;
-                CurrentTile = getTile(Pos);
+                CurrentTile = GameScreen.PositionToTile(Pos, grid);
             }
 
             if(watch.ElapsedMilliseconds > 500)
