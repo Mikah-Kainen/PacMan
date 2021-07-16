@@ -34,10 +34,10 @@ namespace PacMan
 
         public enum Corner
         {
-            TopLeft,
-            TopRight,
-            BottomLeft,
-            BottomRight,
+            TopRight, // red
+            TopLeft, // pink
+            BottomRight, // blue
+            BottomLeft, // orange
         };
 
         public enum Ghosts
@@ -72,6 +72,7 @@ namespace PacMan
             {
                 ghostTextures[i] = ghosts[i].Tex;
                 frames[i] = ghosts[i].Frames;
+                ghosts[i].Corner = (Corner)i;
             }
 
             this.specialGhostTex = specialGhostTex;
@@ -91,21 +92,26 @@ namespace PacMan
             this.grid = grid;
             this.pacman = pacman;
 
-            ghosts[(int)Ghosts.Red].CurrentState = GhostStates.ChasePacman;
 
             GetTarget = new Dictionary<Ghosts, Func<Vector2>>()
             {
                 [Ghosts.Red] = GetRedGhostTarget,
                 [Ghosts.Pink] = GetPinkGhostTarget,
+                [Ghosts.Blue] = GetBlueGhostTarget,
             };
 
             CornerToTile = new Dictionary<Corner, Tile>()
             {
                 [Corner.TopLeft] = grid[0, 0],
-                [Corner.TopRight] = grid[0, grid.GetLength(1) - 1],
-                [Corner.BottomLeft] = grid[grid.GetLength(0) - 1, 0],
+                [Corner.TopRight] = grid[grid.GetLength(1) - 1, 0],
+                [Corner.BottomLeft] = grid[0, grid.GetLength(0) - 1],
                 [Corner.BottomRight] = grid[grid.GetLength(0) - 1, grid.GetLength(1) - 1],
             };
+            List<Tile> temp = new List<Tile>();
+            for(int i = 0; i < 4; i ++)
+            {
+                temp.Add(CornerToTile[(Corner)i]);
+            }
             StopWatch = new Stopwatch();
             StopWatch.Start();
             GeneralState = GhostStates.ChasePacman;
@@ -163,7 +169,7 @@ namespace PacMan
                         case GhostStates.FadeRun:
                             ghosts[i].Tex = specialGhostTex;
                             ghosts[i].Frames = fadeRunFrames;
-                            //ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
+                            ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
                             //////I will probably need to uncomment this if I ever make the ghost go in a circle after it reaches it's corner
                             break;
                     }

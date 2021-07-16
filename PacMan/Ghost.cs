@@ -36,7 +36,6 @@ namespace PacMan
 
             //CurrentState = GhostStates.StayHome;
             CurrentState = GhostStates.ChasePacman;
-            Corner = Corner.BottomRight;
 
             this.grid = grid;
 

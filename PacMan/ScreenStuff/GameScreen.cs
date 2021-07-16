@@ -15,6 +15,16 @@ using static PacMan.GhostManager;
 
 namespace PacMan
 {
+    /// <summary>
+    /// TODO LIST! Fix the teleporters,
+    /// make it so the ghosts do loops when they get to their corners,
+    /// change all the lists to be one big span in ghostManager,
+    /// the ghosts should stay out of the teleporters unless they want to teleport,
+    /// possibly add in ghost teleportation
+    /// </summary>
+    //
+        //
+        //
     public class GameScreen : Screen
     {
         Texture2D pixelMap;
