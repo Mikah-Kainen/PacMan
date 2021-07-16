@@ -98,13 +98,14 @@ namespace PacMan
                 [Ghosts.Red] = GetRedGhostTarget,
                 [Ghosts.Pink] = GetPinkGhostTarget,
                 [Ghosts.Blue] = GetBlueGhostTarget,
+                [Ghosts.Orange] = GetOrangeGhostTarget,
             };
 
             CornerToTile = new Dictionary<Corner, Tile>()
             {
                 [Corner.TopLeft] = grid[0, 0],
-                [Corner.TopRight] = grid[grid.GetLength(1) - 1, 0],
-                [Corner.BottomLeft] = grid[0, grid.GetLength(0) - 1],
+                [Corner.TopRight] = grid[0, grid.GetLength(1) - 1],
+                [Corner.BottomLeft] = grid[grid.GetLength(0) - 1, 0],
                 [Corner.BottomRight] = grid[grid.GetLength(0) - 1, grid.GetLength(1) - 1],
             };
             List<Tile> temp = new List<Tile>();
@@ -251,10 +252,13 @@ namespace PacMan
 
         Vector2 GetBlueGhostTarget()
         {
-            Vector2 targetPos = pacman.Pos;
+            Point RedGhostPoint = GameScreen.PositionToTile(ghosts[0].Pos, grid).PositionInGrid;
+            Point PacPoint = GameScreen.PositionToTile(pacman.Pos, grid).PositionInGrid;
+            Point distance = PacPoint - RedGhostPoint;
 
-
-            return targetPos;
+            Point targetPoint = PacPoint + distance;
+            Vector2 returnVal = targetPoint.ToVector2() * GameScreen.TileSize;
+            return returnVal;
         }
 
 
@@ -262,6 +266,13 @@ namespace PacMan
         {
             Vector2 targetPos = pacman.Pos;
 
+            Point OrangeGhostPoint = GameScreen.PositionToTile(ghosts[3].Pos, grid).PositionInGrid;
+            Point PacPoint = GameScreen.PositionToTile(pacman.Pos, grid).PositionInGrid;
+            Point distance = PacPoint - OrangeGhostPoint;
+            if (distance.X * distance.X + distance.Y * distance.Y < 64)
+            {
+                targetPos = CornerToTile[ghosts[3].Corner].Pos;
+            }
 
             return targetPos;
         }

@@ -11,7 +11,7 @@ namespace PacMan.TraversalStuff
     
 
         public static Stack<T> AStar(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previousPosition)
-        {
+        { 
             targetPosition = FindProperTarget(startingPosition, targetPosition, heuristicFunction, grid);
 
             if (startingPosition.PositionInGrid.Equals(targetPosition.PositionInGrid))
@@ -98,7 +98,7 @@ namespace PacMan.TraversalStuff
             while (backingQueue.Count > 0)
             {
                 T current = backingQueue.Dequeue();
-                if (IsInBounds(new Point(current.PositionInGrid.Y, current.PositionInGrid.X + 1), grid))
+                if (IsInBounds(new Point(current.PositionInGrid.X + 1, current.PositionInGrid.Y), grid))
                 {
                     if (!current.IsObstacle)
                     {
@@ -106,10 +106,10 @@ namespace PacMan.TraversalStuff
                     }
                     else
                     {
-                        backingQueue.Enqueue(grid[current.PositionInGrid.X + 1, current.PositionInGrid.Y]);
+                        backingQueue.Enqueue(grid[current.PositionInGrid.Y, current.PositionInGrid.X + 1]);
                     }
                 }
-                if (IsInBounds(new Point(current.PositionInGrid.Y, current.PositionInGrid.X - 1), grid))
+                if (IsInBounds(new Point(current.PositionInGrid.X - 1, current.PositionInGrid.Y), grid))
                 {
                     if (!current.IsObstacle)
                     {
@@ -117,10 +117,10 @@ namespace PacMan.TraversalStuff
                     }
                     else
                     {
-                        backingQueue.Enqueue(grid[current.PositionInGrid.X - 1, current.PositionInGrid.Y]);
+                        backingQueue.Enqueue(grid[current.PositionInGrid.Y, current.PositionInGrid.X - 1]);
                     }
                 }
-                if (IsInBounds(new Point(current.PositionInGrid.Y + 1, current.PositionInGrid.X), grid))
+                if (IsInBounds(new Point(current.PositionInGrid.X, current.PositionInGrid.Y + 1), grid))
                 {
                     if (!current.IsObstacle)
                     {
@@ -128,10 +128,10 @@ namespace PacMan.TraversalStuff
                     }
                     else
                     {
-                        backingQueue.Enqueue(grid[current.PositionInGrid.X, current.PositionInGrid.Y + 1]);
+                        backingQueue.Enqueue(grid[current.PositionInGrid.Y + 1, current.PositionInGrid.X]);
                     }
                 }
-                if (IsInBounds(new Point(current.PositionInGrid.Y - 1, current.PositionInGrid.X), grid))
+                if (IsInBounds(new Point(current.PositionInGrid.X, current.PositionInGrid.Y - 1), grid))
                 {
                     if (!current.IsObstacle)
                     {
@@ -139,7 +139,7 @@ namespace PacMan.TraversalStuff
                     }
                     else
                     {
-                        backingQueue.Enqueue(grid[current.PositionInGrid.X, current.PositionInGrid.Y - 1]);
+                        backingQueue.Enqueue(grid[current.PositionInGrid.Y - 1, current.PositionInGrid.X]);
                     }
                 }
 

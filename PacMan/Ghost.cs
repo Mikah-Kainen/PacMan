@@ -47,9 +47,6 @@ namespace PacMan
 
         public override void Update(GameTime gameTime)
         {
-            /////////////////////////////////
-            ////////////////////////////////It could be a big problem if the ghost ever gets to his target tile and has nowhere to go but I dont think that will ever happen
-            /////////////////////////////////
             hashSet.Add(PreviousTile);
             if(GameScreen.PositionToTile(Pos, grid) != CurrentTile)
             {

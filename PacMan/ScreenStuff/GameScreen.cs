@@ -20,7 +20,8 @@ namespace PacMan
     /// make it so the ghosts do loops when they get to their corners,
     /// change all the lists to be one big span in ghostManager,
     /// the ghosts should stay out of the teleporters unless they want to teleport,
-    /// possibly add in ghost teleportation
+    /// possibly add in ghost teleportation,
+    /// Figure out why the ghosts shake in the fade out stage,
     /// </summary>
     //
         //
@@ -69,14 +70,14 @@ namespace PacMan
 
             TileSize = new Vector2(xChunk, yChunk);
 
-            for (int x = 0; x < pixelMap.Width; x++)
+            for (int y = 0; y < pixelMap.Height; y++)
             {
-                for (int y = 0; y < pixelMap.Height; y++)
+                for (int x = 0; x < pixelMap.Width; x++)
                 {
 
                     int index = CalculateIndex(x, y, pixelMap.Width);
                     Color pixelColor = pixels[index];
-                    Point tempPoint = new Point(y, x);
+                    Point tempPoint = new Point(x, y);
 
                     if (!PointToTile.ContainsKey(tempPoint))
                     {
@@ -91,7 +92,7 @@ namespace PacMan
                     temp.Neighbors = GetNeighbors(x, y, pixels);
                     Objects.Add(temp);
 
-                    var tile = Objects[y + x * pixelMap.Width] as Tile;
+                    var tile = Objects[y * pixelMap.Width + x] as Tile;
 
                     if (tile.TileType == TileTypes.Wall)
                     {
@@ -122,10 +123,10 @@ namespace PacMan
             Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed, TileSize.Y - ghostSpeed);
 
             frameList = new List<AnimationFrame>();
-            frameList.Add(new AnimationFrame(new Rectangle(234, 47, 162, 148), new Vector2(81, 74), new Vector2(ghostSize.X / 162, ghostSize.Y / 148)));
-            frameList.Add(new AnimationFrame(new Rectangle(46, 236, 158, 147), new Vector2(76, 73.5f), new Vector2(ghostSize.X / 158, ghostSize.Y / 147)));
-            frameList.Add(new AnimationFrame(new Rectangle(45, 43, 161, 154), new Vector2(80.5f, 77), new Vector2(ghostSize.X / 161, ghostSize.Y / 154)));
-            frameList.Add(new AnimationFrame(new Rectangle(235, 233, 160, 156), new Vector2(80, 78), new Vector2(ghostSize.X / 160, ghostSize.Y / 156)));
+            frameList.Add(new Rectangle(235, 45, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(45, 235, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(45, 45, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(235, 235, 160, 160).CreateFrame(true, ghostSize));
             ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid));
 
             frameList = new List<AnimationFrame>();
@@ -134,7 +135,20 @@ namespace PacMan
             frameList.Add(new Rectangle(45, 420, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(235, 610, 160, 160).CreateFrame(true, ghostSize));
             ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid));
-            
+
+            frameList = new List<AnimationFrame>();
+            frameList.Add(new Rectangle(635, 40, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(445, 230, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(445, 40, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(635, 230, 160, 160).CreateFrame(true, ghostSize));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid));
+
+            frameList = new List<AnimationFrame>();
+            frameList.Add(new Rectangle(635, 420, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(445, 610, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(445, 420, 160, 160).CreateFrame(true, ghostSize));
+            frameList.Add(new Rectangle(635, 610, 160, 160).CreateFrame(true, ghostSize));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid));
             #endregion
 
             #region makeFruit
@@ -153,6 +167,7 @@ namespace PacMan
 
             #endregion
 
+            #region makeGhostManager
             Texture2D specialGhosts = ContentManager.Load<Texture2D>("SpecialGhostSpriteSheet");
             List<AnimationFrame> specialGhostFrames = new List<AnimationFrame>();
             specialGhostFrames.Add(new Rectangle(0, 0, 58, 58).CreateFrame(true, TileSize));
@@ -171,6 +186,7 @@ namespace PacMan
             specialGhostFrames.Add(new Rectangle(78, 192, 58, 58).CreateFrame(true, TileSize));
 
             ghostManager = new GhostManager(ghosts, specialGhosts, specialGhostFrames, grid, ref pacman);
+            #endregion
 
             fruit = new Fruit(fruits, Color.Transparent, Color.White, fruitPos, Vector2.Zero, fruitFrames);
             Objects.Add(pacman);
@@ -224,7 +240,7 @@ namespace PacMan
 
 
             //Calculates left neighbor
-            tempPoint = new Point(y, x - 1);
+            tempPoint = new Point(x - 1, y);
             if (!PointToTile.ContainsKey(tempPoint))
             {
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
@@ -241,7 +257,7 @@ namespace PacMan
 
 
             //Calculates right neighbor
-            tempPoint = new Point(y, x + 1);
+            tempPoint = new Point(x + 1, y);
             if (!PointToTile.ContainsKey(tempPoint))
             {
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
@@ -258,7 +274,7 @@ namespace PacMan
 
 
             //Calculates up neighbor
-            tempPoint = new Point(y - 1, x);
+            tempPoint = new Point(x, y - 1);
             if (!PointToTile.ContainsKey(tempPoint))
             {
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
@@ -276,7 +292,7 @@ namespace PacMan
 
 
             //Calculates down neighbor
-            tempPoint = new Point(y + 1, x);
+            tempPoint = new Point(x, y + 1);
             if (!PointToTile.ContainsKey(tempPoint))
             {
                 index = CalculateIndex(tempPoint.X, tempPoint.Y, pixelMap.Width);
@@ -317,7 +333,7 @@ namespace PacMan
             {
                 yPoint = 18;
             }
-            return grid[xPoint, yPoint];
+            return grid[yPoint, xPoint];
         }
 
 
