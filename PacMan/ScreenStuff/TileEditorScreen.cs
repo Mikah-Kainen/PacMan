@@ -73,7 +73,7 @@ namespace PacMan.ScreenStuff
 
 
             Vector2 paintSize = new Vector2(bounds.Width * (1 - fraction) / 5, bounds.Height * (1 - fraction) / 5);
-            Vector2 paintOrigin = new Vector2(paintSize.X / 2, paintSize.Y / 2);
+            Vector2 paintOrigin = new Vector2(1 / 2, 1 / 2);
             pallets = new List<Pallet>();
 
            

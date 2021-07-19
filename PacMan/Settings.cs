@@ -44,24 +44,21 @@ namespace PacMan
 
             //Read from file
 
-            //bool homeLaptop = false;
-            //string filePath = "";
-            //if (homeLaptop)
-            //{
-            //    filePath = @"C:\Users\mikah\source\repos\Mikah-Kainen\PacMan\PacMan";
-            //}
-            //else
-            //{
-            //    //filePath = @"Z:\Visual Studio 2019\Projects\PacMan\PacMan";
-                
-            //}
-            string filePath = "Stuffs.json";
+            bool homeLaptop = false;
+            string filePath = "";
+            if (homeLaptop)
+            {
+                filePath = @"C:\Users\mikah\source\repos\Mikah-Kainen\PacMan\PacMan\";
+            }
+            else
+            {
+                //filePath = @"Z:\Visual Studio 2019\Projects\PacMan\PacMan";
+                filePath = @"Z:\Pacman\PacMan\";
+            }
 
-            //    DictionaryPath = "Stuffs.json";
+            DictionaryPath = filePath + "Stuffs.json";
 
-            DictionaryPath = filePath;
-
-            var fileToConvetBack = System.IO.File.ReadAllText(filePath);
+            var fileToConvetBack = System.IO.File.ReadAllText(DictionaryPath);
             Dictionary<int, TileTypes> meow = JsonConvert.DeserializeObject<Dictionary<int, TileTypes>>(fileToConvetBack);
 
             ColorDictionary = new Dictionary<Color, TileTypes>();
