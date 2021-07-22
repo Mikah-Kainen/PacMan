@@ -86,6 +86,11 @@ namespace PacMan.TraversalStuff
                 return targetPosition;
             }
 
+            return FindClosestTarget(startingPosition, targetPosition, heuristicFunction, grid);
+        }
+
+        public static T FindClosestTarget(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid)
+        {
             T closest = default(T);
             //Queue, enqueue the start,
             //Loop: dequeue, enqueue the dequed node's neighbors
@@ -143,14 +148,17 @@ namespace PacMan.TraversalStuff
                     }
                 }
 
-
+                if(PossibleTargets.Contains(startingPosition))
+                {
+                    PossibleTargets.Remove(startingPosition);
+                }
                 if (PossibleTargets.Count > 0)
                 {
                     int leastDistance = int.MaxValue;
-                    foreach(T target in PossibleTargets)
+                    foreach (T target in PossibleTargets)
                     {
                         int temp = heuristicFunction(startingPosition, target);
-                        if(temp < leastDistance)
+                        if (temp < leastDistance)
                         {
                             leastDistance = temp;
                             closest = target;

@@ -59,7 +59,6 @@ namespace PacMan
         Texture2D specialGhostTex;
         List<AnimationFrame> runAwayFrames;
         List<AnimationFrame> fadeRunFrames;
-        //MAKE THIS A SPAN FOR BETTERNESS
         public Dictionary<Corner, Tile> CornerToTile { get; private set; }
         public Stopwatch StopWatch;
         public GhostStates GeneralState { get; set; }
@@ -147,32 +146,40 @@ namespace PacMan
             {
                 if (IsOnTile(ghosts[i].Pos, ghosts[i].HitBox))
                 {
-                    switch (ghosts[i].CurrentState)
+                    Tile ghostTile = GameScreen.PositionToTile(ghosts[i].Pos, grid);
+                    if (GameScreen.PositionToTile(ghosts[i].Pos, grid) == Traversals<Tile>.FindProperTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid))
                     {
-                        case GhostStates.StayHome:
-                            //PathCalculation[(Ghosts)i](ghosts[i].Pos);
-                            ghosts[i].SetPath(ghosts[i].Pos, grid);
-                            break;
+                        ghosts[i].SetPath(Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid).Pos, grid);
+                    }
+                    else
+                    {
+                        switch (ghosts[i].CurrentState)
+                        {
+                            case GhostStates.StayHome:
+                                //PathCalculation[(Ghosts)i](ghosts[i].Pos);
+                                ghosts[i].SetPath(ghosts[i].Pos, grid);
+                                break;
 
-                        case GhostStates.ChasePacman:
-                            ghosts[i].Tex = ghostTextures[i];
-                            ghosts[i].Frames = frames[i];
-                            //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
-                            ghosts[i].SetPath(GetTarget[(Ghosts)i](), grid);
-                            break;
+                            case GhostStates.ChasePacman:
+                                ghosts[i].Tex = ghostTextures[i];
+                                ghosts[i].Frames = frames[i];
+                                //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
+                                ghosts[i].SetPath(GetTarget[(Ghosts)i](), grid);
+                                break;
 
-                        case GhostStates.RunAway:
-                            ghosts[i].Tex = specialGhostTex;
-                            ghosts[i].Frames = runAwayFrames;
-                            ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
-                            break;
+                            case GhostStates.RunAway:
+                                ghosts[i].Tex = specialGhostTex;
+                                ghosts[i].Frames = runAwayFrames;
+                                ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
+                                break;
 
-                        case GhostStates.FadeRun:
-                            ghosts[i].Tex = specialGhostTex;
-                            ghosts[i].Frames = fadeRunFrames;
-                            ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
-                            //////I will probably need to uncomment this if I ever make the ghost go in a circle after it reaches it's corner
-                            break;
+                            case GhostStates.FadeRun:
+                                ghosts[i].Tex = specialGhostTex;
+                                ghosts[i].Frames = fadeRunFrames;
+                                //ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
+                                //////The ghost shakes when it is in this stage because it is shifting from left to right or right to left in the same tile
+                                break;
+                        }
                     }
                 }
             }

@@ -17,11 +17,8 @@ namespace PacMan
 {
     /// <summary>
     /// TODO LIST! Fix the teleporters,
-    /// make it so the ghosts do loops when they get to their corners,
-    /// change all the lists to be one big span in ghostManager,
-    /// the ghosts should stay out of the teleporters unless they want to teleport,
+    /// change all the lists to be one big span in ghostManager, // maybe not so necessary would make it much harder to read and it's actually only 2 lists
     /// possibly add in ghost teleportation,
-    /// Figure out why the ghosts shake in the fade out stage,
     /// </summary>
     //
         //
@@ -337,7 +334,7 @@ namespace PacMan
         }
 
 
-        private int Heuristic(Tile currentTile, Tile targetTile)
+        public static int Heuristic(Tile currentTile, Tile targetTile)
         {
             return (int)(Math.Abs(currentTile.PositionInGrid.X - targetTile.PositionInGrid.X) + Math.Abs(currentTile.PositionInGrid.Y - targetTile.PositionInGrid.Y));
         }
