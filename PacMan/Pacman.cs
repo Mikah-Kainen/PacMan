@@ -95,7 +95,16 @@ namespace PacMan
 
                             if (IsOnTile(HitBox))
                             {
-                                Pos.Y = Pos.Y + screenManager.CurrentScreen.Bounds.Height - GameScreen.TileSize.Y * 2;
+                                if (IsOnTile(HitBox))
+                                {
+                                    Point targetPoint = GameScreen.PositionToGridPoint(Pos);
+                                    targetPoint.Y = grid.GetLength(1) - 1;
+                                    while (grid[targetPoint.Y, targetPoint.X].IsObstacle)
+                                    {
+                                        targetPoint.Y--;
+                                    } 
+                                    Pos.Y = grid[targetPoint.Y, targetPoint.X].Pos.Y + HitBox.Height/2;
+                                }
                             }
                         }
 
@@ -118,7 +127,13 @@ namespace PacMan
 
                             if (IsOnTile(HitBox))
                             {
-                                Pos.Y = Pos.Y - screenManager.CurrentScreen.Bounds.Height + GameScreen.TileSize.Y * 2;
+                                Point targetPoint = GameScreen.PositionToGridPoint(Pos);
+                                targetPoint.Y = 0;
+                                while(grid[targetPoint.Y, targetPoint.X].IsObstacle)
+                                {
+                                    targetPoint.Y++;
+                                }
+                                Pos.Y = grid[targetPoint.Y, targetPoint.X].Pos.Y + HitBox.Height/2;
                             }
                         }
                         if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileTypes.Wall)
@@ -137,10 +152,18 @@ namespace PacMan
                         {
                             loadingTeleport = true;
 
-                            if (IsOnTile(HitBox))
-                            {
-                                Pos.X = Math.Abs(Pos.X + screenManager.CurrentScreen.Bounds.Width - GameScreen.TileSize.X * 2);
-                            }
+
+                             if (IsOnTile(HitBox))
+                             {
+                                 Point targetPoint = GameScreen.PositionToGridPoint(Pos);
+                                 targetPoint.X = grid.GetLength(0) - 1;
+                                 while (grid[targetPoint.Y, targetPoint.X].IsObstacle)
+                                 {
+                                     targetPoint.X--;
+                                 }
+                                 Pos.X = grid[targetPoint.Y, targetPoint.X].Pos.X + HitBox.Width / 2;
+                             }
+
                         }
 
                         if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X - 1, posInGrid.Y)].TileType == TileTypes.Wall)
@@ -161,7 +184,13 @@ namespace PacMan
 
                             if (IsOnTile(HitBox))
                             {
-                                Pos.X = Math.Abs(Pos.X - screenManager.CurrentScreen.Bounds.Width + GameScreen.TileSize.X * 2);
+                                Point targetPoint = GameScreen.PositionToGridPoint(Pos);
+                                targetPoint.X = 0;
+                                while (grid[targetPoint.Y, targetPoint.X].IsObstacle)
+                                {
+                                    targetPoint.X++;
+                                }
+                                Pos.X = grid[targetPoint.Y, targetPoint.X].Pos.X + HitBox.Width / 2;
                             }
                         }
 

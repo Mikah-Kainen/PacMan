@@ -333,6 +333,29 @@ namespace PacMan
             return grid[yPoint, xPoint];
         }
 
+        public static Point PositionToGridPoint(Vector2 position)
+        {
+            int xPoint = (int)(position.X / TileSize.X);
+            int yPoint = (int)(position.Y / TileSize.Y);
+            if (xPoint < 0)
+            {
+                xPoint = 0;
+            }
+            else if (xPoint >= 19)
+            {
+                xPoint = 18;
+            }
+
+            if (yPoint < 0)
+            {
+                yPoint = 0;
+            }
+            else if (yPoint >= 19)
+            {
+                yPoint = 18;
+            }
+            return new Point(xPoint, yPoint);
+        }
 
         public static int Heuristic(Tile currentTile, Tile targetTile)
         {
