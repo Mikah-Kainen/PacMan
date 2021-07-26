@@ -12,7 +12,7 @@ namespace PacMan.TraversalStuff
 
         public static Stack<T> AStar(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previousPosition)
         { 
-            targetPosition = FindProperTarget(startingPosition, targetPosition, heuristicFunction, grid);
+            targetPosition = FindProperTarget(startingPosition, targetPosition, heuristicFunction, grid, previousPosition);
 
             if (startingPosition.PositionInGrid.Equals(targetPosition.PositionInGrid))
             {
@@ -79,17 +79,17 @@ namespace PacMan.TraversalStuff
         }
 
 
-        public static T FindProperTarget(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid)
+        public static T FindProperTarget(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previous)
         {
             if(!targetPosition.IsObstacle)
             {
                 return targetPosition;
             }
 
-            return FindClosestTarget(startingPosition, targetPosition, heuristicFunction, grid);
+            return FindClosestTarget(startingPosition, targetPosition, heuristicFunction, grid, previous);
         }
 
-        public static T FindClosestTarget(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid)
+        public static T FindClosestTarget(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previous)
         {
             T closest = default(T);
             //Queue, enqueue the start,
@@ -152,6 +152,10 @@ namespace PacMan.TraversalStuff
                 {
                     PossibleTargets.Remove(startingPosition);
                 }
+                if(PossibleTargets.Contains(previous))
+                {
+                    PossibleTargets.Remove(previous);
+                }
                 if (PossibleTargets.Count > 0)
                 {
                     int leastDistance = int.MaxValue;
@@ -168,7 +172,7 @@ namespace PacMan.TraversalStuff
                 }
             }
 
-            return closest;
+            return previous;
         }
 
         public static bool IsInBounds(Point currentPoint, T[,] grid)

@@ -19,7 +19,9 @@ namespace PacMan
     /// TODO LIST! Fix the teleporters,
     /// change all the lists to be one big span in ghostManager, // maybe not so necessary would make it much harder to read and it's actually only 2 lists
     /// possibly add in ghost teleportation,
-    /// the orange ghost can turn around when it switches modes
+    /// the orange ghost can turn around when it switches modes so can the red one
+    /// after the ghosts teleport they can go through walls
+    /// 
     /// </summary>
     //
         //
@@ -118,7 +120,7 @@ namespace PacMan
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
             float ghostSpeed = TileSize.X / 40;
-            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed * 10, TileSize.Y - ghostSpeed * 10);
+            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed, TileSize.Y - ghostSpeed);
 
             frameList = new List<AnimationFrame>();
             frameList.Add(new Rectangle(235, 45, 160, 160).CreateFrame(true, ghostSize));
@@ -168,20 +170,20 @@ namespace PacMan
             #region makeGhostManager
             Texture2D specialGhosts = ContentManager.Load<Texture2D>("SpecialGhostSpriteSheet");
             List<AnimationFrame> specialGhostFrames = new List<AnimationFrame>();
-            specialGhostFrames.Add(new Rectangle(0, 0, 58, 58).CreateFrame(true, TileSize));
-            specialGhostFrames.Add(new Rectangle(0, 0, 58, 58).CreateFrame(true, TileSize));
-            specialGhostFrames.Add(new Rectangle(0, 64, 58, 58).CreateFrame(true, TileSize));
-            specialGhostFrames.Add(new Rectangle(0, 64, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(0, 0, 58, 58).CreateFrame(true, ghostSize));
+            specialGhostFrames.Add(new Rectangle(0, 0, 58, 58).CreateFrame(true, ghostSize));
+            specialGhostFrames.Add(new Rectangle(0, 64, 58, 58).CreateFrame(true, ghostSize));
+            specialGhostFrames.Add(new Rectangle(0, 64, 58, 58).CreateFrame(true, ghostSize));
 
-            specialGhostFrames.Add(new Rectangle(0, 128, 58, 58).CreateFrame(true, TileSize));
-            specialGhostFrames.Add(new Rectangle(0, 128, 58, 58).CreateFrame(true, TileSize));
-            specialGhostFrames.Add(new Rectangle(0, 192, 58, 58).CreateFrame(true, TileSize));
-            specialGhostFrames.Add(new Rectangle(0, 192, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(0, 128, 58, 58).CreateFrame(true, ghostSize));
+            specialGhostFrames.Add(new Rectangle(0, 128, 58, 58).CreateFrame(true, ghostSize));
+            specialGhostFrames.Add(new Rectangle(0, 192, 58, 58).CreateFrame(true, ghostSize));
+            specialGhostFrames.Add(new Rectangle(0, 192, 58, 58).CreateFrame(true, ghostSize));
 
-            specialGhostFrames.Add(new Rectangle(78, 0, 58, 58).CreateFrame(true, TileSize));
-            specialGhostFrames.Add(new Rectangle(78, 64, 58, 58).CreateFrame(true, TileSize));
-            specialGhostFrames.Add(new Rectangle(78, 128, 58, 58).CreateFrame(true, TileSize));
-            specialGhostFrames.Add(new Rectangle(78, 192, 58, 58).CreateFrame(true, TileSize));
+            specialGhostFrames.Add(new Rectangle(78, 0, 58, 58).CreateFrame(true,   ghostSize));
+            specialGhostFrames.Add(new Rectangle(78, 64, 58, 58).CreateFrame(true,  ghostSize));
+            specialGhostFrames.Add(new Rectangle(78, 128, 58, 58).CreateFrame(true, ghostSize));
+            specialGhostFrames.Add(new Rectangle(78, 192, 58, 58).CreateFrame(true, ghostSize));
 
             ghostManager = new GhostManager(ghosts, specialGhosts, specialGhostFrames, grid, ref pacman);
             #endregion

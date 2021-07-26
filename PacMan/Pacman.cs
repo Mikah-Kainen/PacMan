@@ -99,6 +99,7 @@ namespace PacMan
                             {
                                 if (!ScreenManager.Settings.TeleportDictionary.ContainsKey(CurrentTile))
                                 {
+                                    CurrentTile.IsObstacle = false;
                                     Tile key = CurrentTile;
                                     posInGrid.Y = grid.GetLength(1) - 1;
                                     while (CurrentTile.IsObstacle)
@@ -130,7 +131,7 @@ namespace PacMan
                         break;
 
                     case Directions.Down:
-                        if (posInGrid.Y == 18 && GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
+                        if (posInGrid.Y == 18 && CurrentTile.TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -138,6 +139,7 @@ namespace PacMan
                             {
                                 if (!ScreenManager.Settings.TeleportDictionary.ContainsKey(CurrentTile))
                                 {
+                                    CurrentTile.IsObstacle = false;
                                     Tile key = CurrentTile;
                                     posInGrid.Y = 0;
                                     while (CurrentTile.IsObstacle)
@@ -166,7 +168,7 @@ namespace PacMan
                         break;
 
                     case Directions.Left:
-                        if (posInGrid.X == 0 & GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
+                        if (posInGrid.X == 0 & CurrentTile.TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -175,6 +177,7 @@ namespace PacMan
                             {
                                 if (!ScreenManager.Settings.TeleportDictionary.ContainsKey(CurrentTile))
                                 {
+                                    CurrentTile.IsObstacle = false;
                                     Tile key = CurrentTile;
                                     posInGrid.X = grid.GetLength(0) - 1;
                                     while (CurrentTile.IsObstacle)
@@ -205,7 +208,7 @@ namespace PacMan
                         break;
 
                     case Directions.Right:
-                        if (posInGrid.X == 18 & GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
+                        if (posInGrid.X == 18 & CurrentTile.TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
@@ -213,6 +216,7 @@ namespace PacMan
                             {
                                 if (!ScreenManager.Settings.TeleportDictionary.ContainsKey(CurrentTile))
                                 {
+                                    CurrentTile.IsObstacle = false;
                                     Tile key = CurrentTile;
                                     posInGrid.X = 0;
                                     while (CurrentTile.IsObstacle)

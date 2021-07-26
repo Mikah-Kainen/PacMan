@@ -46,7 +46,7 @@ namespace PacMan
 
             //Read from file
 
-            bool homeLaptop = true ;
+            bool homeLaptop = false;
             string filePath = "";
             if (homeLaptop)
             {
@@ -55,7 +55,7 @@ namespace PacMan
             else
             {
                 //filePath = @"Z:\Visual Studio 2019\Projects\PacMan\PacMan";
-                filePath = @"Z:\Pacman\PacMan\";
+                filePath = @"..\..\..\";
             }
 
             DictionaryPath = filePath + "Stuffs.json";

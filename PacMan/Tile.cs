@@ -29,7 +29,8 @@ namespace PacMan
 
         public double Weight { get; set; }
 
-        public bool IsObstacle { get { return TileType == TileTypes.Wall; } }
+        public bool IsObstacle { get; set; }
+
         public Tile(Texture2D tex, Color tint, Vector2 scale, TileTypes tileType, Point posInGrid)
             : base(tex, tint, Vector2.Zero, scale, /*new Vector2(.5f * scale.X * tex.Width, .5f * scale.Y * tex.Height)*/ Vector2.Zero)
         {
@@ -39,6 +40,7 @@ namespace PacMan
             WasVisited = false;
             Weight = 1;
 
+            IsObstacle = tileType == TileTypes.Wall || tileType == TileTypes.Teleport;
             pos = new Vector2(posInGrid.X * Scale.X * tex.Width + Origin.X, posInGrid.Y * Scale.Y * tex.Height + Origin.Y);
         }
 

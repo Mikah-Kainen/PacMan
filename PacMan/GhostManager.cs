@@ -20,7 +20,7 @@ namespace PacMan
             Fade2 = 3,
             EyesRight = 4,
             EyesDown = 5,
-            EyesLeft = 6, 
+            EyesLeft = 6,
             EyesUp = 7,
         };
 
@@ -67,7 +67,7 @@ namespace PacMan
         {
             ghostTextures = new Texture2D[ghosts.Count];
             frames = new List<AnimationFrame>[ghosts.Count];
-            for(int i = 0; i < ghostTextures.Length; i ++)
+            for (int i = 0; i < ghostTextures.Length; i++)
             {
                 ghostTextures[i] = ghosts[i].Tex;
                 frames[i] = ghosts[i].Frames;
@@ -78,11 +78,11 @@ namespace PacMan
             runAwayFrames = new List<AnimationFrame>();
             fadeRunFrames = new List<AnimationFrame>();
 
-            for(int i = 0; i < 4; i ++)
+            for (int i = 0; i < 4; i++)
             {
                 runAwayFrames.Add(specialGhostFrames[i]);
             }
-            for(int i = 4; i < 8; i ++)
+            for (int i = 4; i < 8; i++)
             {
                 fadeRunFrames.Add(specialGhostFrames[i]);
             }
@@ -108,7 +108,7 @@ namespace PacMan
                 [Corner.BottomRight] = grid[grid.GetLength(0) - 1, grid.GetLength(1) - 1],
             };
             List<Tile> temp = new List<Tile>();
-            for(int i = 0; i < 4; i ++)
+            for (int i = 0; i < 4; i++)
             {
                 temp.Add(CornerToTile[(Corner)i]);
             }
@@ -134,7 +134,7 @@ namespace PacMan
                 ghost.Update(gameTime);
             }
 
-            if(StopWatch.ElapsedMilliseconds > 6000 && GeneralState == GhostStates.RunAway)
+            if (StopWatch.ElapsedMilliseconds > 6000 && GeneralState == GhostStates.RunAway)
             {
                 SwitchMode(GhostStates.FadeRun);
             }
@@ -147,39 +147,48 @@ namespace PacMan
                 if (IsOnTile(ghosts[i].Pos, ghosts[i].HitBox))
                 {
                     Tile ghostTile = GameScreen.PositionToTile(ghosts[i].Pos, grid);
-                    if (ghostTile == Traversals<Tile>.FindProperTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid))
-                    {
-                        ghosts[i].SetPath(Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid).Pos, grid);
-                    }
-                    else
-                    {
-                        switch (ghosts[i].CurrentState)
-                        {
-                            case GhostStates.StayHome:
-                                //PathCalculation[(Ghosts)i](ghosts[i].Pos);
-                                ghosts[i].SetPath(ghosts[i].Pos, grid);
-                                break;
 
-                            case GhostStates.ChasePacman:
-                                ghosts[i].Tex = ghostTextures[i];
-                                ghosts[i].Frames = frames[i];
-                                //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
+                    switch (ghosts[i].CurrentState)
+                    {
+                        case GhostStates.StayHome:
+                            //PathCalculation[(Ghosts)i](ghosts[i].Pos);
+                            ghosts[i].SetPath(ghosts[i].Pos, grid);
+                            break;
+
+                        case GhostStates.ChasePacman:
+                            ghosts[i].Tex = ghostTextures[i];
+                            ghosts[i].Frames = frames[i];
+                            //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
+                            if (ghostTile == Traversals<Tile>.FindProperTarget(ghostTile, GameScreen.PositionToTile(GetTarget[(Ghosts)i](), grid), GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
+                            {
+                                ghosts[i].SetPath(Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile).Pos, grid);
+                            }
+                            else
+                            {
                                 ghosts[i].SetPath(GetTarget[(Ghosts)i](), grid);
-                                break;
+                            }
+                            break;
 
-                            case GhostStates.RunAway:
-                                ghosts[i].Tex = specialGhostTex;
-                                ghosts[i].Frames = runAwayFrames;
-                                ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
-                                break;
+                        case GhostStates.RunAway:
+                            ghosts[i].Tex = specialGhostTex;
+                            ghosts[i].Frames = runAwayFrames;
 
-                            case GhostStates.FadeRun:
-                                ghosts[i].Tex = specialGhostTex;
-                                ghosts[i].Frames = fadeRunFrames;
+                            if (ghostTile == Traversals<Tile>.FindProperTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
+                            {
+                                ghosts[i].SetPath(Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile).Pos, grid);
+                            }
+                            else
+                            {
                                 ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
-                                //////The ghost shakes when it is in this stage because it is shifting from left to right or right to left in the same tile
-                                break;
-                        }
+                            }
+                            break;
+
+                        case GhostStates.FadeRun:
+                            ghosts[i].Tex = specialGhostTex;
+                            ghosts[i].Frames = fadeRunFrames;
+                            //ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
+                            //////The ghost shakes when it is in this stage because it is shifting from left to right or right to left in the same tile
+                            break;
                     }
                 }
             }
@@ -221,7 +230,7 @@ namespace PacMan
 
             return targetPos;
         }
-        
+
         Vector2 GetPinkGhostTarget()
         {
             ///////////////////////////////////////////////////////////////When THe pink ghost target is a wall or is off the grid it stops moving!
