@@ -14,7 +14,7 @@ namespace PacMan
 
         public float speed;
         public int iterationsPerUpdate;
-        private ScreenManager screenManager;
+        public ScreenManager ScreenManager;
         private InputManager inputManager;
         public Directions CurrentDirection { get; set; }
         public Directions PreviousDirection { get; set; }
@@ -24,6 +24,8 @@ namespace PacMan
         private Vector2 previousPos;
         Point posInGrid;
         private bool loadingTeleport;
+
+        public Tile CurrentTile => grid[posInGrid.Y, posInGrid.X];
         public override Rectangle HitBox
         {
             get
@@ -38,7 +40,7 @@ namespace PacMan
             this.grid = grid;
 
             speed = speedPerUpdate;
-            this.screenManager = screenManager;
+            this.ScreenManager = screenManager;
             this.inputManager = inputManager;
             CurrentDirection = Directions.None;
             PreviousDirection = Directions.None;
@@ -56,7 +58,7 @@ namespace PacMan
             if (currentKeys.Length > 0)
             {
                 bool shouldScan = true;
-                while (!screenManager.Settings.DirectionDictionary.ContainsKey(currentKeys[index]))
+                while (!ScreenManager.Settings.DirectionDictionary.ContainsKey(currentKeys[index]))
                 {
                     index++;
                     if (index >= currentKeys.Length)
@@ -67,7 +69,7 @@ namespace PacMan
                 }
                 if (shouldScan)
                 {
-                    NextDirection = screenManager.Settings.DirectionDictionary[currentKeys[index]];
+                    NextDirection = ScreenManager.Settings.DirectionDictionary[currentKeys[index]];
                 }
             }
 
@@ -89,21 +91,28 @@ namespace PacMan
                 switch (CurrentDirection)
                 {
                     case Directions.Up:
-                        if (posInGrid.Y == 0 && GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
+                        if (posInGrid.Y == 0 && CurrentTile.TileType == TileTypes.Teleport)
                         {
                             loadingTeleport = true;
 
                             if (IsOnTile(HitBox))
                             {
-                                if (IsOnTile(HitBox))
+                                if (!ScreenManager.Settings.TeleportDictionary.ContainsKey(CurrentTile))
                                 {
-                                    Point targetPoint = GameScreen.PositionToGridPoint(Pos);
-                                    targetPoint.Y = grid.GetLength(1) - 1;
-                                    while (grid[targetPoint.Y, targetPoint.X].IsObstacle)
+                                    Tile key = CurrentTile;
+                                    posInGrid.Y = grid.GetLength(1) - 1;
+                                    while (CurrentTile.IsObstacle)
                                     {
-                                        targetPoint.Y--;
-                                    } 
-                                    Pos.Y = grid[targetPoint.Y, targetPoint.X].Pos.Y + HitBox.Height/2;
+                                        posInGrid.Y--;
+                                    }
+                                    Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2;
+                                    ScreenManager.Settings.TeleportDictionary.Add(key, CurrentTile);
+                                    key.Neighbors.Add(CurrentTile);
+                                }
+                                else
+                                {
+                                    Pos.Y = ScreenManager.Settings.TeleportDictionary[CurrentTile].Pos.Y + HitBox.Height / 2;
+                                    //////In this case part the currentTile will be incorrect until the next update because I am teleporting the pacman
                                 }
                             }
                         }
@@ -127,13 +136,22 @@ namespace PacMan
 
                             if (IsOnTile(HitBox))
                             {
-                                Point targetPoint = GameScreen.PositionToGridPoint(Pos);
-                                targetPoint.Y = 0;
-                                while(grid[targetPoint.Y, targetPoint.X].IsObstacle)
+                                if (!ScreenManager.Settings.TeleportDictionary.ContainsKey(CurrentTile))
                                 {
-                                    targetPoint.Y++;
+                                    Tile key = CurrentTile;
+                                    posInGrid.Y = 0;
+                                    while (CurrentTile.IsObstacle)
+                                    {
+                                        posInGrid.Y++;
+                                    }
+                                    Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2;
+                                    ScreenManager.Settings.TeleportDictionary.Add(key, CurrentTile);
+                                    key.Neighbors.Add(CurrentTile);
                                 }
-                                Pos.Y = grid[targetPoint.Y, targetPoint.X].Pos.Y + HitBox.Height/2;
+                                else
+                                {
+                                    Pos.Y = ScreenManager.Settings.TeleportDictionary[CurrentTile].Pos.Y + HitBox.Height / 2;
+                                }
                             }
                         }
                         if (!loadingTeleport && GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileTypes.Wall)
@@ -153,16 +171,25 @@ namespace PacMan
                             loadingTeleport = true;
 
 
-                             if (IsOnTile(HitBox))
-                             {
-                                 Point targetPoint = GameScreen.PositionToGridPoint(Pos);
-                                 targetPoint.X = grid.GetLength(0) - 1;
-                                 while (grid[targetPoint.Y, targetPoint.X].IsObstacle)
-                                 {
-                                     targetPoint.X--;
-                                 }
-                                 Pos.X = grid[targetPoint.Y, targetPoint.X].Pos.X + HitBox.Width / 2;
-                             }
+                            if (IsOnTile(HitBox))
+                            {
+                                if (!ScreenManager.Settings.TeleportDictionary.ContainsKey(CurrentTile))
+                                {
+                                    Tile key = CurrentTile;
+                                    posInGrid.X = grid.GetLength(0) - 1;
+                                    while (CurrentTile.IsObstacle)
+                                    {
+                                        posInGrid.X--;
+                                    }
+                                    Pos.X = CurrentTile.Pos.X + HitBox.Width / 2;
+                                    ScreenManager.Settings.TeleportDictionary.Add(key, CurrentTile);
+                                    key.Neighbors.Add(CurrentTile);
+                                }
+                                else
+                                {
+                                    Pos.X = ScreenManager.Settings.TeleportDictionary[CurrentTile].Pos.X + HitBox.Width / 2;
+                                }
+                            }
 
                         }
 
@@ -184,13 +211,22 @@ namespace PacMan
 
                             if (IsOnTile(HitBox))
                             {
-                                Point targetPoint = GameScreen.PositionToGridPoint(Pos);
-                                targetPoint.X = 0;
-                                while (grid[targetPoint.Y, targetPoint.X].IsObstacle)
+                                if (!ScreenManager.Settings.TeleportDictionary.ContainsKey(CurrentTile))
                                 {
-                                    targetPoint.X++;
+                                    Tile key = CurrentTile;
+                                    posInGrid.X = 0;
+                                    while (CurrentTile.IsObstacle)
+                                    {
+                                        posInGrid.X++;
+                                    }
+                                    Pos.X = CurrentTile.Pos.X + HitBox.Width / 2;
+                                    ScreenManager.Settings.TeleportDictionary.Add(key, CurrentTile);
+                                    key.Neighbors.Add(CurrentTile);
                                 }
-                                Pos.X = grid[targetPoint.Y, targetPoint.X].Pos.X + HitBox.Width / 2;
+                                else
+                                {
+                                    Pos.X = ScreenManager.Settings.TeleportDictionary[CurrentTile].Pos.X + HitBox.Width / 2;
+                                }
                             }
                         }
 
@@ -228,25 +264,25 @@ namespace PacMan
         public bool HitBorder()
         {
             bool returnValue = false;
-            if (Pos.X - base.CurrentFrame.HitBox.Width * Scale.X * Frames[currentIndex].Scale.X / 2 <= screenManager.CurrentScreen.Bounds.Left)
+            if (Pos.X - HitBox.Width / 2 <= ScreenManager.CurrentScreen.Bounds.Left)
             {
                 returnValue = true;
-                Pos.X = (int)(base.CurrentFrame.HitBox.Width * Scale.X * Frames[currentIndex].Scale.X / 2 + screenManager.CurrentScreen.Bounds.Left);
+                Pos.X = (int)(HitBox.Width / 2 + ScreenManager.CurrentScreen.Bounds.Left);
             }
-            else if (Pos.X + base.CurrentFrame.HitBox.Width * Scale.X * Frames[currentIndex].Scale.X / 2 >= screenManager.CurrentScreen.Bounds.Right)
+            else if (Pos.X + HitBox.Width / 2 >= ScreenManager.CurrentScreen.Bounds.Right)
             {
                 returnValue = true;
-                Pos.X = (int)(screenManager.CurrentScreen.Bounds.Right - base.CurrentFrame.HitBox.Width * Scale.X * Frames[currentIndex].Scale.X / 2);
+                Pos.X = (int)(ScreenManager.CurrentScreen.Bounds.Right - HitBox.Width / 2);
             }
-            else if (Pos.Y - base.CurrentFrame.HitBox.Height * Scale.Y * Frames[currentIndex].Scale.Y / 2 <= screenManager.CurrentScreen.Bounds.Top)
+            else if (Pos.Y - HitBox.Height / 2 <= ScreenManager.CurrentScreen.Bounds.Top)
             {
                 returnValue = true;
-                Pos.Y = (int)(base.CurrentFrame.HitBox.Height * Scale.Y * Frames[currentIndex].Scale.Y / 2 + screenManager.CurrentScreen.Bounds.Top);
+                Pos.Y = (int)(HitBox.Height / 2 + ScreenManager.CurrentScreen.Bounds.Top);
             }
-            else if (Pos.Y + base.CurrentFrame.HitBox.Height * Scale.Y * Frames[currentIndex].Scale.Y / 2 >= screenManager.CurrentScreen.Bounds.Bottom)
+            else if (Pos.Y + HitBox.Height / 2 >= ScreenManager.CurrentScreen.Bounds.Bottom)
             {
                 returnValue = true;
-                Pos.Y = (int)(screenManager.CurrentScreen.Bounds.Bottom - base.CurrentFrame.HitBox.Height * Scale.Y * Frames[currentIndex].Scale.Y / 2);
+                Pos.Y = (int)(ScreenManager.CurrentScreen.Bounds.Bottom - HitBox.Height / 2);
             }
 
             return returnValue;

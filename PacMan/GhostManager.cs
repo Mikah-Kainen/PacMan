@@ -147,7 +147,7 @@ namespace PacMan
                 if (IsOnTile(ghosts[i].Pos, ghosts[i].HitBox))
                 {
                     Tile ghostTile = GameScreen.PositionToTile(ghosts[i].Pos, grid);
-                    if (GameScreen.PositionToTile(ghosts[i].Pos, grid) == Traversals<Tile>.FindProperTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid))
+                    if (ghostTile == Traversals<Tile>.FindProperTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid))
                     {
                         ghosts[i].SetPath(Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid).Pos, grid);
                     }
@@ -176,7 +176,7 @@ namespace PacMan
                             case GhostStates.FadeRun:
                                 ghosts[i].Tex = specialGhostTex;
                                 ghosts[i].Frames = fadeRunFrames;
-                                //ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
+                                ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
                                 //////The ghost shakes when it is in this stage because it is shifting from left to right or right to left in the same tile
                                 break;
                         }
@@ -288,7 +288,7 @@ namespace PacMan
         private bool IsOnTile(Vector2 middlePos, Rectangle Hitbox)
         {
             Vector2 size = new Vector2(Hitbox.Width, Hitbox.Height);
-            return GameScreen.PositionToTile(middlePos + size * 1 / 2, grid).PositionInGrid == GameScreen.PositionToTile(middlePos - size * 1 / 2, grid).PositionInGrid;
+            return GameScreen.PositionToTile(middlePos + size / 2, grid).PositionInGrid == GameScreen.PositionToTile(middlePos - size * 1 / 2, grid).PositionInGrid;
         }
     }
 }

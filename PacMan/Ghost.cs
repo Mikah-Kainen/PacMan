@@ -24,7 +24,9 @@ namespace PacMan
         private Stopwatch watch;
         private HashSet<Tile> hashSet;
 
-        public Ghost(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, float speedPerUpdate, Tile[,] grid)
+        public ScreenManager ScreenManager { get; set; }
+
+        public Ghost(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, float speedPerUpdate, Tile[,] grid, ScreenManager screenManager)
             : base(tex, tint, pos, scale, frames, TimeSpan.FromMilliseconds(100))
         {
             this.speedPerUpdate = speedPerUpdate;
@@ -42,6 +44,8 @@ namespace PacMan
             watch = new Stopwatch();
             watch.Start();
             hashSet = new HashSet<Tile>();
+
+            this.ScreenManager = screenManager;
         }
 
 
@@ -99,21 +103,41 @@ namespace PacMan
             switch (CurrentDirection)
             {
                 case Directions.Up:
+                    if (CurrentTile.PositionInGrid.Y == 0 && CurrentTile.TileType == TileTypes.Teleport)
+                    {
+                        CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
+                        Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2;
+                    }
                     Pos.Y -= speedPerUpdate;
                     currentIndex = 0;
                     break;
 
                 case Directions.Down:
+                    if (CurrentTile.PositionInGrid.Y == 18 && GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
+                    {
+                        CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
+                        Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2;
+                    }
                     Pos.Y += speedPerUpdate;
                     currentIndex = 1;
                     break;
 
                 case Directions.Right:
+                    if (CurrentTile.PositionInGrid.X == 18 & GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
+                    {
+                        CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
+                        Pos.X = CurrentTile.Pos.X + HitBox.Width / 2;
+                    }
                     Pos.X += speedPerUpdate;
                     currentIndex = 2;
                     break;
 
                 case Directions.Left:
+                    if (CurrentTile.PositionInGrid.X == 0 & GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
+                    {
+                        CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
+                        Pos.X = CurrentTile.Pos.X + HitBox.Width / 2;
+                    }
                     Pos.X -= speedPerUpdate;
                     currentIndex = 3;
                     break;

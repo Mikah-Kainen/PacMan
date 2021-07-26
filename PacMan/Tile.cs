@@ -29,7 +29,7 @@ namespace PacMan
 
         public double Weight { get; set; }
 
-        public bool IsObstacle { get { return TileType != TileTypes.Background; } }
+        public bool IsObstacle { get { return TileType == TileTypes.Wall; } }
         public Tile(Texture2D tex, Color tint, Vector2 scale, TileTypes tileType, Point posInGrid)
             : base(tex, tint, Vector2.Zero, scale, /*new Vector2(.5f * scale.X * tex.Width, .5f * scale.Y * tex.Height)*/ Vector2.Zero)
         {

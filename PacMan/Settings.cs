@@ -18,6 +18,8 @@ namespace PacMan
         /// </summary>
         public Dictionary<Color, TileTypes> ColorDictionary { get; private set; }
 
+        public Dictionary<Tile, Tile> TeleportDictionary { get; set; }
+
         public string DictionaryPath;
         public Settings(GraphicsDevice graphicsDevice)
         {
@@ -30,7 +32,7 @@ namespace PacMan
 
             };
 
-
+            TeleportDictionary = new Dictionary<Tile, Tile>();
             //Texture2D whitePixel = Color.White.CreatePixel(graphicsDevice);
 
             //TextureDictionary = new Dictionary<Color, TileType>
@@ -44,7 +46,7 @@ namespace PacMan
 
             //Read from file
 
-            bool homeLaptop = false;
+            bool homeLaptop = true ;
             string filePath = "";
             if (homeLaptop)
             {

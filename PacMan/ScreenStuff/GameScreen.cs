@@ -19,6 +19,7 @@ namespace PacMan
     /// TODO LIST! Fix the teleporters,
     /// change all the lists to be one big span in ghostManager, // maybe not so necessary would make it much harder to read and it's actually only 2 lists
     /// possibly add in ghost teleportation,
+    /// the orange ghost can turn around when it switches modes
     /// </summary>
     //
         //
@@ -117,35 +118,35 @@ namespace PacMan
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
             float ghostSpeed = TileSize.X / 40;
-            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed, TileSize.Y - ghostSpeed);
+            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed * 10, TileSize.Y - ghostSpeed * 10);
 
             frameList = new List<AnimationFrame>();
             frameList.Add(new Rectangle(235, 45, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(45, 235, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(45, 45, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(235, 235, 160, 160).CreateFrame(true, ghostSize));
-            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid, ScreenManager));
 
             frameList = new List<AnimationFrame>();
             frameList.Add(new Rectangle(235, 420, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(45, 610, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(45, 420, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(235, 610, 160, 160).CreateFrame(true, ghostSize));
-            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid, ScreenManager));
 
             frameList = new List<AnimationFrame>();
             frameList.Add(new Rectangle(635, 40, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(445, 230, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(445, 40, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(635, 230, 160, 160).CreateFrame(true, ghostSize));
-            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid, ScreenManager));
 
             frameList = new List<AnimationFrame>();
             frameList.Add(new Rectangle(635, 420, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(445, 610, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(445, 420, 160, 160).CreateFrame(true, ghostSize));
             frameList.Add(new Rectangle(635, 610, 160, 160).CreateFrame(true, ghostSize));
-            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid));
+            ghosts.Add(new Ghost(ghostSprite, Color.White, new Vector2(TileSize.X * 1.5f, TileSize.Y * 1.5f), Vector2.One, frameList, ghostSpeed, grid, ScreenManager));
             #endregion
 
             #region makeFruit
