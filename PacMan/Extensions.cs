@@ -72,7 +72,14 @@ namespace PacMan
         }
         public static void SetPath(this Ghost ghost, Vector2 targetPos, Tile[,] grid)
         {
-            ghost.Path = Traversals<Tile>.AStar(GameScreen.PositionToTile(ghost.Pos, grid), GameScreen.PositionToTile(targetPos, grid), Heuristic, grid, ghost.PreviousTile);
+            Tile startingPosition = GameScreen.PositionToTile(ghost.Pos, grid);
+            Tile closest = Traversals<Tile>.FindClosestTarget(startingPosition, startingPosition, GameScreen.Heuristic, grid, ghost.PreviousTile);
+            Tile previous = ghost.PreviousTile;
+            if(closest == previous &&true)
+            {
+                previous = null;
+            }
+            ghost.Path = Traversals<Tile>.AStar(GameScreen.PositionToTile(ghost.Pos, grid), GameScreen.PositionToTile(targetPos, grid), Heuristic, grid, previous);
         }
     }
 }

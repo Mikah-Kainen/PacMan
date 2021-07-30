@@ -65,15 +65,6 @@ namespace PacMan
 
         public GhostManager(List<Ghost> ghosts, Texture2D specialGhostTex, List<AnimationFrame> specialGhostFrames, Tile[,] grid, ref Pacman pacman)
         {
-            ghostTextures = new Texture2D[ghosts.Count];
-            frames = new List<AnimationFrame>[ghosts.Count];
-            for (int i = 0; i < ghostTextures.Length; i++)
-            {
-                ghostTextures[i] = ghosts[i].Tex;
-                frames[i] = ghosts[i].Frames;
-                ghosts[i].Corner = (Corner)i;
-            }
-
             this.specialGhostTex = specialGhostTex;
             runAwayFrames = new List<AnimationFrame>();
             fadeRunFrames = new List<AnimationFrame>();
@@ -107,14 +98,21 @@ namespace PacMan
                 [Corner.BottomLeft] = grid[grid.GetLength(0) - 1, 0],
                 [Corner.BottomRight] = grid[grid.GetLength(0) - 1, grid.GetLength(1) - 1],
             };
-            List<Tile> temp = new List<Tile>();
-            for (int i = 0; i < 4; i++)
-            {
-                temp.Add(CornerToTile[(Corner)i]);
-            }
             StopWatch = new Stopwatch();
             StopWatch.Start();
             GeneralState = GhostStates.ChasePacman;
+
+            ghostTextures = new Texture2D[ghosts.Count];
+            frames = new List<AnimationFrame>[ghosts.Count];
+            for (int i = 0; i < ghostTextures.Length; i++)
+            {
+                ghostTextures[i] = ghosts[i].Tex;
+                frames[i] = ghosts[i].Frames;
+                ghosts[i].Corner = (Corner)i;
+                Tile startTile = Traversals<Tile>.FindClosestTarget(CornerToTile[(Corner)i], CornerToTile[(Corner)i], GameScreen.Heuristic, grid, null);
+                ghosts[i].Pos.Y = startTile.Pos.Y + ghosts[i].HitBox.Y / 2;
+                ghosts[i].Pos.X = startTile.Pos.X + ghosts[i].HitBox.X / 2;
+            }
         }
 
 
@@ -161,7 +159,11 @@ namespace PacMan
                             //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
                             if (ghostTile == Traversals<Tile>.FindProperTarget(ghostTile, GameScreen.PositionToTile(GetTarget[(Ghosts)i](), grid), GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
                             {
-                                ghosts[i].SetPath(Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile).Pos, grid);
+                                Tile target = Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile);
+                                if (target != null)
+                                {
+                                    ghosts[i].SetPath(target.Pos, grid);
+                                }
                             }
                             else
                             {
@@ -175,7 +177,11 @@ namespace PacMan
 
                             if (ghostTile == Traversals<Tile>.FindProperTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
                             {
-                                ghosts[i].SetPath(Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile).Pos, grid);
+                                Tile target = Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile);
+                                if (target != null)
+                                {
+                                    ghosts[i].SetPath(target.Pos, grid);
+                                }
                             }
                             else
                             {

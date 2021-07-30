@@ -22,6 +22,7 @@ namespace PacMan
     /// the orange ghost can turn around when it switches modes so can the red one
     /// after the ghosts teleport they can go through walls
     /// 
+    /// Make a can move previous function
     /// </summary>
     //
         //

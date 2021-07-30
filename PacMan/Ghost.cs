@@ -58,16 +58,16 @@ namespace PacMan
                 CurrentTile = GameScreen.PositionToTile(Pos, grid);
             }
 
-            if(watch.ElapsedMilliseconds > 500)
-            {
-                if(hashSet.Count == 1)
-                {
-                    PreviousTile = null;
-                }
+            //if(watch.ElapsedMilliseconds > 1500/(speedPerUpdate + 1))
+            //{
+            //    if(hashSet.Count == 1)
+            //    {
+            //        PreviousTile = null;
+            //    }
 
-                watch.Restart();
-                hashSet.Clear();
-            }
+            //    watch.Restart();
+            //    hashSet.Clear();
+            //}
 
 
             if (Path == null || Path.Count == 0)
@@ -106,7 +106,7 @@ namespace PacMan
                     if (CurrentTile.PositionInGrid.Y == 0 && CurrentTile.TileType == TileTypes.Teleport)
                     {
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
-                        Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2;
+                        Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2 + 2;
                     }
                     Pos.Y -= speedPerUpdate;
                     currentIndex = 0;
@@ -116,7 +116,7 @@ namespace PacMan
                     if (CurrentTile.PositionInGrid.Y == 18 && GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
                     {
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
-                        Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2;
+                        Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2 - 2;
                     }
                     Pos.Y += speedPerUpdate;
                     currentIndex = 1;
@@ -126,7 +126,7 @@ namespace PacMan
                     if (CurrentTile.PositionInGrid.X == 18 & GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
                     {
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
-                        Pos.X = CurrentTile.Pos.X + HitBox.Width / 2;
+                        Pos.X = CurrentTile.Pos.X + HitBox.Width / 2 - 2;
                     }
                     Pos.X += speedPerUpdate;
                     currentIndex = 2;
@@ -136,7 +136,7 @@ namespace PacMan
                     if (CurrentTile.PositionInGrid.X == 0 & GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
                     {
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
-                        Pos.X = CurrentTile.Pos.X + HitBox.Width / 2;
+                        Pos.X = CurrentTile.Pos.X + HitBox.Width / 2 + 2;
                     }
                     Pos.X -= speedPerUpdate;
                     currentIndex = 3;
