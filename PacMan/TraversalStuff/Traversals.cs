@@ -12,7 +12,7 @@ namespace PacMan.TraversalStuff
 
         public static Stack<T> AStar(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previousPosition)
         { 
-            targetPosition = FindProperTarget(startingPosition, targetPosition, heuristicFunction, grid, previousPosition);
+            targetPosition = FindClosestTarget(startingPosition, targetPosition, heuristicFunction, grid, previousPosition);
 
             if (startingPosition.PositionInGrid.Equals(targetPosition.PositionInGrid))
             {
@@ -62,7 +62,7 @@ namespace PacMan.TraversalStuff
                     }
                 }
                 currentPosition.WasVisited = true;
-                previousPosition = currentPosition;
+                //previousPosition = currentPosition;
             }
 
             //if final is null return no path
@@ -79,18 +79,13 @@ namespace PacMan.TraversalStuff
         }
 
 
-        public static T FindProperTarget(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previous)
+        public static T FindClosestTarget(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previous)
         {
-            if(!targetPosition.IsObstacle)
+            if(!startingPosition.Equals(targetPosition) && !targetPosition.IsObstacle)
             {
                 return targetPosition;
             }
 
-            return FindClosestTarget(startingPosition, targetPosition, heuristicFunction, grid, previous);
-        }
-
-        public static T FindClosestTarget(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previous)
-        {
             T closest = default(T);
             //Queue, enqueue the start,
             //Loop: dequeue, enqueue the dequed node's neighbors
@@ -105,52 +100,56 @@ namespace PacMan.TraversalStuff
                 T current = backingQueue.Dequeue();
                 if (IsInBounds(new Point(current.PositionInGrid.X + 1, current.PositionInGrid.Y), grid))
                 {
-                    if (!current.IsObstacle)
+                    T temp = grid[current.PositionInGrid.Y, current.PositionInGrid.X + 1];
+                    if (!temp.IsObstacle)
                     {
-                        PossibleTargets.Add(current);
+                        PossibleTargets.Add(temp);
                     }
                     else
                     {
-                        backingQueue.Enqueue(grid[current.PositionInGrid.Y, current.PositionInGrid.X + 1]);
+                        backingQueue.Enqueue(temp);
                     }
                 }
                 if (IsInBounds(new Point(current.PositionInGrid.X - 1, current.PositionInGrid.Y), grid))
                 {
-                    if (!current.IsObstacle)
+                    T temp = grid[current.PositionInGrid.Y, current.PositionInGrid.X - 1];
+                    if (!temp.IsObstacle)
                     {
-                        PossibleTargets.Add(current);
+                        PossibleTargets.Add(temp);
                     }
                     else
                     {
-                        backingQueue.Enqueue(grid[current.PositionInGrid.Y, current.PositionInGrid.X - 1]);
+                        backingQueue.Enqueue(temp);
                     }
                 }
                 if (IsInBounds(new Point(current.PositionInGrid.X, current.PositionInGrid.Y + 1), grid))
                 {
-                    if (!current.IsObstacle)
+                    T temp = grid[current.PositionInGrid.Y + 1, current.PositionInGrid.X];
+                    if (!temp.IsObstacle)
                     {
-                        PossibleTargets.Add(current);
+                        PossibleTargets.Add(temp);
                     }
                     else
                     {
-                        backingQueue.Enqueue(grid[current.PositionInGrid.Y + 1, current.PositionInGrid.X]);
+                        backingQueue.Enqueue(temp);
                     }
                 }
                 if (IsInBounds(new Point(current.PositionInGrid.X, current.PositionInGrid.Y - 1), grid))
                 {
-                    if (!current.IsObstacle)
+                    T temp = grid[current.PositionInGrid.Y - 1, current.PositionInGrid.X];
+                    if (!temp.IsObstacle)
                     {
-                        PossibleTargets.Add(current);
+                        PossibleTargets.Add(temp);
                     }
                     else
                     {
-                        backingQueue.Enqueue(grid[current.PositionInGrid.Y - 1, current.PositionInGrid.X]);
+                        backingQueue.Enqueue(temp);
                     }
                 }
 
                 if(PossibleTargets.Contains(startingPosition))
                 {
-                    PossibleTargets.Remove(startingPosition);
+                    PossibleTargets.Remove(startingPosition); 
                 }
                 if(PossibleTargets.Contains(previous))
                 {

@@ -13,7 +13,7 @@ namespace PacMan
 {
     public static class Extensions
     {
-            
+
         public static Texture2D CreatePixel(this Color color, GraphicsDevice device)
         {
             Texture2D texture = new Texture2D(device, 1, 1);
@@ -55,7 +55,7 @@ namespace PacMan
 
         public static AnimationFrame CreateFrame(this Rectangle source, bool isMiddleOrigin, Vector2 scale)
         {
-            if(isMiddleOrigin)
+            if (isMiddleOrigin)
             {
                 return new AnimationFrame(source, new Vector2(source.Width / 2, source.Height / 2), new Vector2(scale.X / source.Width, scale.Y / source.Height));
             }
@@ -72,14 +72,30 @@ namespace PacMan
         }
         public static void SetPath(this Ghost ghost, Vector2 targetPos, Tile[,] grid)
         {
-            Tile startingPosition = GameScreen.PositionToTile(ghost.Pos, grid);
-            Tile closest = Traversals<Tile>.FindClosestTarget(startingPosition, startingPosition, GameScreen.Heuristic, grid, ghost.PreviousTile);
-            Tile previous = ghost.PreviousTile;
-            if(closest == previous &&true)
+            Tile startingTile = GameScreen.PositionToTile(ghost.Pos, grid);
+            Tile targetTile = GameScreen.PositionToTile(targetPos, grid);
+            Tile previousTile = ghost.PreviousTile;
+            if (ghost.CanMovePrevious(grid))
             {
-                previous = null;
+                previousTile = null;
             }
-            ghost.Path = Traversals<Tile>.AStar(GameScreen.PositionToTile(ghost.Pos, grid), GameScreen.PositionToTile(targetPos, grid), Heuristic, grid, previous);
+
+            ghost.Path = Traversals<Tile>.AStar(startingTile, Traversals<Tile>.FindClosestTarget(targetTile, targetTile, Heuristic, grid, previousTile), Heuristic, grid, previousTile);
+
+        }
+
+        public static bool CanMovePrevious(this Ghost ghost, Tile[,] grid)
+        {
+            int possiblePaths = 0;
+            List<Tile> neighbors = ghost.CurrentTile.Neighbors;
+            foreach (Tile tile in neighbors)
+            {
+                if (!tile.IsObstacle)
+                {
+                    possiblePaths++;
+                }
+            }
+            return possiblePaths == 1;
         }
     }
 }

@@ -157,7 +157,7 @@ namespace PacMan
                             ghosts[i].Tex = ghostTextures[i];
                             ghosts[i].Frames = frames[i];
                             //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
-                            if (ghostTile == Traversals<Tile>.FindProperTarget(ghostTile, GameScreen.PositionToTile(GetTarget[(Ghosts)i](), grid), GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
+                            if (ghostTile == Traversals<Tile>.FindClosestTarget(ghostTile, GameScreen.PositionToTile(GetTarget[(Ghosts)i](), grid), GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
                             {
                                 Tile target = Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile);
                                 if (target != null)
@@ -175,7 +175,7 @@ namespace PacMan
                             ghosts[i].Tex = specialGhostTex;
                             ghosts[i].Frames = runAwayFrames;
 
-                            if (ghostTile == Traversals<Tile>.FindProperTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
+                            if (ghostTile == Traversals<Tile>.FindClosestTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
                             {
                                 Tile target = Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile);
                                 if (target != null)
@@ -239,10 +239,6 @@ namespace PacMan
 
         Vector2 GetPinkGhostTarget()
         {
-            ///////////////////////////////////////////////////////////////When THe pink ghost target is a wall or is off the grid it stops moving!
-            ///////////////////////////
-            //////////////////////////////
-            /////////////////////////////
 
             Vector2 targetPos = Vector2.Zero;
 
@@ -305,5 +301,6 @@ namespace PacMan
             Vector2 size = new Vector2(Hitbox.Width, Hitbox.Height);
             return GameScreen.PositionToTile(middlePos + size / 2, grid).PositionInGrid == GameScreen.PositionToTile(middlePos - size * 1 / 2, grid).PositionInGrid;
         }
+
     }
 }

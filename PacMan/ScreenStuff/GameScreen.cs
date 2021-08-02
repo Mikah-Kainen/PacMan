@@ -16,13 +16,8 @@ using static PacMan.GhostManager;
 namespace PacMan
 {
     /// <summary>
-    /// TODO LIST! Fix the teleporters,
     /// change all the lists to be one big span in ghostManager, // maybe not so necessary would make it much harder to read and it's actually only 2 lists
-    /// possibly add in ghost teleportation,
-    /// the orange ghost can turn around when it switches modes so can the red one
-    /// after the ghosts teleport they can go through walls
     /// 
-    /// Make a can move previous function
     /// </summary>
     //
         //
