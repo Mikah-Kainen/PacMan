@@ -199,36 +199,36 @@ namespace PacMan
                             ghosts[i].Tex = ghostTextures[i];
                             ghosts[i].Frames = frames[i];
                             //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
-                            if (ghostTile == Traversals<Tile>.FindClosestTarget(ghostTile, GameScreen.PositionToTile(GetTarget[(Ghosts)i](), grid), GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
-                            {
-                                Tile target = Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile);
-                                if (target != null)
-                                {
-                                    ghosts[i].SetPath(target.Pos, grid);
-                                }
-                            }
-                            else
-                            {
+                            //if (ghostTile == Traversals<Tile>.FindClosestTarget(ghostTile, GameScreen.PositionToTile(GetTarget[(Ghosts)i](), grid), GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
+                            //{
+                            //    Tile target = Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile);
+                            //    if (target != null)
+                            //    {
+                            //        ghosts[i].SetPath(target.Pos, grid);
+                            //    }
+                            //}
+                            //else
+                            //{
                                 ghosts[i].SetPath(GetTarget[(Ghosts)i](), grid);
-                            }
+                            //}
                             break;
 
                         case GhostStates.Scatter:
                             ghosts[i].Tex = ghostTextures[i];
                             ghosts[i].Frames = frames[i];
 
-                            if (ghostTile == Traversals<Tile>.FindClosestTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
-                            {
-                                Tile target = Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile);
-                                if (target != null)
-                                {
-                                    ghosts[i].SetPath(target.Pos, grid);
-                                }
-                            }
-                            else
-                            {
+                            //if (ghostTile == Traversals<Tile>.FindClosestTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
+                            //{
+                            //    Tile target = Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile);
+                            //    if (target != null)
+                            //    {
+                            //        ghosts[i].SetPath(target.Pos, grid);
+                            //    }
+                            //}
+                            //else
+                            //{
                                 ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
-                            }
+                            //}
                             break;
 
 
