@@ -19,9 +19,7 @@ namespace PacMan
     /// change all the lists to be one big span in ghostManager, // maybe not so necessary would make it much harder to read and it's actually only 2 lists
     /// 
     /// </summary>
-    //
-        //
-        //
+     
     public class GameScreen : Screen
     {
         Texture2D pixelMap;

@@ -33,6 +33,7 @@ namespace PacMan
             };
 
             TeleportDictionary = new Dictionary<Tile, Tile>();
+
             //Texture2D whitePixel = Color.White.CreatePixel(graphicsDevice);
 
             //TextureDictionary = new Dictionary<Color, TileType>

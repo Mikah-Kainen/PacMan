@@ -63,6 +63,8 @@ namespace PacMan
         List<AnimationFrame> fadeRunFrames;
         public Dictionary<Corner, Tile> CornerToTile { get; private set; }
         public Stopwatch StopWatch;
+        public Stopwatch IntervalCounter;
+        public Queue<TimeSpan> Intervals;
         public GhostStates GeneralState { get; set; }
 
         public GhostManager(List<Ghost> ghosts, Texture2D specialGhostTex, List<AnimationFrame> specialGhostFrames, Tile[,] grid, ref Pacman pacman)
@@ -102,7 +104,18 @@ namespace PacMan
             };
             StopWatch = new Stopwatch();
             StopWatch.Start();
-            GeneralState = GhostStates.ChasePacman;
+            IntervalCounter = new Stopwatch();
+            IntervalCounter.Start();
+
+            Intervals = new Queue<TimeSpan>();
+            Intervals.Enqueue(TimeSpan.FromSeconds(7));
+            Intervals.Enqueue(TimeSpan.FromSeconds(20));
+            Intervals.Enqueue(TimeSpan.FromSeconds(7));
+            Intervals.Enqueue(TimeSpan.FromSeconds(20));
+            Intervals.Enqueue(TimeSpan.FromSeconds(5));
+            Intervals.Enqueue(TimeSpan.FromSeconds(20));
+            Intervals.Enqueue(TimeSpan.FromSeconds(5));
+            Intervals.Enqueue(TimeSpan.FromSeconds(int.MaxValue));
 
             ghostTextures = new Texture2D[ghosts.Count];
             frames = new List<AnimationFrame>[ghosts.Count];
@@ -115,6 +128,10 @@ namespace PacMan
                 ghosts[i].Pos.Y = startTile.Pos.Y + ghosts[i].HitBox.Y / 2;
                 ghosts[i].Pos.X = startTile.Pos.X + ghosts[i].HitBox.X / 2;
             }
+
+
+            GeneralState = GhostStates.Scatter;
+            SwitchMode(GeneralState);
         }
 
 
@@ -134,13 +151,36 @@ namespace PacMan
                 ghost.Update(gameTime);
             }
 
-            if (StopWatch.ElapsedMilliseconds > 6000 && GeneralState == GhostStates.RunAway)
+            if(IntervalCounter.ElapsedMilliseconds > Intervals.Peek().TotalMilliseconds)
             {
-                SwitchMode(GhostStates.FadeRun);
+                IntervalCounter.Restart();
+                if(GeneralState == GhostStates.Scatter)
+                {
+                    GeneralState = GhostStates.ChasePacman;
+                }
+                else if(GeneralState == GhostStates.ChasePacman)
+                {
+                    GeneralState = GhostStates.Scatter;
+                }
+                else
+                {
+
+                }
+                SwitchMode(GeneralState);
             }
-            if (StopWatch.ElapsedMilliseconds > 1000 && GeneralState == GhostStates.FadeRun)
+
+            if (GeneralState == GhostStates.RunAway || GeneralState == GhostStates.FadeRun)
             {
-                SwitchMode(GhostStates.ChasePacman);
+                IntervalCounter.Stop();
+                if (StopWatch.ElapsedMilliseconds > 6000 && GeneralState == GhostStates.RunAway)
+                {
+                    SwitchMode(GhostStates.FadeRun);
+                }
+                if (StopWatch.ElapsedMilliseconds > 1000 && GeneralState == GhostStates.FadeRun)
+                {
+                    SwitchMode(GhostStates.ChasePacman);
+                    IntervalCounter.Start();
+                }
             }
             for (int i = 0; i < ghosts.Count; i++)
             {
