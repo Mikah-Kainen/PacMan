@@ -28,8 +28,10 @@ namespace PacMan
         {
             StayHome = 10,
             ChasePacman = 11,
+            Scatter = 12,
             RunAway = 0,
             FadeRun = 1,
+
         };
 
         public enum Corner
@@ -171,9 +173,9 @@ namespace PacMan
                             }
                             break;
 
-                        case GhostStates.RunAway:
-                            ghosts[i].Tex = specialGhostTex;
-                            ghosts[i].Frames = runAwayFrames;
+                        case GhostStates.Scatter:
+                            ghosts[i].Tex = ghostTextures[i];
+                            ghosts[i].Frames = frames[i];
 
                             if (ghostTile == Traversals<Tile>.FindClosestTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
                             {
@@ -188,6 +190,18 @@ namespace PacMan
                                 ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
                             }
                             break;
+
+
+                        case GhostStates.RunAway:
+                            ghosts[i].Tex = specialGhostTex;
+                            ghosts[i].Frames = runAwayFrames;
+
+                            Random random = new Random();
+                            int targetGhost = random.Next() % 4;
+
+                            ghosts[i].SetPath(ghosts[targetGhost].Pos, grid);
+                            break;
+
 
                         case GhostStates.FadeRun:
                             ghosts[i].Tex = specialGhostTex;

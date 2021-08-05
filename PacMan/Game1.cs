@@ -30,7 +30,7 @@ namespace PacMan
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            screenSize = new Vector2(19 * 30, 19 * 30);
+            screenSize = new Vector2(19 * 60, 19 * 60);
             graphics.PreferredBackBufferWidth = (int)screenSize.X;
             graphics.PreferredBackBufferHeight = (int)screenSize.Y;
             graphics.ApplyChanges();
