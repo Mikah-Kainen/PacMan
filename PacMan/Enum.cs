@@ -22,6 +22,8 @@ namespace PacMan
         Wall,
         Background,
         Teleport,
+        GhostHouse,
+        Escape,
         None,
     }
 

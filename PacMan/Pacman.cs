@@ -325,16 +325,16 @@ namespace PacMan
             switch (nextDirection)
             {
                 case Directions.Up:
-                    return GameScreen.PointToTile[new Point(pacPoint.X, pacPoint.Y - 1)].TileType != TileTypes.Wall;
+                    return GameScreen.PointToTile[new Point(pacPoint.X, pacPoint.Y - 1)].IsPacObstacle();
 
                 case Directions.Down:
-                    return GameScreen.PointToTile[new Point(pacPoint.X, pacPoint.Y + 1)].TileType != TileTypes.Wall;
+                    return GameScreen.PointToTile[new Point(pacPoint.X, pacPoint.Y + 1)].IsPacObstacle();
 
                 case Directions.Right:
-                    return GameScreen.PointToTile[new Point(pacPoint.X + 1, pacPoint.Y)].TileType != TileTypes.Wall;
+                    return GameScreen.PointToTile[new Point(pacPoint.X + 1, pacPoint.Y)].IsPacObstacle();
 
                 case Directions.Left:
-                    return GameScreen.PointToTile[new Point(pacPoint.X - 1, pacPoint.Y)].TileType != TileTypes.Wall;
+                    return GameScreen.PointToTile[new Point(pacPoint.X - 1, pacPoint.Y)].IsPacObstacle();
 
                 default:
                     return true;

@@ -27,8 +27,12 @@ namespace PacMan
         GhostManager ghostManager;
         List<Ghost> ghosts;
         List<Tile> walls;
+        List<Food> foods;
         Fruit fruit;
+        int remainingFood;
+        float ghostSpeed;
 
+        public float percentEaten => (float)((foods.Count - remainingFood) / (float)foods.Count) * 100;
         public static Vector2 TileSize;
         public static Dictionary<Point, Tile> PointToTile;
         private Tile[,] grid;
@@ -52,6 +56,7 @@ namespace PacMan
 
             walls = new List<Tile>();
             ghosts = new List<Ghost>();
+            foods = new List<Food>();
             PointToTile = new Dictionary<Point, Tile>();
             pixelMap = ContentManager.Load<Texture2D>("pacmanmap");
             grid = new Tile[pixelMap.Width, pixelMap.Height];
@@ -95,6 +100,18 @@ namespace PacMan
                 }
             }
 
+            foreach(Tile tile in grid)
+            {
+                if (tile.TileType == TileTypes.Background)
+                {
+                    Food current = new Food(tile, GraphicsDeviceManager.GraphicsDevice);
+                    Objects.Add(current);
+                    foods.Add(current);
+                }
+            }
+            //foods.Add(new Food(PositionToTile(pacman.Pos, grid), GraphicsDeviceManager.GraphicsDevice));
+            remainingFood = foods.Count;
+
             Texture2D pacmansprite = ContentManager.Load<Texture2D>("pacmansprite");
 
             //What is a good width and height for the pacman?
@@ -113,8 +130,8 @@ namespace PacMan
             #region makeGhosts
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
-            float ghostSpeed = TileSize.X / 40;
-            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed, TileSize.Y - ghostSpeed);
+            ghostSpeed = TileSize.X / 30;
+            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed * 2, TileSize.Y - ghostSpeed * 2);
 
             frameList = new List<AnimationFrame>();
             frameList.Add(new Rectangle(235, 45, 160, 160).CreateFrame(true, ghostSize));
@@ -197,16 +214,7 @@ namespace PacMan
 
             ghostManager.Update(gameTime);
 
-            if (fruit.CurrentState != FruitStates.ScaleIn && fruit.CurrentState != FruitStates.ScaleOut && pacman.HitBox.Intersects(fruit.HitBox))
-            {
-                fruit.ChangeFruit(CalculateNewFruitPos());
-                ///If I add in the fade out state I should check for it here as well
-                if (ghostManager.GeneralState != GhostStates.RunAway)
-                {
-                    ghostManager.SwitchMode(GhostStates.RunAway);
-                }
-                ghostManager.StopWatch.Restart();
-            }
+            UpdateFood();
 
             base.Update(gameTime);
 
@@ -377,6 +385,55 @@ namespace PacMan
             fruitPos += TileSize / 2;
 
             return fruitPos;
+        }
+
+        private void UpdateFood()
+        {
+            if (fruit.CurrentState != FruitStates.ScaleIn && fruit.CurrentState != FruitStates.ScaleOut && pacman.HitBox.Intersects(fruit.HitBox))
+            {
+                fruit.ChangeFruit(CalculateNewFruitPos());
+                ///If I add in the fade out state I should check for it here as well
+                if (ghostManager.GeneralState != GhostStates.RunAway)
+                {
+                    ghostManager.SwitchMode(GhostStates.RunAway);
+                }
+                ghostManager.StopWatch.Restart();
+            }
+
+            foreach (Food food in foods)
+            {
+                if (pacman.HitBox.Intersects(food.HitBox) && food.IsVisable == true)
+                {
+                    food.IsVisable = false;
+                    remainingFood--;
+                }
+            }
+
+            if (percentEaten > 50 && ghosts[0].SpeedPerUpdate == ghostSpeed)
+            {
+                foreach (Ghost ghost in ghosts)
+                {
+                    ghost.SpeedPerUpdate = ghost.SpeedPerUpdate * 1.5f;
+                }
+            }
+
+            if (percentEaten == 100)
+            {
+                while (true) ;
+            }
+
+            if(screenTint.IsVisable == true)
+            {
+                foreach(Food food in foods)
+                {
+                    food.IsVisable = true;
+                    remainingFood = foods.Count;
+                }
+                foreach(Ghost ghost in ghosts)
+                {
+                    ghost.SpeedPerUpdate = ghostSpeed;
+                }
+            }
         }
     }
 }

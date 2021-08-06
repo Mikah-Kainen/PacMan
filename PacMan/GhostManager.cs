@@ -67,6 +67,13 @@ namespace PacMan
         public Queue<TimeSpan> Intervals;
         public GhostStates GeneralState { get; set; }
 
+        //0 = red, 1 = pink, 2 = blue, 3 = orange
+        List<Tile> ghostStarts = new List<Tile>()
+        {
+            //fill this in with the proper ghost start positions
+
+        };
+
         public GhostManager(List<Ghost> ghosts, Texture2D specialGhostTex, List<AnimationFrame> specialGhostFrames, Tile[,] grid, ref Pacman pacman)
         {
             this.specialGhostTex = specialGhostTex;
@@ -124,9 +131,9 @@ namespace PacMan
                 ghostTextures[i] = ghosts[i].Tex;
                 frames[i] = ghosts[i].Frames;
                 ghosts[i].Corner = (Corner)i;
-                Tile startTile = Traversals<Tile>.FindClosestTarget(CornerToTile[(Corner)i], CornerToTile[(Corner)i], GameScreen.Heuristic, grid, null);
-                ghosts[i].Pos.Y = startTile.Pos.Y + ghosts[i].HitBox.Y / 2;
-                ghosts[i].Pos.X = startTile.Pos.X + ghosts[i].HitBox.X / 2;
+                //Tile startTile = Traversals<Tile>.FindClosestTarget(CornerToTile[(Corner)i], CornerToTile[(Corner)i], GameScreen.Heuristic, grid, null);
+                ghosts[i].Pos.Y = ghostStarts[i].Pos.Y + ghosts[i].HitBox.Y / 2;
+                ghosts[i].Pos.X = ghostStarts[i].Pos.X + ghosts[i].HitBox.X / 2;
             }
 
 
@@ -142,7 +149,7 @@ namespace PacMan
             {
                 if (pacman.HitBox.Intersects(ghost.HitBox))
                 {
-                    GameScreen.screenTint.IsVisable = true;
+                    GameScreen.screenTint.IsVisable = true; 
                 }
             }
 
@@ -161,10 +168,6 @@ namespace PacMan
                 else if(GeneralState == GhostStates.ChasePacman)
                 {
                     GeneralState = GhostStates.Scatter;
-                }
-                else
-                {
-
                 }
                 SwitchMode(GeneralState);
             }
@@ -192,7 +195,7 @@ namespace PacMan
                     {
                         case GhostStates.StayHome:
                             //PathCalculation[(Ghosts)i](ghosts[i].Pos);
-                            ghosts[i].SetPath(ghosts[i].Pos, grid);
+                            //ghosts[i].SetPath(ghosts[i].Pos, grid);
                             break;
 
                         case GhostStates.ChasePacman:

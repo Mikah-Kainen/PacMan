@@ -11,7 +11,7 @@ namespace PacMan
 {
     public class Ghost : AnimationSprite
     {
-        private float speedPerUpdate;
+        public float SpeedPerUpdate;
         public Stack<Tile> Path { get; set; }
         public Tile PreviousTile { get; set; }
         public Tile CurrentTile { get; set; }
@@ -29,7 +29,7 @@ namespace PacMan
         public Ghost(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, float speedPerUpdate, Tile[,] grid, ScreenManager screenManager)
             : base(tex, tint, pos, scale, frames, TimeSpan.FromMilliseconds(100))
         {
-            this.speedPerUpdate = speedPerUpdate;
+            this.SpeedPerUpdate = speedPerUpdate;
             CurrentDirection = Directions.None;
 
 
@@ -108,7 +108,7 @@ namespace PacMan
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
                         Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2 + 2;
                     }
-                    Pos.Y -= speedPerUpdate;
+                    Pos.Y -= SpeedPerUpdate;
                     currentIndex = 0;
                     break;
 
@@ -118,7 +118,7 @@ namespace PacMan
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
                         Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2 - 2;
                     }
-                    Pos.Y += speedPerUpdate;
+                    Pos.Y += SpeedPerUpdate;
                     currentIndex = 1;
                     break;
 
@@ -128,7 +128,7 @@ namespace PacMan
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
                         Pos.X = CurrentTile.Pos.X + HitBox.Width / 2 - 2;
                     }
-                    Pos.X += speedPerUpdate;
+                    Pos.X += SpeedPerUpdate;
                     currentIndex = 2;
                     break;
 
@@ -138,7 +138,7 @@ namespace PacMan
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
                         Pos.X = CurrentTile.Pos.X + HitBox.Width / 2 + 2;
                     }
-                    Pos.X -= speedPerUpdate;
+                    Pos.X -= SpeedPerUpdate;
                     currentIndex = 3;
                     break;
 

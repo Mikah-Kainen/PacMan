@@ -62,6 +62,10 @@ namespace PacMan
             return new AnimationFrame(source, Vector2.Zero, new Vector2(scale.X / source.Width, scale.Y / source.Height));
         }
 
+        public static bool IsPacObstacle(this Tile targetTile)
+        {
+            return !targetTile.IsObstacle || targetTile.TileType == TileTypes.Teleport;
+        }
     }
 
     public static class GhostExtensions
