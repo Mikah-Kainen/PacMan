@@ -64,16 +64,14 @@ namespace PacMan
         public Dictionary<Corner, Tile> CornerToTile { get; private set; }
         public Stopwatch StopWatch;
         public Stopwatch IntervalCounter;
-        public Queue<TimeSpan> Intervals;
+        public Stopwatch ShouldReleaseGhost;
+        public List<TimeSpan> Intervals;
+        public int CurrentInterval;
         public GhostStates GeneralState { get; set; }
 
         //0 = red, 1 = pink, 2 = blue, 3 = orange
-        List<Tile> ghostStarts = new List<Tile>()
-        {
-            //fill this in with the proper ghost start positions
-
-        };
-
+        public List<Tile> GhostStarts;
+        Tile exitTile;
         public GhostManager(List<Ghost> ghosts, Texture2D specialGhostTex, List<AnimationFrame> specialGhostFrames, Tile[,] grid, ref Pacman pacman)
         {
             this.specialGhostTex = specialGhostTex;
@@ -93,6 +91,15 @@ namespace PacMan
             this.grid = grid;
             this.pacman = pacman;
 
+             GhostStarts = new List<Tile>()
+             {
+                 //fill this in with the proper ghost start positions
+                 grid[8, 8],
+                 grid[8, 10],
+                 grid[9, 8],
+                 grid[9, 10],
+             };
+            exitTile = grid[7, 9];
 
             GetTarget = new Dictionary<Ghosts, Func<Vector2>>()
             {
@@ -110,19 +117,17 @@ namespace PacMan
                 [Corner.BottomRight] = grid[grid.GetLength(0) - 1, grid.GetLength(1) - 1],
             };
             StopWatch = new Stopwatch();
-            StopWatch.Start();
             IntervalCounter = new Stopwatch();
-            IntervalCounter.Start();
+            ShouldReleaseGhost = new Stopwatch();
 
-            Intervals = new Queue<TimeSpan>();
-            Intervals.Enqueue(TimeSpan.FromSeconds(7));
-            Intervals.Enqueue(TimeSpan.FromSeconds(20));
-            Intervals.Enqueue(TimeSpan.FromSeconds(7));
-            Intervals.Enqueue(TimeSpan.FromSeconds(20));
-            Intervals.Enqueue(TimeSpan.FromSeconds(5));
-            Intervals.Enqueue(TimeSpan.FromSeconds(20));
-            Intervals.Enqueue(TimeSpan.FromSeconds(5));
-            Intervals.Enqueue(TimeSpan.FromSeconds(int.MaxValue));
+            Intervals = new List<TimeSpan>();
+            Intervals.Add(TimeSpan.FromSeconds(7));
+            Intervals.Add(TimeSpan.FromSeconds(20));
+            Intervals.Add(TimeSpan.FromSeconds(7));
+            Intervals.Add(TimeSpan.FromSeconds(20));
+            Intervals.Add(TimeSpan.FromSeconds(5));
+            Intervals.Add(TimeSpan.FromSeconds(20));
+            Intervals.Add(TimeSpan.FromSeconds(5));
 
             ghostTextures = new Texture2D[ghosts.Count];
             frames = new List<AnimationFrame>[ghosts.Count];
@@ -132,13 +137,9 @@ namespace PacMan
                 frames[i] = ghosts[i].Frames;
                 ghosts[i].Corner = (Corner)i;
                 //Tile startTile = Traversals<Tile>.FindClosestTarget(CornerToTile[(Corner)i], CornerToTile[(Corner)i], GameScreen.Heuristic, grid, null);
-                ghosts[i].Pos.Y = ghostStarts[i].Pos.Y + ghosts[i].HitBox.Y / 2;
-                ghosts[i].Pos.X = ghostStarts[i].Pos.X + ghosts[i].HitBox.X / 2;
             }
 
-
-            GeneralState = GhostStates.Scatter;
-            SwitchMode(GeneralState);
+            Reset();
         }
 
 
@@ -158,7 +159,20 @@ namespace PacMan
                 ghost.Update(gameTime);
             }
 
-            if(IntervalCounter.ElapsedMilliseconds > Intervals.Peek().TotalMilliseconds)
+            if(ShouldReleaseGhost.ElapsedMilliseconds > 1000)
+            {
+                foreach(Ghost ghost in ghosts)
+                {
+                    if(ghost.CurrentState == GhostStates.StayHome)
+                    {
+                        ghost.CurrentState = GhostStates.ChasePacman;
+                        ShouldReleaseGhost.Restart();
+                        break;
+                    }
+                }
+            }
+
+            if(CurrentInterval < Intervals.Count && IntervalCounter.ElapsedMilliseconds > Intervals[CurrentInterval].TotalMilliseconds)
             {
                 IntervalCounter.Restart();
                 if(GeneralState == GhostStates.Scatter)
@@ -170,6 +184,7 @@ namespace PacMan
                     GeneralState = GhostStates.Scatter;
                 }
                 SwitchMode(GeneralState);
+                CurrentInterval++;
             }
 
             if (GeneralState == GhostStates.RunAway || GeneralState == GhostStates.FadeRun)
@@ -357,6 +372,24 @@ namespace PacMan
         {
             Vector2 size = new Vector2(Hitbox.Width, Hitbox.Height);
             return GameScreen.PositionToTile(middlePos + size / 2, grid).PositionInGrid == GameScreen.PositionToTile(middlePos - size * 1 / 2, grid).PositionInGrid;
+        }
+
+        public void Reset()
+        {
+            StopWatch.Restart();
+            IntervalCounter.Restart();
+            ShouldReleaseGhost.Restart();
+            CurrentInterval = 0;
+
+            for (int i = 0; i < ghosts.Count; i ++)
+            {
+                Tile startTile = GhostStarts[i];
+                ghosts[i].Pos.X = startTile.Pos.X + GameScreen.TileSize.X / 2;
+                ghosts[i].Pos.Y = startTile.Pos.Y + GameScreen.TileSize.Y / 2;
+                ghosts[i].CurrentState = GhostStates.StayHome;
+            }
+            GeneralState = GhostStates.Scatter;
+            SwitchMode(GeneralState);
         }
 
     }

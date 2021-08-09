@@ -131,7 +131,7 @@ namespace PacMan
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
             ghostSpeed = TileSize.X / 30;
-            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed * 2, TileSize.Y - ghostSpeed * 2);
+            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed * 3, TileSize.Y - ghostSpeed * 3);
 
             frameList = new List<AnimationFrame>();
             frameList.Add(new Rectangle(235, 45, 160, 160).CreateFrame(true, ghostSize));
@@ -424,16 +424,22 @@ namespace PacMan
 
             if(screenTint.IsVisable == true)
             {
-                foreach(Food food in foods)
-                {
-                    food.IsVisable = true;
-                    remainingFood = foods.Count;
-                }
-                foreach(Ghost ghost in ghosts)
-                {
-                    ghost.SpeedPerUpdate = ghostSpeed;
-                }
+                ResetGame();
             }
+        }
+
+        private void ResetGame()
+        {
+            foreach (Food food in foods)
+            {
+                food.IsVisable = true;
+                remainingFood = foods.Count;
+            }
+            for(int i = 0; i < ghosts.Count; i ++)
+            {
+                ghosts[i].SpeedPerUpdate = ghostSpeed;
+            }
+            ghostManager.Reset();
         }
     }
 }

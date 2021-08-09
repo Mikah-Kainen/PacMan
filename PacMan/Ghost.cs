@@ -37,7 +37,7 @@ namespace PacMan
             PreviousTile = GameScreen.PositionToTile(pos, grid);
 
             //CurrentState = GhostStates.StayHome;
-            CurrentState = GhostStates.ChasePacman;
+            CurrentState = GhostStates.StayHome;
 
             this.grid = grid;
 

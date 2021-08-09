@@ -40,7 +40,7 @@ namespace PacMan
             WasVisited = false;
             Weight = 1;
 
-            IsObstacle = tileType != TileTypes.Background;
+            IsObstacle = tileType != TileTypes.Background && tileType != TileTypes.GhostHouse && tileType != TileTypes.Escape;
             pos = new Vector2(posInGrid.X * Scale.X * tex.Width + Origin.X, posInGrid.Y * Scale.Y * tex.Height + Origin.Y);
         }
 
