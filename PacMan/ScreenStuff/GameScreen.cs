@@ -99,6 +99,7 @@ namespace PacMan
                     }
                 }
             }
+            grid[8, 9].Neighbors.Add(grid[6,9]);
 
             foreach(Tile tile in grid)
             {

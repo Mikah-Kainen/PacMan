@@ -159,7 +159,7 @@ namespace PacMan
                 ghost.Update(gameTime);
             }
 
-            if(ShouldReleaseGhost.ElapsedMilliseconds > 1000)
+            if(ShouldReleaseGhost.ElapsedMilliseconds > 3000)
             {
                 foreach(Ghost ghost in ghosts)
                 {
@@ -209,44 +209,18 @@ namespace PacMan
                     switch (ghosts[i].CurrentState)
                     {
                         case GhostStates.StayHome:
-                            //PathCalculation[(Ghosts)i](ghosts[i].Pos);
-                            //ghosts[i].SetPath(ghosts[i].Pos, grid);
                             break;
 
                         case GhostStates.ChasePacman:
                             ghosts[i].Tex = ghostTextures[i];
                             ghosts[i].Frames = frames[i];
-                            //needs helper function for the other ghosts since pacman.Pos is not the target pos for every ghost
-                            //if (ghostTile == Traversals<Tile>.FindClosestTarget(ghostTile, GameScreen.PositionToTile(GetTarget[(Ghosts)i](), grid), GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
-                            //{
-                            //    Tile target = Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile);
-                            //    if (target != null)
-                            //    {
-                            //        ghosts[i].SetPath(target.Pos, grid);
-                            //    }
-                            //}
-                            //else
-                            //{
-                                ghosts[i].SetPath(GetTarget[(Ghosts)i](), grid);
-                            //}
+                            ghosts[i].SetPath(GetTarget[(Ghosts)i](), grid);
                             break;
 
                         case GhostStates.Scatter:
                             ghosts[i].Tex = ghostTextures[i];
                             ghosts[i].Frames = frames[i];
-
-                            //if (ghostTile == Traversals<Tile>.FindClosestTarget(ghostTile, CornerToTile[ghosts[i].Corner], GameScreen.Heuristic, grid, ghosts[i].PreviousTile))
-                            //{
-                            //    Tile target = Traversals<Tile>.FindClosestTarget(ghostTile, ghostTile, GameScreen.Heuristic, grid, ghosts[i].PreviousTile);
-                            //    if (target != null)
-                            //    {
-                            //        ghosts[i].SetPath(target.Pos, grid);
-                            //    }
-                            //}
-                            //else
-                            //{
-                                ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
-                            //}
+                            ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
                             break;
 
 
@@ -387,8 +361,9 @@ namespace PacMan
                 ghosts[i].Pos.X = startTile.Pos.X + GameScreen.TileSize.X / 2;
                 ghosts[i].Pos.Y = startTile.Pos.Y + GameScreen.TileSize.Y / 2;
                 ghosts[i].CurrentState = GhostStates.StayHome;
+                ghosts[i].Path = new Stack<Tile>();
             }
-            GeneralState = GhostStates.Scatter;
+            GeneralState = GhostStates.StayHome;
             SwitchMode(GeneralState);
         }
 

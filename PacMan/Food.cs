@@ -11,7 +11,7 @@ namespace PacMan
 
 
         public Food(Tile foodTile, GraphicsDevice graphicsDevice)
-            :base(Color.White.CreatePixel(graphicsDevice), Color.White, new Vector2(foodTile.Pos.X + foodTile.HitBox.Width / 2, foodTile.Pos.Y + foodTile.HitBox.Height / 2), new Vector2(5,5), new Vector2(.5F, .5F))
+            :base(Color.White.CreatePixel(graphicsDevice), Color.White, new Vector2(foodTile.Pos.X + foodTile.HitBox.Width / 2, foodTile.Pos.Y + foodTile.HitBox.Height / 2), GameScreen.TileSize * 1/6f, new Vector2(.5F, .5F))
         {
             if(foodTile.TileType != TileTypes.Background)
             {
