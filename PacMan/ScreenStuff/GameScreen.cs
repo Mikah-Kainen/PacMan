@@ -99,7 +99,7 @@ namespace PacMan
                     }
                 }
             }
-            grid[8, 9].Neighbors.Add(grid[6,9]);
+            grid[6, 9].Neighbors.Remove(grid[7,9]);
 
             foreach(Tile tile in grid)
             {
@@ -132,7 +132,7 @@ namespace PacMan
             Texture2D ghostSprite = ContentManager.Load<Texture2D>("ghosts");
 
             ghostSpeed = TileSize.X / 30;
-            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed * 3, TileSize.Y - ghostSpeed * 3);
+            Vector2 ghostSize = new Vector2(TileSize.X - ghostSpeed * 2, TileSize.Y - ghostSpeed * 2);
 
             frameList = new List<AnimationFrame>();
             frameList.Add(new Rectangle(235, 45, 160, 160).CreateFrame(true, ghostSize));
@@ -410,11 +410,11 @@ namespace PacMan
                 }
             }
 
-            if (percentEaten > 50 && ghosts[0].SpeedPerUpdate == ghostSpeed)
+            if (percentEaten > 50 && ghosts[0].speed == ghostSpeed)
             {
                 foreach (Ghost ghost in ghosts)
                 {
-                    ghost.SpeedPerUpdate = ghost.SpeedPerUpdate * 1.5f;
+                    ghost.speed = ghost.speed * 1.5f;
                 }
             }
 
@@ -431,6 +431,8 @@ namespace PacMan
 
         private void ResetGame()
         {
+            fruit.ChangeFruit(CalculateNewFruitPos());
+            fruit.CurrentIndex = 0;
             foreach (Food food in foods)
             {
                 food.IsVisable = true;
@@ -438,9 +440,15 @@ namespace PacMan
             }
             for(int i = 0; i < ghosts.Count; i ++)
             {
-                ghosts[i].SpeedPerUpdate = ghostSpeed;
+                ghosts[i].speed = ghostSpeed;
             }
             ghostManager.Reset();
+            var temp = ScreenManager.Settings.TeleportDictionary;
+            foreach(var kvp in temp)
+            {
+                kvp.Key.Neighbors.Remove(kvp.Value);
+            }
+            ScreenManager.Settings.TeleportDictionary = new Dictionary<Tile, Tile>();
         }
     }
 }

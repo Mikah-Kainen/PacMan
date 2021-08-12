@@ -204,7 +204,6 @@ namespace PacMan
             {
                 if (IsOnTile(ghosts[i].Pos, ghosts[i].HitBox))
                 {
-                    Tile ghostTile = GameScreen.PositionToTile(ghosts[i].Pos, grid);
 
                     switch (ghosts[i].CurrentState)
                     {
@@ -362,9 +361,12 @@ namespace PacMan
                 ghosts[i].Pos.Y = startTile.Pos.Y + GameScreen.TileSize.Y / 2;
                 ghosts[i].CurrentState = GhostStates.StayHome;
                 ghosts[i].Path = new Stack<Tile>();
+
+                ghosts[i].Tex = ghostTextures[i];
+                ghosts[i].Frames = frames[i];
             }
-            GeneralState = GhostStates.StayHome;
-            SwitchMode(GeneralState);
+            ghosts[0].CurrentState = GhostStates.Scatter;
+            GeneralState = GhostStates.Scatter;
         }
 
     }

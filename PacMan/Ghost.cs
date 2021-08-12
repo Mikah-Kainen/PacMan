@@ -11,10 +11,11 @@ namespace PacMan
 {
     public class Ghost : AnimationSprite
     {
-        public float SpeedPerUpdate;
+        public float speed;
         public Stack<Tile> Path { get; set; }
         public Tile PreviousTile { get; set; }
         public Tile CurrentTile { get; set; }
+        Point posInGrid => CurrentTile.PositionInGrid;
         public Corner Corner { get; set; }
         public GhostStates CurrentState { get; set; }
         public Directions CurrentDirection { get; set; }
@@ -29,7 +30,7 @@ namespace PacMan
         public Ghost(Texture2D tex, Color tint, Vector2 pos, Vector2 scale, List<AnimationFrame> frames, float speedPerUpdate, Tile[,] grid, ScreenManager screenManager)
             : base(tex, tint, pos, scale, frames, TimeSpan.FromMilliseconds(100))
         {
-            this.SpeedPerUpdate = speedPerUpdate;
+            this.speed = speedPerUpdate;
             CurrentDirection = Directions.None;
 
 
@@ -58,17 +59,6 @@ namespace PacMan
                 CurrentTile = GameScreen.PositionToTile(Pos, grid);
             }
 
-            //if(watch.ElapsedMilliseconds > 1500/(speedPerUpdate + 1))
-            //{
-            //    if(hashSet.Count == 1)
-            //    {
-            //        PreviousTile = null;
-            //    }
-
-            //    watch.Restart();
-            //    hashSet.Clear();
-            //}
-
 
             if (Path == null || Path.Count == 0)
             {
@@ -76,39 +66,47 @@ namespace PacMan
             }
             else
             {
-                Vector2 targetPos = Path.Peek().Pos;
-                if (targetPos == Pos)
+                Tile targetTile = Path.Peek();
+                if (targetTile.Pos == Pos)
                 {
                     Path.Pop();
                 }
-                if (targetPos.Y < HitBox.Y)
+                if (targetTile.PositionInGrid.Y < posInGrid.Y)
                 {
                     CurrentDirection = Directions.Up;
                 }
-                else if (targetPos.Y > HitBox.Y)
+                else if (targetTile.PositionInGrid.Y > posInGrid.Y)
                 {
                     CurrentDirection = Directions.Down;
                 }
-                else if (targetPos.X > HitBox.X)
+                else if (targetTile.PositionInGrid.X > posInGrid.X)
                 {
                     CurrentDirection = Directions.Right;
                 }
-                else if (targetPos.X < HitBox.X)
+                else if (targetTile.PositionInGrid.X < posInGrid.X)
                 {
                     CurrentDirection = Directions.Left;
                 }
 
             }
 
+            Vector2 padding = new Vector2(1, 1);
             switch (CurrentDirection)
             {
                 case Directions.Up:
                     if (CurrentTile.PositionInGrid.Y == 0 && CurrentTile.TileType == TileTypes.Teleport)
                     {
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
-                        Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2 + 2;
+                        Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2 + padding.Y;
                     }
-                    Pos.Y -= SpeedPerUpdate;
+                    else if (GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y - 1)].TileType == TileTypes.Wall)
+                    {
+                        Pos.Y = Math.Max(Pos.Y - speed, (float)(posInGrid.Y) * GameScreen.TileSize.Y + HitBox.Height / 2 + padding.Y);
+                    }
+                    else
+                    {
+                        Pos.Y -= speed;
+                    }
                     currentIndex = 0;
                     break;
 
@@ -116,9 +114,16 @@ namespace PacMan
                     if (CurrentTile.PositionInGrid.Y == 18 && GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
                     {
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
-                        Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2 - 2;
+                        Pos.Y = CurrentTile.Pos.Y + HitBox.Height / 2 - padding.Y;
                     }
-                    Pos.Y += SpeedPerUpdate;
+                    else if (GameScreen.PointToTile[new Point(posInGrid.X, posInGrid.Y + 1)].TileType == TileTypes.Wall)
+                    {
+                        Pos.Y = Math.Min(Pos.Y + speed, (float)(posInGrid.Y + 1) * GameScreen.TileSize.Y - HitBox.Height / 2 - padding.Y);
+                    }
+                    else
+                    {
+                        Pos.Y += speed;
+                    }
                     currentIndex = 1;
                     break;
 
@@ -126,9 +131,16 @@ namespace PacMan
                     if (CurrentTile.PositionInGrid.X == 18 & GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
                     {
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
-                        Pos.X = CurrentTile.Pos.X + HitBox.Width / 2 - 2;
+                        Pos.X = CurrentTile.Pos.X + HitBox.Width / 2 - padding.X;
                     }
-                    Pos.X += SpeedPerUpdate;
+                    if (GameScreen.PointToTile[new Point(posInGrid.X + 1, posInGrid.Y)].TileType == TileTypes.Wall)
+                    {
+                        Pos.X = Math.Min(Pos.X + speed, (float)(posInGrid.X + 1) * GameScreen.TileSize.X - HitBox.Width / 2 - padding.X);
+                    }
+                    else
+                    {
+                        Pos.X += speed;
+                    }
                     currentIndex = 2;
                     break;
 
@@ -136,9 +148,16 @@ namespace PacMan
                     if (CurrentTile.PositionInGrid.X == 0 & GameScreen.PositionToTile(Pos, grid).TileType == TileTypes.Teleport)
                     {
                         CurrentTile = ScreenManager.Settings.TeleportDictionary[CurrentTile];
-                        Pos.X = CurrentTile.Pos.X + HitBox.Width / 2 + 2;
+                        Pos.X = CurrentTile.Pos.X + HitBox.Width / 2 + padding.X;
                     }
-                    Pos.X -= SpeedPerUpdate;
+                    else if (GameScreen.PointToTile[new Point(posInGrid.X - 1, posInGrid.Y)].TileType == TileTypes.Wall)
+                    {
+                        Pos.X = Math.Max(Pos.X - speed, (float)(posInGrid.X) * GameScreen.TileSize.X + HitBox.Width / 2 + padding.X);
+                    }
+                    else
+                    {
+                        Pos.X -= speed;
+                    }
                     currentIndex = 3;
                     break;
 

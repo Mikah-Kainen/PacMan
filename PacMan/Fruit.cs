@@ -21,12 +21,12 @@ namespace PacMan
         Stopwatch stopwatch = new Stopwatch();
 
         List<AnimationFrame> frames;
-        int currentIndex;
-        AnimationFrame currentFrame => frames[currentIndex];
+        public int CurrentIndex { get; set; }
+        AnimationFrame currentFrame => frames[CurrentIndex];
         public Rectangle SourceRectangle => currentFrame.HitBox;
         public override Rectangle HitBox => new Rectangle((int)(Pos.X - currentFrame.Origin.X * Scale.X *currentFrame.Scale.X), (int)(Pos.Y - currentFrame.Origin.Y * Scale.Y * currentFrame.Scale.Y), (int)(currentFrame.HitBox.Width * Scale.X * currentFrame.Scale.X), (int)(currentFrame.HitBox.Height * Scale.Y * currentFrame.Scale.Y));
-        private Vector2 goalScaleUp => frames[currentIndex].Scale;
-        private Vector2 goalScaleDown => frames[currentIndex].Scale * .9f;
+        private Vector2 goalScaleUp => frames[CurrentIndex].Scale;
+        private Vector2 goalScaleDown => frames[CurrentIndex].Scale * .9f;
 
         float scaleStep;
 
@@ -35,10 +35,10 @@ namespace PacMan
            : base(tex, startTint, pos, startScale, frames[0].Origin)
         {
             this.frames = frames;
-            currentIndex = 0;
+            CurrentIndex = 0;
             this.startScale = startScale;
-            scaleStep = frames[currentIndex].Scale.X / 100f;
-            scaleLerp = new LerpData<Vector2>(startScale, frames[currentIndex].Scale, scaleStep, Vector2.Lerp);
+            scaleStep = frames[CurrentIndex].Scale.X / 100f;
+            scaleLerp = new LerpData<Vector2>(startScale, frames[CurrentIndex].Scale, scaleStep, Vector2.Lerp);
             tintLerp = new LerpData<Color>(startTint, endTint, (float)endTint.A / 1500f, Color.Lerp);
         }
 
@@ -101,16 +101,16 @@ namespace PacMan
 
         public void ChangeFruit(Vector2 newPos)
         {
-            scaleLerp = new LerpData<Vector2>(frames[currentIndex].Scale, startScale, scaleStep * 15, Vector2.Lerp);
+            scaleLerp = new LerpData<Vector2>(frames[CurrentIndex].Scale, startScale, scaleStep * 15, Vector2.Lerp);
             CurrentState = FruitStates.ScaleOut;
             nextFruitPos = newPos;
         }
 
         private void FinishChangeFruit(Vector2 newPos)
         {
-            currentIndex = (currentIndex + 1) % frames.Count;
+            CurrentIndex = (CurrentIndex + 1) % frames.Count;
             Origin = currentFrame.Origin;
-            scaleLerp = new LerpData<Vector2>(startScale, frames[currentIndex].Scale, scaleStep, Vector2.Lerp);
+            scaleLerp = new LerpData<Vector2>(startScale, frames[CurrentIndex].Scale, scaleStep, Vector2.Lerp);
             Pos = newPos;
             CurrentState = FruitStates.ScaleIn;
         }
