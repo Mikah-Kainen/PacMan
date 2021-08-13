@@ -29,9 +29,9 @@ namespace PacMan
             StayHome = 10,
             ChasePacman = 11,
             Scatter = 12,
+            Eaten = 13,
             RunAway = 0,
             FadeRun = 1,
-
         };
 
         public enum Corner
@@ -61,6 +61,7 @@ namespace PacMan
         Texture2D specialGhostTex;
         List<AnimationFrame> runAwayFrames;
         List<AnimationFrame> fadeRunFrames;
+        List<AnimationFrame> eatenFrames;
         public Dictionary<Corner, Tile> CornerToTile { get; private set; }
         public Stopwatch StopWatch;
         public Stopwatch IntervalCounter;
@@ -71,12 +72,12 @@ namespace PacMan
 
         //0 = red, 1 = pink, 2 = blue, 3 = orange
         public List<Tile> GhostStarts;
-        Tile exitTile;
         public GhostManager(List<Ghost> ghosts, Texture2D specialGhostTex, List<AnimationFrame> specialGhostFrames, Tile[,] grid, ref Pacman pacman)
         {
             this.specialGhostTex = specialGhostTex;
             runAwayFrames = new List<AnimationFrame>();
             fadeRunFrames = new List<AnimationFrame>();
+            eatenFrames = new List<AnimationFrame>();
 
             for (int i = 0; i < 4; i++)
             {
@@ -86,6 +87,12 @@ namespace PacMan
             {
                 fadeRunFrames.Add(specialGhostFrames[i]);
             }
+            //targetOrder: up down right left
+            //currentOrder: right down left up
+            eatenFrames.Add(specialGhostFrames[8 + 3]);
+            eatenFrames.Add(specialGhostFrames[8 + 1]);
+            eatenFrames.Add(specialGhostFrames[8 + 0]);
+            eatenFrames.Add(specialGhostFrames[8 + 2]);
 
             this.ghosts = ghosts;
             this.grid = grid;
@@ -99,7 +106,6 @@ namespace PacMan
                  grid[9, 8],
                  grid[9, 10],
              };
-            exitTile = grid[7, 9];
 
             GetTarget = new Dictionary<Ghosts, Func<Vector2>>()
             {
@@ -150,7 +156,14 @@ namespace PacMan
             {
                 if (pacman.HitBox.Intersects(ghost.HitBox))
                 {
-                    GameScreen.screenTint.IsVisable = true; 
+                    if (ghost.CurrentState == GhostStates.RunAway || ghost.CurrentState == GhostStates.FadeRun || ghost.CurrentState == GhostStates.Eaten)
+                    {
+                        ghost.CurrentState = GhostStates.Eaten;
+                    }
+                    else
+                    {
+                        GameScreen.screenTint.IsVisable = true;
+                    }
                 }
             }
 
@@ -222,6 +235,16 @@ namespace PacMan
                             ghosts[i].SetPath(CornerToTile[ghosts[i].Corner].Pos, grid);
                             break;
 
+                        case GhostStates.Eaten:
+                            Tile startTile = GhostStarts[i];
+                            ghosts[i].Pos.X = startTile.Pos.X + GameScreen.TileSize.X / 2;
+                            ghosts[i].Pos.Y = startTile.Pos.Y + GameScreen.TileSize.Y / 2;
+                            ghosts[i].CurrentState = GhostStates.StayHome;
+                            ghosts[i].Path = new Stack<Tile>();
+
+                            ghosts[i].Tex = ghostTextures[i];
+                            ghosts[i].Frames = frames[i];
+                            break;
 
                         case GhostStates.RunAway:
                             ghosts[i].Tex = specialGhostTex;
@@ -263,6 +286,9 @@ namespace PacMan
                 switch (ghost.CurrentState)
                 {
                     case GhostStates.StayHome:
+                        break;
+
+                    case GhostStates.Eaten:
                         break;
 
                     default:
