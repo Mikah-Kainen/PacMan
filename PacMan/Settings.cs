@@ -12,6 +12,9 @@ namespace PacMan
 {
     public class Settings
     {
+        public const int TileWidth = 30;
+        public const int TileHeight = 30;
+        public const bool Playing = true;
         public Dictionary<Keys, Directions> DirectionDictionary { get; private set; }
         /// <summary>
         /// Vector2 pos, Vector2 scale, Point posInGrid

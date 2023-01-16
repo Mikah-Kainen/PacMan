@@ -30,7 +30,6 @@ namespace PacMan
             Screen currentScreen = ScreenDictionary[name];
             PreviousScreens.Push(CurrentScreen);
             CurrentScreen = currentScreen;
-
         }
 
         public void LeaveScreen()
