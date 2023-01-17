@@ -8,7 +8,6 @@ namespace PacMan.TraversalStuff
 {
     public static class Traversals<T> where T : IComparable<T>, ITraversable<T>
     {
-    
 
         public static Stack<T> AStar(T startingPosition, T targetPosition, Func<T /*currentPosition*/, T /*targetPosition*/, int /*tentativeDistance*/> heuristicFunction, T[,] grid, T previousPosition)
         { 

@@ -47,15 +47,16 @@ namespace PacMan
 
             screenManager.Add(Screens.Game, new GameScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
             screenManager.Add(Screens.Editor, new TileEditorScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
-            if (Settings.Playing)
-            {
-                screenManager.SetScreen(Screens.Game);
-            }
-            else
+            screenManager.Add(Screens.Start, new StartScreen(graphics, Content, new Rectangle(0, 0, (int)screenSize.X, (int)screenSize.Y), screenManager, inputManager));
+            if (Settings.Editing)
             {
                 screenManager.SetScreen(Screens.Editor);
             }
-
+            else
+            {
+                screenManager.SetScreen(Screens.Game);
+            }
+            //screenManager.SetScreen(Screens.Start);
 
             screenManager.CurrentScreen.Init();
             base.Initialize();

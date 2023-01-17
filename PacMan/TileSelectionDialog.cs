@@ -10,8 +10,9 @@ namespace PacMan
 {
     public class TileSelectionDialog : GameObject
     {
-        public List<Button> Buttons { get; set; }
-        public List<Text> Texts { get; set; }
+        //public List<Button> Buttons { get; set; }
+        //public List<Text> Texts { get; set; }
+        public List<Label> Labels { get; set; }
         public Vector2 Size { get; set; }
         public TileTypes SelectedType { get; set; }
         public TileTypes CurrentPalletType 
@@ -19,15 +20,15 @@ namespace PacMan
 
             set 
             { 
-                foreach(Button button in Buttons)
+                foreach(Label label in Labels)
                 {
-                    if((TileTypes)button.Tag == value)
+                    if((TileTypes)label.Tag == value)
                     {
-                        button.Tint = Color.Yellow;
+                        label.Tint = Color.Yellow;
                     }
                     else
                     {
-                        button.Tint = Color.White;
+                        label.Tint = Color.White;
                     }
                 }
             } 
@@ -37,8 +38,7 @@ namespace PacMan
         {
             var buttonTypes = (TileTypes[])Enum.GetValues(typeof(TileTypes));
 
-            Buttons = new List<Button>();
-            Texts = new List<Text>();
+            Labels = new List<Label>();
             Vector2 incriment = new Vector2(0, HitBox.Height / buttonTypes.Length);
             Vector2 currentPos = pos;
             Size = new Vector2(HitBox.Width, HitBox.Height / buttonTypes.Length);
@@ -49,11 +49,11 @@ namespace PacMan
             {
                 if (type != TileTypes.None)
                 {
-                    Buttons.Add(new Button(whitePixel, Color.White, currentPos, Size, Vector2.Zero, input)
+                    Labels.Add(new Label(whitePixel, Color.White, currentPos, Size, Vector2.Zero, input, font, type.ToString(), Color.Black, Vector2.One)
                     {
                         Tag = type
                     });
-                    Texts.Add(new Text(currentPos, Size, Vector2.Zero, font, type.ToString(), Color.Black));
+                    //Texts.Add(new Text(currentPos, Size, Vector2.Zero, font, type.ToString(), Color.Black));
                     currentPos += incriment;
                 }
             }
@@ -63,11 +63,11 @@ namespace PacMan
         {
             if (IsVisable)
             {
-                foreach (Button button in Buttons)
+                foreach (Label label in Labels)
                 {
-                    if (button.IsClicked())
+                    if (label.IsClicked())
                     {
-                        SelectedType = (TileTypes)button.Tag;
+                        SelectedType = (TileTypes)label.Tag;
                     }
                 }
             }
@@ -81,13 +81,9 @@ namespace PacMan
         {
             if (IsVisable)
             {
-                foreach (Button button in Buttons)
+                foreach (Label label in Labels)
                 {
-                    button.Draw(spriteBatch);
-                }
-                foreach (Text text in Texts)
-                {
-                    text.Draw(spriteBatch);
+                    label.Draw(spriteBatch);
                 }
             }
         }

@@ -35,7 +35,7 @@ namespace PacMan.ScreenStuff
         {
             base.Load(graphics, content, bounds, screenManager, inputManager);
             gridHitbox = new Rectangle(Bounds.Left, Bounds.Top, (int)(Bounds.Width * fraction), (int)(Bounds.Height * fraction));
-            tileDialog = new TileSelectionDialog(new Vector2(gridHitbox.Width + 20, 20), Vector2.One, new Vector2(100, 60), Vector2.Zero, graphics, inputManager, content);
+            tileDialog = new TileSelectionDialog(new Vector2(gridHitbox.Width + 20, 20), Vector2.One, new Vector2(Settings.TileDialogWidth, Settings.TileDialogHeight), Vector2.One, graphics, inputManager, content);
             tileDialog.IsVisable = false;
             Objects.Add(tileDialog);
             currentPallet = null;

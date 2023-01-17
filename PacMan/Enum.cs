@@ -31,6 +31,7 @@ namespace PacMan
     {
         Game,
         Editor,
+        Start,
     }
 
     public enum FruitStates
