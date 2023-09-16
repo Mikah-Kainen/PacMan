@@ -12,8 +12,8 @@ namespace PacMan
 {
     public class Settings
     {
-        public const int TileWidth = 30;
-        public const int TileHeight = 30;
+        public const int TileWidth = 60;
+        public const int TileHeight = 60;
         public const int TileDialogWidth = 100;
         public const int TileDialogHeight = 120;
         public const bool Editing = true;
